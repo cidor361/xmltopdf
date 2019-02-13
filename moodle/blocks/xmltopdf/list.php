@@ -24,8 +24,10 @@ if($listform->is_cancelled()) {
     $filename = $listform->get_new_filename('userfile');
     $XMLString = $listform->get_file_content('userfile');
     $xmlCVObject = simplexml_load_string($XMLString);
+    $HTMLString = '';
+    $XMLString = var_dump($xmlCVObject);
 
-    $filename = 'qqmbr.pdf';
+    $filename = 'Portfolio.pdf';
     $pdf = new pdf;
     $pdf->AddPage();
 //    $pdf->Write(1, $XMLString);

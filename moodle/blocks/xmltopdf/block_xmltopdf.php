@@ -1,7 +1,5 @@
 <?php
 require_once("xmltopdf_form.php");
-require_once('lib.php');
-
 
 class block_xmltopdf extends block_base {
 
