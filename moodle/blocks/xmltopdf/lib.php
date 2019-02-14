@@ -23,6 +23,7 @@ function TagP($string){
     $string = '<p>' . $string . '</p>';
     return @$string;
 }
+//br - новая строка
 function NewLine($string) {
     $string2 = '<br>'.$string;
     return $string2;
@@ -36,9 +37,13 @@ function get_name($XMLObject) {
 }
 function get_adress($XMLObject) {}
 function get_contacts($XMLObject) {
-    $contacts = NewLine('Email: '.$XMLObject->LearnerInfo->Identification->ContactInfo->Email->Contact);
-    $contacts = $contacts.NewLine(TagB('Telephone: ').$XMLObject->LearnerInfo->Identification->ContactInfo->TelephoneList->{'0'}->Contact);
-    return $contacts.'qq';
+    $contacts = NewLine('Email: ' . $XMLObject->LearnerInfo->Identification->ContactInfo->Email->Contact);
+    $num = count($XMLObject->LearnerInfo->Identification->ContactInfo->TelephoneList) + 1;
+    for ($i = 0; $i < $num; $i++) {
+        $contacts = $contacts.NewLine($XMLObject->LearnerInfo->Identification->ContactInfo->TelephoneList->Telephone->{$i}->Use->Code.': ');
+        $contacts = $contacts.$XMLObject->LearnerInfo->Identification->ContactInfo->TelephoneList->Telephone->{$i}->Contact;
+    }
+    return $contacts;
 }
 function get_web_sites($XMLObject) {
     return $XMLObject->LearnerInfo->Identification->ContactInfo->WebsiteList->Website->Contact;
@@ -73,4 +78,5 @@ function get_achivment($XMLObject) {
 }
 function get_cover_letter($XMLObject) {         //html yet
     $letter = NewLine(TagB('Cover Letter: ').$XMLObject->CoverLetter->Letter->Body->MainBody);
-    return $letter;}
+    return $letter;
+}
