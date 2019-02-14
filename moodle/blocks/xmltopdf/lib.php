@@ -1,14 +1,14 @@
 <?php
-function XMLParsing($xmlCVObject) {
-
+function TagH1($string) {
+    $string = '<h1>'.$string.'</h1>';
+    return @$string;
 }
-
 function TagB($string) {
     $string2 = '<b>'.$string.'</b>';
      return $string2;
 }
 function NewLine($string) {
-    $string2 = '<br>'.$string.'</br>';
+    $string2 = '<br>'.$string;
     return $string2;
 }
 
@@ -28,7 +28,6 @@ function get_web_sites($XMLObject) {
     return $XMLObject->LearnerInfo->Identification->ContactInfo->WebsiteList->Website->Contact;
 }
 function get_messagers($XMLObject){
-
     $skype = NewLine('Skype: '.$XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging->{'0'}->Use->Code);
     $icq = NewLine('icq: '.$XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging->{'1'}->Use->Code);
     $aim = NewLine('aim: '.$XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging->{'2'}->Use->Code);
@@ -45,11 +44,11 @@ function get_work_experiance($XMLObject) {
     return $work;
 }
 function get_education($XMLObject) {
-    $education = NewLine('Education: '.$XMLObject->LearnerInfo->Skills);
+    $education = NewLine('Education: '.$XMLObject->LearnerInfo->EducationList);
     return $education;
 }
 function get_skills($XMLObject) {
-    $skills = NewLine('Skills: '.$XMLObject->LearnerInfo->EducationList);
+    $skills = NewLine('Skills: '.$XMLObject->LearnerInfo->Skills);
     return $skills;
 }
 function get_achivment($XMLObject) {
