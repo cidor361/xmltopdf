@@ -20,8 +20,9 @@ function get_name($XMLObject) {
 }
 function get_adress($XMLObject) {}
 function get_contacts($XMLObject) {
-    $contacts = 'Email'.$XMLObject->LearnerInfo->Identification->ContactInfo->Email->Contact;
-    return $contacts;
+    $contacts = NewLine('Email: '.$XMLObject->LearnerInfo->Identification->ContactInfo->Email->Contact);
+    $contacts = $contacts.NewLine('Telephone: '.$XMLObject->LearnerInfo->Identification->ContactInfo->TelephoneList->{'0'}->Contact);
+    return $contacts.'qq';
 }
 function get_web_sites($XMLObject) {
     return $XMLObject->LearnerInfo->Identification->ContactInfo->WebsiteList->Website->Contact;
@@ -29,15 +30,11 @@ function get_web_sites($XMLObject) {
 function get_messagers($XMLObject){
 
     $skype = $XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging->{'0'}->Use->Code;
-    return $skype;
     $icq = $XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging->{'1'}->Use->Code;
-    return $icq;
     $aim = $XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging->{'2'}->Use->Code;
-    return $aim;
     $msn = $XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging->{'3'}->Use->Code;
-    return $msn;
     $yahoo = $XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging->{'4'}->Use->Code;
-    return $yahoo;
+    return $skype.$icq.$aim.$msn.$yahoo;
 }
 function get_personal_info($XMLObject) {
     $statement = $XMLObject->LearnerInfo->Headline->Type->Code->Label;
