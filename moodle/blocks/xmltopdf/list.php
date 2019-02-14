@@ -2,6 +2,7 @@
 require_once('../../config.php');
 require_once('list_form.php');
 require_once($CFG->libdir.'/pdflib.php');
+require_once('lib.php');
 
 global $PAGE, $OUTPUT, $CFG;
 
@@ -24,15 +25,16 @@ if($listform->is_cancelled()) {
     $filename = $listform->get_new_filename('userfile');
     $XMLString = $listform->get_file_content('userfile');
     $xmlCVObject = simplexml_load_string($XMLString);
-    $HTMLString = '';
-    $XMLString = var_dump($xmlCVObject);
+//    echo var_dump($xmlCVObject);
+    echo get_name($xmlCVObject);
+    echo get_messagers($xmlCVObject);
 
-    $filename = 'Portfolio.pdf';
-    $pdf = new pdf;
-    $pdf->AddPage();
-//    $pdf->Write(1, $XMLString);
-    $pdf->writeHTML($XMLString, true, false, false, false, 'qqqqq');
-    $pdf->Output($filename, 'D');
+//    $filename = 'Portfolio.pdf';
+//    $pdf = new pdf;
+//    $pdf->AddPage();
+////    $pdf->Write(1, $XMLString);
+//    $pdf->writeHTML($XMLString, true, false, false, false, 'qqqqq');
+//    $pdf->Output($filename, 'D');
 } else {
 //    print 'q';
     echo $OUTPUT->header();
