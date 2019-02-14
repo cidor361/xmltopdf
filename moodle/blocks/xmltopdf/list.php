@@ -28,7 +28,7 @@ if($listform->is_cancelled()) {
 //    echo var_dump($xmlCVObject);
     echo TagH1(get_name($xmlCVObject));
     echo get_contacts($xmlCVObject);
-    echo get_messagers($xmlCVObject);
+    echo TagP(get_messagers($xmlCVObject));
 //echo get_web_sites($xmlCVObject);
 //    echo get_personal_info($xmlCVObject);
 //    echo get_work_experiance($xmlCVObject);
