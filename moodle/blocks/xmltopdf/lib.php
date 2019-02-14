@@ -7,6 +7,10 @@ function TagB($string) {
     $string2 = '<b>'.$string.'</b>';
      return $string2;
 }
+function NewLine($string) {
+    $string2 = '<br>'.$string.'</br>';
+    return $string2;
+}
 
 
 
@@ -16,8 +20,8 @@ function get_name($XMLObject) {
 }
 function get_adress($XMLObject) {}
 function get_contacts($XMLObject) {
-    $contacts = '';
-    return $XMLObject->LearnerInfo->Identification->ContactInfo->Email->Contact;
+    $contacts = 'Email'.$XMLObject->LearnerInfo->Identification->ContactInfo->Email->Contact;
+    return $contacts;
 }
 function get_web_sites($XMLObject) {
     return $XMLObject->LearnerInfo->Identification->ContactInfo->WebsiteList->Website->Contact;
@@ -55,4 +59,6 @@ function get_achivment($XMLObject) {
     $achivment = $XMLObject->LearnerInfo->AchievementList;
     return $achivment;
 }
-function get_cover_letter($XMLObject) {}
+function get_cover_letter($XMLObject) {         //html yet
+    $letter = $XMLObject->CoverLetter->Letter->Body->MainBody;
+    return $letter;}

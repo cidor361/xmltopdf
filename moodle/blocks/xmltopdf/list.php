@@ -27,7 +27,7 @@ if($listform->is_cancelled()) {
     $xmlCVObject = simplexml_load_string($XMLString);
 //    echo var_dump($xmlCVObject);
     echo get_name($xmlCVObject);
-    echo get_messagers($xmlCVObject);
+    echo NewLine(get_contacts($xmlCVObject));
 
 //    $filename = 'Portfolio.pdf';
 //    $pdf = new pdf;
