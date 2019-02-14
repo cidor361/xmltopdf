@@ -29,33 +29,33 @@ function get_web_sites($XMLObject) {
 }
 function get_messagers($XMLObject){
 
-    $skype = $XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging->{'0'}->Use->Code;
-    $icq = $XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging->{'1'}->Use->Code;
-    $aim = $XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging->{'2'}->Use->Code;
-    $msn = $XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging->{'3'}->Use->Code;
-    $yahoo = $XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging->{'4'}->Use->Code;
+    $skype = NewLine('Skype: '.$XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging->{'0'}->Use->Code);
+    $icq = NewLine('icq: '.$XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging->{'1'}->Use->Code);
+    $aim = NewLine('aim: '.$XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging->{'2'}->Use->Code);
+    $msn = NewLine('msn: '.$XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging->{'3'}->Use->Code);
+    $yahoo = NewLine('yahoo: '.$XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging->{'4'}->Use->Code);
     return $skype.$icq.$aim.$msn.$yahoo;
 }
 function get_personal_info($XMLObject) {
-    $statement = $XMLObject->LearnerInfo->Headline->Type->Code->Label;
+    $statement = NewLine('Personal info: '.$XMLObject->LearnerInfo->Headline->Type->Code->Label);
     return $statement;
 }
 function get_work_experiance($XMLObject) {
-    $work = $XMLObject->LearnerInfo->WorkExperienceList;
+    $work = NewLine('Work: '.$XMLObject->LearnerInfo->WorkExperienceList);
     return $work;
 }
 function get_education($XMLObject) {
-    $education = $XMLObject->LearnerInfo->Skills;
+    $education = NewLine('Education: '.$XMLObject->LearnerInfo->Skills);
     return $education;
 }
 function get_skills($XMLObject) {
-    $skills = $XMLObject->LearnerInfo->EducationList;
+    $skills = NewLine('Skills: '.$XMLObject->LearnerInfo->EducationList);
     return $skills;
 }
 function get_achivment($XMLObject) {
-    $achivment = $XMLObject->LearnerInfo->AchievementList;
+    $achivment = NewLine('Achivment: '.$XMLObject->LearnerInfo->AchievementList);
     return $achivment;
 }
 function get_cover_letter($XMLObject) {         //html yet
-    $letter = $XMLObject->CoverLetter->Letter->Body->MainBody;
+    $letter = NewLine('Cover Letter: '.$XMLObject->CoverLetter->Letter->Body->MainBody);
     return $letter;}
