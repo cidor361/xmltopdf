@@ -1,63 +1,89 @@
 <?php
 function TagH1($string) {
     $string = '<h1>'.$string.'</h1>';
-    return @$string;
+    return $string;
 }
 //i - курсив
 function TagI($string){
     $string = '<i>' . $string . '</i>';
-    return @$string;
+    return $string;
 }
 //b - полужирный
 function TagB($string){
     $string = '<b>' . $string . '</b>';
-    return @$string;
+    return $string;
 }
 //ins - подчеркивание
 function TagINS($string) {
-    $string2 = '<ins>'.$string.'</ins>';
-     return $string2;
+    $string = '<ins>'.$string.'</ins>';
+     return $string;
 }
-//p - отступ
+//p - отступ (абзац)
 function TagP($string){
     $string = '<p>' . $string . '</p>';
-    return @$string;
+    return $string;
 }
 //br - новая строка
 function NewLine($string) {
-    $string2 = '<br>'.$string;
-    return $string2;
+    $string = '<br>'.$string;
+    return $string;
+}
+//первый заголвок
+function HeadLine($string) {
+    $string = '<h1>'.$string.'</h1>';
+    return $string;
+}
+//правый отступ
+function RightSide($string) {
+    $string = '<p align="right">'.$string.'</p>';
+    return $string;
 }
 
 
 
 function get_name($XMLObject) {
-    $name = $XMLObject->LearnerInfo->Identification->PersonName->FirstName.' '.$XMLObject->LearnerInfo->Identification->PersonName->Surname;
+    $personalName = $XMLObject->LearnerInfo->Identification->PersonName;
+    $name = $personalName->FirstName.' '.$personalName->Surname;
     return $name;
 }
-function get_adress($XMLObject) {}
+function get_adress($XMLObject) {
+    //TODO: adress
+}
 function get_contacts($XMLObject) {
-    $contacts = NewLine('Email: ' . $XMLObject->LearnerInfo->Identification->ContactInfo->Email->Contact);
-    $num = count($XMLObject->LearnerInfo->Identification->ContactInfo->TelephoneList) + 1;
+    $contactInfo = $XMLObject->LearnerInfo->Identification->ContactInfo;
+    $contacts = NewLine('Email: '.$contactInfo->Email->Contact);
+    $num = count($contactInfo->TelephoneList) + 1;
     for ($i = 0; $i < $num; $i++) {
-        $contacts = $contacts.NewLine($XMLObject->LearnerInfo->Identification->ContactInfo->TelephoneList->Telephone->{$i}->Use->Code.': ');
-        $contacts = $contacts.$XMLObject->LearnerInfo->Identification->ContactInfo->TelephoneList->Telephone->{$i}->Contact;
+        if (!empty($contactInfo->TelephoneList->Telephone->{$i}->Contact)) {
+            $contacts = $contacts . NewLine($contactInfo->TelephoneList->Telephone->{$i}->Use->Code . ': ');
+            $contacts = $contacts . $contactInfo->TelephoneList->Telephone->{$i}->Contact;
+        }
     }
     return $contacts;
 }
 function get_web_sites($XMLObject) {
     return $XMLObject->LearnerInfo->Identification->ContactInfo->WebsiteList->Website->Contact;
+    //TODO: Цикл
 }
-function get_messagers($XMLObject){
-    $skype = NewLine(TagI('Skype: ').$XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging->{'0'}->Use->Code);
-    $icq = NewLine(TagI('icq: ').$XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging->{'1'}->Use->Code);
-    $aim = NewLine(TagI('aim: ').$XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging->{'2'}->Use->Code);
-    $msn = NewLine(TagI('msn: ').$XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging->{'3'}->Use->Code);
-    $yahoo = NewLine(TagI('yahoo: ').$XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging->{'4'}->Use->Code);
-    return $skype.$icq.$aim.$msn.$yahoo;
+function get_messagers($XMLObject) {
+    $massageList = $XMLObject->LearnerInfo->Identification->ContactInfo->InstantMessagingList->InstantMessaging;
+    $num = count($massageList) + 1;
+    $massage = '';
+    for ($i = 0; $i < $num; $i++) {
+        if (!empty($massage.$massageList->{$i}->Contact)) {
+            $massage = $massage . NewLine(TagI($massageList->{$i}->Use->Code) . ': ');
+            $massage = $massage . $massageList->{$i}->Contact;
+        }
+    }
+    return $massage;
 }
 function get_personal_info($XMLObject) {
-    $statement = NewLine(TagB('Personal info: ').$XMLObject->LearnerInfo->Headline->Type->Code->Label);
+    $personalInfo = $XMLObject->LearnerInfo->Headline;
+    $statement = '';
+    if (!empty($personalInfo->Description->Label)) {
+        $statement = NewLine($personalInfo->Type->Label . ': ');
+        $statement = $statement.NewLine($personalInfo->Description->Label);
+    }
     return $statement;
 }
 function get_work_experiance($XMLObject) {
@@ -69,14 +95,21 @@ function get_education($XMLObject) {
     return $education;
 }
 function get_skills($XMLObject) {
-    $skills = NewLine(TagB('Skills: ').$XMLObject->LearnerInfo->Skills);
+    $skillsInfo = $XMLObject->LearnerInfo->Skills;
+    $skills = NewLine($skillsInfo->Other->Description);
     return $skills;
 }
 function get_achivment($XMLObject) {
-    $achivment = NewLine(TagB('Achivment: ').$XMLObject->LearnerInfo->AchievementList);
+    $achivmentList = $XMLObject->LearnerInfo->AchievementList->Achievement;
+    $achivment = '';
+    $num = count($achivmentList) + 1;
+    for ($i = 0; $i < $num; $++) {
+        $achivment = $achivment.NewLine($achivmentList->{'$i'}->Title->Label.': ');
+        $achivment = $achivment.$achivmentList->{'$i'}->Description;
+    }
     return $achivment;
 }
-function get_cover_letter($XMLObject) {         //html yet
+function get_cover_letter($XMLObject) {
     $letter = NewLine(TagB('Cover Letter: ').$XMLObject->CoverLetter->Letter->Body->MainBody);
     return $letter;
 }

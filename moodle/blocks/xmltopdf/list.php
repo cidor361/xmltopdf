@@ -29,13 +29,9 @@ if($listform->is_cancelled()) {
     echo TagH1(get_name($xmlCVObject));
     echo get_contacts($xmlCVObject);
     echo TagP(get_messagers($xmlCVObject));
-//echo get_web_sites($xmlCVObject);
-//    echo get_personal_info($xmlCVObject);
-//    echo get_work_experiance($xmlCVObject);
-//    echo get_education($xmlCVObject);
-//    echo get_skills($xmlCVObject);
-//    echo get_achivment($xmlCVObject);
+    echo get_skills($xmlCVObject);
     echo get_cover_letter($xmlCVObject);
+    echo get_personal_info($xmlCVObject);
 
 //    $filename = 'Portfolio.pdf';
 //    $pdf = new pdf;
@@ -44,7 +40,6 @@ if($listform->is_cancelled()) {
 //    $pdf->writeHTML($XMLString, true, false, false, false, 'qqqqq');
 //    $pdf->Output($filename, 'D');
 } else {
-//    print 'q';
     echo $OUTPUT->header();
     $listform->display();
     echo $OUTPUT->footer();
