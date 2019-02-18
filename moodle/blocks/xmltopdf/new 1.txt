@@ -1,0 +1,262 @@
+<body>object(SimpleXMLElement)#299 (4) {
+  ["@attributes"]=&gt;
+  array(1) {
+    ["locale"]=&gt;
+    string(2) "en"
+  }
+  ["DocumentInfo"]=&gt;
+  object(SimpleXMLElement)#297 (7) {
+    ["DocumentType"]=&gt;
+    string(3) "ECV"
+    ["Bundle"]=&gt;
+    object(SimpleXMLElement)#322 (0) {
+    }
+    ["CreationDate"]=&gt;
+    string(24) "2019-02-14T09:57:40.000Z"
+    ["LastUpdateDate"]=&gt;
+    string(24) "2019-02-14T09:57:40.000Z"
+    ["XSDVersion"]=&gt;
+    string(4) "V3.2"
+    ["Generator"]=&gt;
+    string(21) "Moodle exaport resume"
+    ["Comment"]=&gt;
+    string(31) "Europass CV from Moodle exaport"
+  }
+  ["LearnerInfo"]=&gt;
+  object(SimpleXMLElement)#300 (6) {
+    ["Identification"]=&gt;
+    object(SimpleXMLElement)#322 (2) {
+      ["PersonName"]=&gt;
+      object(SimpleXMLElement)#329 (3) {
+        ["Title"]=&gt;
+        object(SimpleXMLElement)#331 (0) {
+        }
+        ["FirstName"]=&gt;
+        string(6) "andrey"
+        ["Surname"]=&gt;
+        string(7) "andreev"
+      }
+      ["ContactInfo"]=&gt;
+      object(SimpleXMLElement)#330 (5) {
+        ["Address"]=&gt;
+        object(SimpleXMLElement)#331 (1) {
+          ["Contact"]=&gt;
+          object(SimpleXMLElement)#336 (4) {
+            ["AddressLine"]=&gt;
+            object(SimpleXMLElement)#337 (0) {
+            }
+            ["PostalCode"]=&gt;
+            object(SimpleXMLElement)#338 (0) {
+            }
+            ["Municipality"]=&gt;
+            object(SimpleXMLElement)#339 (0) {
+            }
+            ["Country"]=&gt;
+            object(SimpleXMLElement)#340 (2) {
+              ["Code"]=&gt;
+              object(SimpleXMLElement)#341 (0) {
+              }
+              ["Label"]=&gt;
+              object(SimpleXMLElement)#342 (0) {
+              }
+            }
+          }
+        }
+        ["Email"]=&gt;
+        object(SimpleXMLElement)#332 (1) {
+          ["Contact"]=&gt;
+          string(7) "a@g.ruu"
+        }
+        ["TelephoneList"]=&gt;
+        object(SimpleXMLElement)#333 (1) {
+          ["Telephone"]=&gt;
+          array(2) {
+            [0]=&gt;
+            object(SimpleXMLElement)#336 (2) {
+              ["Contact"]=&gt;
+              object(SimpleXMLElement)#339 (0) {
+              }
+              ["Use"]=&gt;
+              object(SimpleXMLElement)#338 (1) {
+                ["Code"]=&gt;
+                string(4) "home"
+              }
+            }
+            [1]=&gt;
+            object(SimpleXMLElement)#340 (2) {
+              ["Contact"]=&gt;
+              object(SimpleXMLElement)#338 (0) {
+              }
+              ["Use"]=&gt;
+              object(SimpleXMLElement)#339 (1) {
+                ["Code"]=&gt;
+                string(6) "mobile"
+              }
+            }
+          }
+        }
+        ["WebsiteList"]=&gt;
+        object(SimpleXMLElement)#334 (1) {
+          ["Website"]=&gt;
+          object(SimpleXMLElement)#340 (2) {
+            ["Contact"]=&gt;
+            object(SimpleXMLElement)#336 (0) {
+            }
+            ["Use"]=&gt;
+            object(SimpleXMLElement)#339 (1) {
+              ["Code"]=&gt;
+              string(8) "personal"
+            }
+          }
+        }
+        ["InstantMessagingList"]=&gt;
+        object(SimpleXMLElement)#335 (1) {
+          ["InstantMessaging"]=&gt;
+          array(5) {
+            [0]=&gt;
+            object(SimpleXMLElement)#340 (2) {
+              ["Contact"]=&gt;
+              object(SimpleXMLElement)#342 (0) {
+              }
+              ["Use"]=&gt;
+              object(SimpleXMLElement)#341 (1) {
+                ["Code"]=&gt;
+                string(5) "skype"
+              }
+            }
+            [1]=&gt;
+            object(SimpleXMLElement)#339 (2) {
+              ["Contact"]=&gt;
+              object(SimpleXMLElement)#341 (0) {
+              }
+              ["Use"]=&gt;
+              object(SimpleXMLElement)#342 (1) {
+                ["Code"]=&gt;
+                string(3) "icq"
+              }
+            }
+            [2]=&gt;
+            object(SimpleXMLElement)#336 (2) {
+              ["Contact"]=&gt;
+              object(SimpleXMLElement)#342 (0) {
+              }
+              ["Use"]=&gt;
+              object(SimpleXMLElement)#341 (1) {
+                ["Code"]=&gt;
+                string(3) "aim"
+              }
+            }
+            [3]=&gt;
+            object(SimpleXMLElement)#338 (2) {
+              ["Contact"]=&gt;
+              object(SimpleXMLElement)#341 (0) {
+              }
+              ["Use"]=&gt;
+              object(SimpleXMLElement)#342 (1) {
+                ["Code"]=&gt;
+                string(3) "msn"
+              }
+            }
+            [4]=&gt;
+            object(SimpleXMLElement)#337 (2) {
+              ["Contact"]=&gt;
+              object(SimpleXMLElement)#342 (0) {
+              }
+              ["Use"]=&gt;
+              object(SimpleXMLElement)#341 (1) {
+                ["Code"]=&gt;
+                string(5) "yahoo"
+              }
+            }
+          }
+        }
+      }
+    }
+    ["Headline"]=&gt;
+    object(SimpleXMLElement)#324 (2) {
+      ["Type"]=&gt;
+      object(SimpleXMLElement)#330 (2) {
+        ["Code"]=&gt;
+        string(18) "personal_statement"
+        ["Label"]=&gt;
+        string(18) "PERSONAL STATEMENT"
+      }
+      ["Description"]=&gt;
+      object(SimpleXMLElement)#329 (1) {
+        ["Label"]=&gt;
+        string(20) "<h2>My new FaQ!</h2>"
+      }
+    }
+    ["WorkExperienceList"]=&gt;
+    object(SimpleXMLElement)#325 (0) {
+    }
+    ["EducationList"]=&gt;
+    object(SimpleXMLElement)#326 (0) {
+    }
+    ["Skills"]=&gt;
+    object(SimpleXMLElement)#327 (1) {
+      ["Other"]=&gt;
+      object(SimpleXMLElement)#329 (1) {
+        ["Description"]=&gt;
+        string(96) "<p>i am Elon Musk</p><p>i am iron man</p><p>i am tony stark</p><p>i'm batman</p><p>qq batman</p>"
+      }
+    }
+    ["AchievementList"]=&gt;
+    object(SimpleXMLElement)#328 (1) {
+      ["Achievement"]=&gt;
+      array(5) {
+        [0]=&gt;
+        object(SimpleXMLElement)#329 (2) {
+          ["Title"]=&gt;
+          object(SimpleXMLElement)#332 (1) {
+            ["Label"]=&gt;
+            string(41) "Certifications, accreditations and awards"
+          }
+          ["Description"]=&gt;
+          string(50) "<ul><li>qqcert (11.11.11). Desscuription</li></ul>"
+        }
+        [1]=&gt;
+        object(SimpleXMLElement)#330 (2) {
+          ["Title"]=&gt;
+          object(SimpleXMLElement)#332 (1) {
+            ["Label"]=&gt;
+            string(22) "Books and publications"
+          }
+          ["Description"]=&gt;
+          string(113) "<ul><li>Blue orange (11.11.11). hooh: nothing</li><li>red orange (11.11.11). some red: a little bit red</li></ul>"
+        }
+        [2]=&gt;
+        object(SimpleXMLElement)#335 (2) {
+          ["Title"]=&gt;
+          object(SimpleXMLElement)#332 (1) {
+            ["Label"]=&gt;
+            string(24) "Professional memberships"
+          }
+          ["Description"]=&gt;
+          string(117) "<ul><li>sun rise (11.11.2133-11.99.2233). rain rise</li><li>linuxoid (11.11.11-22.22.22). linux is the best</li></ul>"
+        }
+        [3]=&gt;
+        object(SimpleXMLElement)#334 (2) {
+          ["Title"]=&gt;
+          object(SimpleXMLElement)#332 (1) {
+            ["Label"]=&gt;
+            string(8) "My goals"
+          }
+          ["Description"]=&gt;
+          string(127) "<p>ole ole ole ole</p><p>Russia is besst</p><br><p>aph aph</p><p>moo moo</p><br><p>kykareky career</p><p>apt get moo career</p>"
+        }
+        [4]=&gt;
+        object(SimpleXMLElement)#333 (2) {
+          ["Title"]=&gt;
+          object(SimpleXMLElement)#332 (1) {
+            ["Label"]=&gt;
+            string(9) "Interests"
+          }
+          ["Description"]=&gt;
+          string(55) "<p>i'm good at driving belaz</p><p>and i'm the best</p>"
+        }
+      }
+    }
+  }
+}
+<link id="cincopa_main_css" type="text/css" rel="stylesheet" href="chrome-extension://dgmoopeiaaembcbpngjcndibcejbhafg/main.css"></body>
