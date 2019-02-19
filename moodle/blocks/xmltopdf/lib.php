@@ -103,7 +103,7 @@ function get_achivment($XMLObject) {
     $achivmentList = $XMLObject->LearnerInfo->AchievementList->Achievement;
     $achivment = '';
     $num = count($achivmentList) + 1;
-    for ($i = 0; $i < $num; $++) {
+    for ($i = 0; $i < $num; $i++) {
         $achivment = $achivment.NewLine($achivmentList->{'$i'}->Title->Label.': ');
         $achivment = $achivment.$achivmentList->{'$i'}->Description;
     }
