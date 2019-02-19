@@ -39,8 +39,6 @@ function RightSide($string) {
     return $string;
 }
 
-
-
 function get_name($XMLObject) {
     $personalName = $XMLObject->LearnerInfo->Identification->PersonName;
     $name = $personalName->FirstName.' '.$personalName->Surname;
@@ -88,15 +86,17 @@ function get_personal_info($XMLObject) {
 }
 function get_work_experiance($XMLObject) {
     $work = NewLine(TagB('Work: ').$XMLObject->LearnerInfo->WorkExperienceList);
+    //TODO: Цикл!
     return $work;
 }
 function get_education($XMLObject) {
     $education = NewLine(TagB('Education: ').TagINS($XMLObject->LearnerInfo->EducationList));
+    //TODO: Цикл!
     return $education;
 }
 function get_skills($XMLObject) {
     $skillsInfo = $XMLObject->LearnerInfo->Skills;
-    $skills = NewLine($skillsInfo->Other->Description);
+    $skills = NewLine('Skills: ').NewLine($skillsInfo->Other->Description);
     return $skills;
 }
 function get_achivment($XMLObject) {
@@ -104,8 +104,10 @@ function get_achivment($XMLObject) {
     $achivment = '';
     $num = count($achivmentList) + 1;
     for ($i = 0; $i < $num; $i++) {
-        $achivment = $achivment.NewLine($achivmentList->{'$i'}->Title->Label.': ');
-        $achivment = $achivment.$achivmentList->{'$i'}->Description;
+        if (!empty($achivment . $achivmentList->{'$i'}->Description)) {
+            $achivment = $achivment . NewLine($achivmentList->{'$i'}->Title->Label . ': ');
+            $achivment = $achivment . $achivmentList->{'$i'}->Description;
+        }
     }
     return $achivment;
 }

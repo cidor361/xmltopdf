@@ -25,13 +25,17 @@ if($listform->is_cancelled()) {
     $filename = $listform->get_new_filename('userfile');
     $XMLString = $listform->get_file_content('userfile');
     $xmlCVObject = simplexml_load_string($XMLString);
-//    echo var_dump($xmlCVObject);
+
     echo TagH1(get_name($xmlCVObject));
     echo get_contacts($xmlCVObject);
+//    echo get_web_sites($xmlCVObject);
     echo TagP(get_messagers($xmlCVObject));
+//    echo get_personal_info($xmlCVObject);
+//    echo get_work_experiance($xmlCVObject);
+//    echo get_education($xmlCVObject);
     echo get_skills($xmlCVObject);
+    echo get_achivment($xmlCVObject);
     echo get_cover_letter($xmlCVObject);
-    echo get_personal_info($xmlCVObject);
 
 //    $filename = 'Portfolio.pdf';
 //    $pdf = new pdf;
