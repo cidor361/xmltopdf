@@ -21,7 +21,7 @@ $mform->add_textfield('institution', 'text');
 $mform->add_textfield('duration', 'text');
 $mform->add_selectwithlink('duration','yes');
 $mform->add_textfield('business_version', 'text');
-$mform->add_link('promo_url', 'URL');
+$mform->add_link('promo_url', 'http://URL.ru', 'URL.Ru');
 
 
 echo $OUTPUT->header();

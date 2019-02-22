@@ -65,7 +65,7 @@ class listform extends moodleform {
             array('link' => $CFG->wwwroot.'/grade/edit/scale/edit.php?courseid='.$COURSE->id, 'label' => get_string('scalescustomcreate')));
     }
 
-    function add_link($title, $link) {
-        $this->mform->addElement('static', 'staticlink', $title, $link);
+    function add_link($title, $link, $text) {
+        $this->mform->addElement('static', 'staticlink', $title, '<a href='.$link.'>'.$text.'</a>');
     }
 }
