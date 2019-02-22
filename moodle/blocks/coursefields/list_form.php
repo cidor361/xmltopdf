@@ -31,16 +31,17 @@ class listform extends moodleform {
         $this->mform->setDefault('requesteddate',  $defaulttime);
     }
 
-    function add_textfield($title) {
+    function add_textfield($title, $text) {
         $attributes = array('size' => '50', 'maxlength' => '100');
-        $this->mform->addElement('text', 'description', $title, $attributes);
-        $this->mform->setType('description', PARAM_TEXT);
-        $this->mform->setDefault('text', 'qqqqqq');
+        $num = uniqid();
+        $this->mform->addElement('text', $num, $title, $attributes);
+        $this->mform->setType($num, PARAM_TEXT);
+        $this->mform->setDefault($num, $text);
         //TODO: Установка текста!
     }
 
     function add_simple_text($title, $text) {
-        $this->mform->addElement('static', 'description', $title, $text);
+        $this->mform->addElement('static', uniqid(), $title, $text);
     }
 
     function add_email($title, $text) {
