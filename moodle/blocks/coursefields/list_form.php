@@ -24,25 +24,31 @@ class listform extends moodleform {
         $this->mform->addElement('header','displayinfo', $title);
     }
 
-    function add_data_selector($title, $year, $month, $day) {
-        $num = uniqid();
-        $this->mform->addElement('date_selector', $num, $title, array('optional' => true));
+    function add_data_selector($title, $year, $month, $day, $id) {
+        if ($id = NULL) {
+            $id = uniqid();
+        }
+        $this->mform->addElement('date_selector', $id, $title, array('optional' => true));
         $this->mform->setAdvanced('optional');
         $defaulttime = make_timestamp($year, $month, $day);
         $this->mform->setDefault('requesteddate',  $defaulttime);
     }
 
-    function add_textfield($title, $text) {
-        $attributes = array('size' => '50', 'maxlength' => '100');
-        $num = uniqid();
-        $this->mform->addElement('text', $num, $title, $attributes);
-        $this->mform->setType($num, PARAM_TEXT);
-        $this->mform->setDefault($num, $text);
-        //TODO: Установка текста!
+    function add_textfield($title, $text, $id) {
+        if ($id = NULL) {
+            $id = uniqid();
+        }
+        $attributes = array('size' => '50', 'maxlength' => '150');
+        $this->mform->addElement('text', $id, $title, $attributes);
+        $this->mform->setType($id, PARAM_TEXT);
+        $this->mform->setDefault($id, $text);
     }
 
-    function add_simple_text($title, $text) {
-        $this->mform->addElement('static', uniqid(), $title, $text);
+    function add_simple_text($title, $text, $id) {
+        if ($id = NULL) {
+            $id = uniqid();
+        }
+        $this->mform->addElement('static', $id, $title, $text);
     }
 
     function add_email($title, $text) {

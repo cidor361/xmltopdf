@@ -18,14 +18,14 @@ $mform->add_textfield(get_string('partnerid', 'block_coursefields'), 'Непон
 $mform->add_textfield(get_string('title', 'block_coursefields'), $course->fullname);
 $mform->add_data_selector(get_string('started_at', 'block_coursefields'), $year, $month, $date);
 $mform->add_data_selector(get_string('finished_at', 'block_coursefields'), $year, $month, $date);
-$mform->add_textfield(get_string('description', 'block_coursefields'), 'text');
-$mform->add_link(get_string('external_url', 'block_coursefields'), 'https://www.moodle.com');
+$mform->add_textfield(get_string('description', 'block_coursefields'), $course->summary);
+$mform->add_textfield(get_string('external_url', 'block_coursefields'), 'https://www.moodle.com');
 $mform->add_textfield(get_string('direction', 'block_coursefields'), '');
 $mform->add_textfield(get_string('institution', 'block_coursefields'), 'text');
 $mform->add_textfield(get_string('duration', 'block_coursefields'), 'text');
 $mform->add_selectwithlink(get_string('duration', 'block_coursefields'),'yes');
 $mform->add_textfield(get_string('business_version', 'block_coursefields'), 'text');
-$mform->add_link(get_string('promo_url', 'block_coursefields'), 'http://URL.ru', 'URL.Ru');
+$mform->add_textfield(get_string('promo_url', 'block_coursefields'), 'http://URL.ru');
 
 echo $OUTPUT->header();
 $mform->display();
