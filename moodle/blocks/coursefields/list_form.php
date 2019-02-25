@@ -25,7 +25,8 @@ class listform extends moodleform {
     }
 
     function add_data_selector($title, $year, $month, $day) {
-        $this->mform->addElement('date_selector', 'assesstimefinish', $title, array('optional' => true));
+        $num = uniqid();
+        $this->mform->addElement('date_selector', $num, $title, array('optional' => true));
         $this->mform->setAdvanced('optional');
         $defaulttime = make_timestamp($year, $month, $day);
         $this->mform->setDefault('requesteddate',  $defaulttime);

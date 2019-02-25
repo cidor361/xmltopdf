@@ -1,5 +1,6 @@
 <?php
 require_once("list_form.php");
+
 class block_coursefields extends block_base {
 
     public function init()
@@ -9,16 +10,16 @@ class block_coursefields extends block_base {
 
     public function get_content()
     {
-        global $CFG;
         if ($this->content != null) {
             return $this->content;
         }
 
+        $id = optional_param('id', 0, PARAM_INT);
         $url = new moodle_url('/blocks/coursefields/list.php');
 
         $this->content = new stdClass;
         $this->content->text = get_string('Description_plugin', 'block_coursefields');
-        $this->content->footer = '<a href="'.$url.'">Редактировать</a>';
+        $this->content->footer = '<a href="'.$url.'?id='.$id.'">Редактировать</a>';
 
         return $this->content;
     }
