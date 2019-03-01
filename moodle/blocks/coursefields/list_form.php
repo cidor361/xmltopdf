@@ -25,29 +25,20 @@ class listform extends moodleform {
     }
 
     function add_data_selector($title, $year, $month, $day, $id) {
-        if ($id = NULL) {
-            $id = uniqid();
-        }
         $this->mform->addElement('date_selector', $id, $title, array('optional' => true));
         $this->mform->setAdvanced('optional');
         $defaulttime = make_timestamp($year, $month, $day);
-        $this->mform->setDefault('requesteddate',  $defaulttime);
+        $this->mform->setDefault($id, $defaulttime);
     }
 
     function add_textfield($title, $text, $id) {
-        if ($id = NULL) {
-            $id = uniqid();
-        }
-        $attributes = array('size' => '50', 'maxlength' => '150');
+        $attributes = array('size' => '50', 'maxlength' => '100');
         $this->mform->addElement('text', $id, $title, $attributes);
         $this->mform->setType($id, PARAM_TEXT);
         $this->mform->setDefault($id, $text);
     }
 
     function add_simple_text($title, $text, $id) {
-        if ($id = NULL) {
-            $id = uniqid();
-        }
         $this->mform->addElement('static', $id, $title, $text);
     }
 

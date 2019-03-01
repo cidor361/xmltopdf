@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="blocks/coursefield/db" VERSION="20110221" COMMENT="XMLDB file for Moodle blocks/coursefierld"
+<XMLDB PATH="blocks/coursefields/db" VERSION="20110221" COMMENT="XMLDB file for Moodle blocks/coursefierlds"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
     <TABLES>
-        <TABLE NAME="block_coursefield" COMMENT="Table for extra course field">
+        <TABLE NAME="block_coursefields" COMMENT="Table for extra course field">
             <FIELDS>
-                <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="partnerid"/>
-                <FIELD NAME="partnerid" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="title"/>
+                <FIELD NAME="courseid" TYPE="int" LENGTH="20" SEQUENCE="false" NOTNULL="true" UNSIGNED="true" NEXT="partnerid"/>
+                <FIELD NAME="partnerid" TYPE="text" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="courseid" NEXT="title"/>
                 <FIELD NAME="title" TYPE="text" LENGTH="50" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="partnerid" NEXT="description"/>
-                <FIELD NAME="description" TYPE="text" LENGTH="200" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="submission_b_id"/>
+                <FIELD NAME="description" TYPE="text" LENGTH="200" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="title" NEXT="external_url"/>
+                <FIELD NAME="external_url" TYPE="text" LENGTH="50" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="description" NEXT="direction"/>
+                <FIELD NAME="direction" TYPE="text" LENGTH="50" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="external_url" NEXT="institution"/>
+                <FIELD NAME="institution" TYPE="text" LENGTH="50" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="direction" NEXT="duration"/>
+                <FIELD NAME="duration" TYPE="text" LENGTH="50" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="institution" NEXT="cert"/>
+                <FIELD NAME="cert" TYPE="text" LENGTH="50" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="duration" NEXT="business_version"/>
+                <FIELD NAME="business_version" TYPE="text" LENGTH="200" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="cert"/>
             </FIELDS>
             <KEYS>
-                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="primary" TYPE="primary" FIELDS="courseid"/>
             </KEYS>
         </TABLE>
     </TABLES>
