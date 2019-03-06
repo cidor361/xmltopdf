@@ -11,8 +11,19 @@ $PAGE->set_title(get_string('course_fields', 'block_coursefields'));
 $PAGE->set_heading(get_string('course_fields', 'block_coursefields'));
 $PAGE->set_context(context_course::instance($courseid));
 
-$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
-$object = $DB->get_record('block_coursefields', array('courseid' => $courseid));
+$object = new stdClass();
+$object->courseid = $courseid;
+$object->partnerid = '123';
+$object->title = 'titleqq';
+$object->description = 'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
+$object->external_url = 'qq.ru';
+$object->direction = '43265584589774631564783265667695553';
+$object->institution = 'dghdghadfvgsf';
+$object->duration = '666';
+$object->cert = 'true';
+$object->business_version = '20190201';
+$DB->update_record('block_coursefield', $object);
+$object = $DB->get_record('block_coursefields', array('courseid' => $courseid), '*', MUST_EXIST);
 
 $mform = new listform();
 $mform->add_textfield(get_string('partnerid', 'block_coursefields'), $object->partnerid, 'partnerid');
@@ -36,18 +47,8 @@ $mform->add_act_button();
 //
 //}
 
-$object->courseid = $courseid;
-$object->partnerid = '123';
-$object->title = 'titleqq';
-$object->description = 'qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq';
-$object->external_url = 'qq.ru';
-$object->direction = '43265584589774631564783265667695553';
-$object->institution = 'dghdghadfvgsf';
-$object->duration = '666';
-$object->cert = 'true';
-$object->business_version = '20190201';
-
-$DB->insert_record('block_coursefields', $object);
+//$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+//$DB->insert_record('block_coursefields', $object, '*', MUST_EXIST);
 
 echo $OUTPUT->header();
 $mform->display();
