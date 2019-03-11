@@ -5,7 +5,8 @@
     <TABLES>
         <TABLE NAME="block_coursefields" COMMENT="Table for extra course field">
             <FIELDS>
-                <FIELD NAME="courseid" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" NEXT="partnerid"/>
+                <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true" NEXT="courseid"/>
+                <FIELD NAME="courseid" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" NEXT="partnerid" PREVIOUS="id"/>
                 <FIELD NAME="partnerid" TYPE="text" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="courseid" NEXT="title"/>
                 <FIELD NAME="title" TYPE="text" LENGTH="50" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="partnerid" NEXT="description"/>
                 <FIELD NAME="description" TYPE="text" LENGTH="200" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="title" NEXT="external_url"/>
@@ -18,6 +19,7 @@
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" FIELDS="courseid" TYPE="unique"/>
+                <KEY NAME="id" FIELDS="id" TYPE="primary"/>
             </KEYS>
         </TABLE>
     </TABLES>
