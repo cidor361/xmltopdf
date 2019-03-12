@@ -8,8 +8,6 @@
                 <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true" NEXT="courseid"/>
                 <FIELD NAME="courseid" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" NEXT="partnerid" PREVIOUS="id"/>
                 <FIELD NAME="partnerid" TYPE="text" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="courseid" NEXT="title"/>
-                <FIELD NAME="title" TYPE="text" LENGTH="50" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="partnerid" NEXT="description"/>
-                <FIELD NAME="description" TYPE="text" LENGTH="200" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="title" NEXT="external_url"/>
                 <FIELD NAME="external_url" TYPE="text" LENGTH="50" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="description" NEXT="direction"/>
                 <FIELD NAME="direction" TYPE="text" LENGTH="50" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="external_url" NEXT="institution"/>
                 <FIELD NAME="institution" TYPE="text" LENGTH="50" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="direction" NEXT="duration"/>

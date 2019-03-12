@@ -5,39 +5,26 @@ require_once('list_form.php');
 global $PAGE, $OUTPUT, $DB;
 
 $courseid = $_GET['id'];
-$PAGE->set_url('/blocks/coursefield/list.php');
+$PAGE->set_url('/blocks/coursefield/list.php'.'?id='.$courseid);
 $PAGE->set_pagelayout('standart');
 $PAGE->set_title(get_string('course_fields', 'block_coursefields'));
 $PAGE->set_heading(get_string('course_fields', 'block_coursefields'));
 $PAGE->set_context(context_course::instance($courseid));
-$mform = new listform();
-$mform->add_act_button();
-
-//$object = new stdClass();
-//$object->courseid = $courseid;
-//$object->partnerid = '123';
-//$object->title = 'titleqq';
-//$object->description = 'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
-//$object->external_url = 'qq.ru';
-//$object->direction = '31564783265667695553';
-//$object->institution = 'dghdghadfvgsf';
-//$object->duration = '666';
-//$object->cert = 'true';
-//$object->business_version = '20190201';
-
-//$object = array('courseid' => 2, 'description' => 'eeeeeeeeeeeeeeeeeeeeee');
-
-//$DB->update_record('block_coursefield', $object, '*', MUST_EXIST);
+$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+//TODO: $DB->record_exists()
+//TODO: send courseid (after action with form
 //$object = $DB->get_record('block_coursefields', array('courseid' => $courseid), '*', MUST_EXIST);
+$mform = new listform();
 
-//
 
-if($listform->is_cancelled()) {
+//TODO: default values ( + when they must be added - before or after first time)
+
+if($mform->is_cancelled()) {
     $mform->add_textfield(get_string('partnerid', 'block_coursefields'), $object->partnerid, 'partnerid');
-    $mform->add_textfield(get_string('title', 'block_coursefields'), $object->title, 'title');
+    $mform->add_textfield(get_string('title', 'block_coursefields'), $course->fullname, 'title');
     $mform->add_data_selector(get_string('started_at', 'block_coursefields'), $year, $month, $date, 'started_at');
     $mform->add_data_selector(get_string('finished_at', 'block_coursefields'), $year, $month, $date, 'finished_at');
-    $mform->add_textfield(get_string('description', 'block_coursefields'), $object->description, 'description');
+    $mform->add_textfield(get_string('description', 'block_coursefields'), $course->summary, 'description');
     $mform->add_textfield(get_string('external_url', 'block_coursefields'), $object->external_url, 'external_url');
     $mform->add_textfield(get_string('direction', 'block_coursefields'), $object->direction, 'direction');
     $mform->add_textfield(get_string('institution', 'block_coursefields'), $object->institution, 'institution');
@@ -45,18 +32,29 @@ if($listform->is_cancelled()) {
     $mform->add_selectwithlink(get_string('duration', 'block_coursefields'),'yes');
     $mform->add_textfield(get_string('business_version', 'block_coursefields'), $object->business_version, 'business_version');
     $mform->add_textfield(get_string('promo_url', 'block_coursefields'), 'http://URL.ru', 'promo_url');
-    echo $OUTPUT->header();
-    $mform->display();
-    echo $OUTPUT->footer();
-    echo var_dump($out);
-} else if ($listform->get_data()) {
+} else if ($mform->get_data()) {
+    $object = new stdClass();
+    $object->id = $courseid;
+    $object->courseid = $courseid;
+    $object->partnerid = '123';
+    $object->external_url = 'qq.ru';
+    $object->direction = '31564783265667695553';
+    $object->institution = 'dghdghadfvgsf';
+    $object->duration = '666';
+    $object->cert = 'true';
+    $object->business_version = '20190201';
+    if(!$object) {
+        $DB->insert_record('block_coursefields', $object, '*', MUST_EXIST);
+    } else {
+        $DB->update_record('block_coursefield', $object, '*', MUST_EXIST);
+    }
 
 } else {
     $mform->add_textfield(get_string('partnerid', 'block_coursefields'), $object->partnerid, 'partnerid');
-    $mform->add_textfield(get_string('title', 'block_coursefields'), $object->title, 'title');
+    $mform->add_textfield(get_string('title', 'block_coursefields'), $course->fullname, 'title');
     $mform->add_data_selector(get_string('started_at', 'block_coursefields'), $year, $month, $date, 'started_at');
     $mform->add_data_selector(get_string('finished_at', 'block_coursefields'), $year, $month, $date, 'finished_at');
-    $mform->add_textfield(get_string('description', 'block_coursefields'), $object->description, 'description');
+    $mform->add_textfield(get_string('description', 'block_coursefields'), $course->summary, 'description');
     $mform->add_textfield(get_string('external_url', 'block_coursefields'), $object->external_url, 'external_url');
     $mform->add_textfield(get_string('direction', 'block_coursefields'), $object->direction, 'direction');
     $mform->add_textfield(get_string('institution', 'block_coursefields'), $object->institution, 'institution');
@@ -64,11 +62,8 @@ if($listform->is_cancelled()) {
     $mform->add_selectwithlink(get_string('duration', 'block_coursefields'),'yes');
     $mform->add_textfield(get_string('business_version', 'block_coursefields'), $object->business_version, 'business_version');
     $mform->add_textfield(get_string('promo_url', 'block_coursefields'), 'http://URL.ru', 'promo_url');
-    echo $OUTPUT->header();
-    $mform->display();
-    echo $OUTPUT->footer();
-    echo var_dump($out);
 }
-
-//$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
-//$DB->insert_record('block_coursefields', $object, '*', MUST_EXIST);
+$mform->add_act_button();
+echo $OUTPUT->header();
+$mform->display();
+echo $OUTPUT->footer();
