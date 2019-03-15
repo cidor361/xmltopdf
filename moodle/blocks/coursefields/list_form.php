@@ -66,4 +66,8 @@ class listform extends moodleform {
     function add_link($title, $link, $text) {
         $this->mform->addElement('static', 'staticlink', $title, '<a href='.$link.'>'.$text.'</a>');
     }
+    function add_text_area($title, $text, $id) {
+        $this->mform->addElement ('textarea', $id, $title, 'wrap = "virtual" rows = "20" cols = "50"');
+        $this->mform->setDefault($id, $text);
+    }
 }

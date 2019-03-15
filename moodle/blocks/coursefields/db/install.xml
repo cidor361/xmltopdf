@@ -3,22 +3,51 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
     <TABLES>
-        <TABLE NAME="block_coursefields" COMMENT="Table for extra course field">
+        <TABLE NAME="block_coursefields_main" COMMENT="Table for extra course field">
             <FIELDS>
-                <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true" NEXT="courseid"/>
-                <FIELD NAME="courseid" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" NEXT="partnerid" PREVIOUS="id"/>
-                <FIELD NAME="partnerid" TYPE="text" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="courseid" NEXT="title"/>
-                <FIELD NAME="external_url" TYPE="text" LENGTH="50" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="description" NEXT="direction"/>
-                <FIELD NAME="direction" TYPE="text" LENGTH="50" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="external_url" NEXT="institution"/>
-                <FIELD NAME="institution" TYPE="text" LENGTH="50" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="direction" NEXT="duration"/>
-                <FIELD NAME="duration" TYPE="text" LENGTH="50" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="institution" NEXT="cert"/>
-                <FIELD NAME="cert" TYPE="text" LENGTH="50" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="duration" NEXT="business_version"/>
-                <FIELD NAME="business_version" TYPE="text" LENGTH="200" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="cert"/>
+                <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true" NEXT="partnerid"/>
+                <FIELD NAME="partnerid" TYPE="text" LENGTH="50" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="courseid"/>
+                <FIELD NAME="courseid" TYPE="text" LENGTH="50" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="title" TYPE="text" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="started_at" TYPE="text" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="finished_at" TYPE="text" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="enrollment_finished_" TYPE="text" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="image" TYPE="text" LENGTH="50" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="description" TYPE="text" LENGTH="100" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="competences" TYPE="text" LENGTH="50" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="requirements" TYPE="text" LENGTH="100" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="content" TYPE="text" LENGTH="100" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="external_url" TYPE="text" LENGTH="100" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="direction" TYPE="text" LENGTH="50" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="institution" TYPE="text" LENGTH="50" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="duration" TYPE="text" LENGTH="50" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="lectures" TYPE="text" LENGTH="20" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="language" TYPE="text" LENGTH="2" NOTNULL="false" UNSIGNED="true"  SEQUENCE="false"/>
+                <FIELD NAME="cert" TYPE="text" LENGTH="5" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="visitors" TYPE="text" LENGTH="20" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="teachers" TYPE="text" LENGTH="50" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="transfers" TYPE="text" LENGTH="20" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="results" TYPE="text" LENGTH="50" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="results" TYPE="text" LENGTH="20" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="hours" TYPE="text" LENGTH="3" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="hours_per_week" TYPE="text" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="business_version" TYPE="int" LENGTH="100" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="promo_url" TYPE="text" LENGTH="100" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="promo_lang" TYPE="text" LENGTH="2" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="subtitles_lang" TYPE="text" LENGTH="2" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="estimation_tools" TYPE="text" LENGTH="20" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="proctoring_service" TYPE="text" LENGTH="50" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="sessionid" TYPE="text" LENGTH="50" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" FIELDS="courseid" TYPE="unique"/>
                 <KEY NAME="id" FIELDS="id" TYPE="primary"/>
             </KEYS>
+        </TABLE>
+        <TABLE NAME="block_coursefields_teacher" COMMENT="Поля объекта teacher">
+            <FIELDS>
+                <FIELD NAME="" SEQUENCE="" TYPE="" NOTNULL=""/>
+            </FIELDS>
         </TABLE>
     </TABLES>
 </XMLDB>

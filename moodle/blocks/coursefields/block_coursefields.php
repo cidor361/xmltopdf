@@ -15,11 +15,11 @@ class block_coursefields extends block_base {
         }
 
         $id = optional_param('id', 0, PARAM_INT);
-        $url = new moodle_url('/blocks/coursefields/list.php');
+        $url = new moodle_url('/blocks/coursefields/list.php'.'?id='.$id);
 
         $this->content = new stdClass;
         $this->content->text = get_string('Description_plugin', 'block_coursefields');
-        $this->content->footer = '<a href="'.$url.'?id='.$id.'">Редактировать</a>';
+        $this->content->footer = '<a href='.$url.'>Редактировать</a>';
 
         return $this->content;
     }

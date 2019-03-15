@@ -4,7 +4,7 @@ require_once("xmltopdf_form.php");
 class block_xmltopdf extends block_base {
 
     public function init() {
-        $this->title = get_string('xmltopdf', 'block_xmltopdf');
+        $this->title = get_string('course_fields', 'block_xmltopdf');
     }
     
     public function get_content() {
