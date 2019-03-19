@@ -67,4 +67,9 @@ class listform extends moodleform {
     function add_link($title, $link) {
         $this->mform->addElement('static', 'staticlink', $title, $link);
     }
+    function add_text_editor($title, $text, $id) {
+        $textfieldoptions = array('trusttext'=>true, 'subdirs'=>true, 'maxfiles'=>$maxfiles,
+            'maxbytes'=>$maxbytes, 'context'=>$context);
+        $this->mform->addElement('editor', $id, $title, null, $textfieldoptions)->setValue(array('text' => $text));
+    }
 }

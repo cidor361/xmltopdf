@@ -1,8 +1,6 @@
 <?php
 require_once('../../config.php');
 require_once('list_form.php');
-require_once($CFG->libdir.'/pdflib.php');
-require_once('lib.php');
 
 global $PAGE, $OUTPUT, $CFG;
 
@@ -15,36 +13,16 @@ $listform->add_filepicker();
 $listform->add_act_button();
 
 if($listform->is_cancelled()) {
-//    print "qq";
-    $site = get_site();
-    echo $OUTPUT->header();
-    $listform->display();
-    echo $OUTPUT->footer();
 
 } else if ($listform->get_data()) {
     $filename = $listform->get_new_filename('userfile');
     $XMLString = $listform->get_file_content('userfile');
-    $xmlCVObject = simplexml_load_string($XMLString);
-
-    echo TagH1(get_name($xmlCVObject));
-    echo get_contacts($xmlCVObject);
-//    echo get_web_sites($xmlCVObject);
-    echo TagP(get_messagers($xmlCVObject));
-//    echo get_personal_info($xmlCVObject);
-//    echo get_work_experiance($xmlCVObject);
-//    echo get_education($xmlCVObject);
-    echo get_skills($xmlCVObject);
-    echo get_achivment($xmlCVObject);
-    echo get_cover_letter($xmlCVObject);
-
-//    $filename = 'Portfolio.pdf';
-//    $pdf = new pdf;
-//    $pdf->AddPage();
-////    $pdf->Write(1, $XMLString);
-//    $pdf->writeHTML($XMLString, true, false, false, false, 'qqqqq');
-//    $pdf->Output($filename, 'D');
+    $_SESSION["XMLString"] = $XMLString;
+    $url = new moodle_url('/blocks/xmltopdf/list2.php');
+    redirect($url);
 } else {
-    echo $OUTPUT->header();
-    $listform->display();
-    echo $OUTPUT->footer();
+
 }
+echo $OUTPUT->header();
+$listform->display();
+echo $OUTPUT->footer();

@@ -67,7 +67,13 @@ class listform extends moodleform {
         $this->mform->addElement('static', 'staticlink', $title, '<a href='.$link.'>'.$text.'</a>');
     }
     function add_text_area($title, $text, $id) {
-        $this->mform->addElement ('textarea', $id, $title, 'wrap = "virtual" rows = "20" cols = "50"');
+        $this->mform->addElement('textarea', $id, $title, 'wrap = "virtual" rows = "20" cols = "50"');
         $this->mform->setDefault($id, $text);
+    }
+    function add_text_editor($title, $text, $id) {
+        $textfieldoptions = array('trusttext'=>true, 'subdirs'=>true, 'maxfiles'=>$maxfiles,
+            'maxbytes'=>$maxbytes, 'context'=>$context);
+        $this->mform->addElement('editor', 'textfield_editor', get_string('fieldname', 'somemodule'),
+            null, $textfieldoptions);
     }
 }
