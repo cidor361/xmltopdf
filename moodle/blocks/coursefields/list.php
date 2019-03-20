@@ -1,7 +1,7 @@
 <?php
 require_once('../../config.php');
 require_once('list_form.php');
-require_once('constructor.php');
+//require_once('constructor.php');
 
 global $PAGE, $OUTPUT, $DB;
 //require_login($courseid);
@@ -20,8 +20,7 @@ $exist = $DB->record_exists('block_coursefields', array('courseid' => $courseid)
 if ($exist == 1) {
     $courseobject = $DB->get_record('block_coursefields', array('courseid' => $courseid), '*', MUST_EXIST);
 } else {
-    new FieldDB();
-    $courseobject = FieldDB->createField();
+    $courseobject = createField();
 }
 $mform = new listform();    //TODO: проверить совпадение полей с базой
 $mform->add_textfield(get_string('partnerid', 'block_coursefields'), $courseobject->partnerid, 'partnerid');
@@ -46,7 +45,6 @@ $mform->add_act_button();
 if($mform->is_cancelled()) {
 
 } else if ($object = $mform->get_data()) {
-//    $object->id = $courseobject->id;
     $object->courseid = $courseid;
     if ($exist == null) {
         $DB->insert_record('block_coursefields', $object, '*', MUST_EXIST);
