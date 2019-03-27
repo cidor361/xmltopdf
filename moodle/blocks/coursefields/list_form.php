@@ -36,6 +36,7 @@ class listform extends moodleform {
         $this->mform->addElement('text', $id, $title, $attributes);
         $this->mform->setType($id, PARAM_TEXT);
         $this->mform->setDefault($id, $text);
+        $this->mform->addRule($id, 'required', 'required');
     }
 
     function add_simple_text($title, $text, $id) {

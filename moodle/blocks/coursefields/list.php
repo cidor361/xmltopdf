@@ -24,17 +24,17 @@ $exist['coursetransfeObject'] = $DB->record_exists('block_coursefields_coursetra
 if ($exist['object'] == 1) {
     $courseobject = $DB->get_record('block_coursefields_main', array('courseid' => $courseid), '*', MUST_EXIST);
 } else {
-    $courseobject = createField();
+    $courseobject = createField($course);
 }
 if ($exist['teacherObject'] == 1) {
     $teacherObject = $DB->get_record('block_coursefields_teacher', array('courseid' => $courseid), '*', MUST_EXIST);
 } else {
-    $teacherObject = createTeacherField();
+    $teacherObject = createTeacherField($course);
 }
 if ($exist['coursetransfeObject']) {
     $coursetransferObject = $DB->get_record('block_coursefields_coursetransfer', array('courseid' => $courseid), '*', MUST_EXIST);
 } else {
-    $coursetransferObject = createCoursetransferField();
+    $coursetransferObject = createCoursetransferField($course);
 }
 
 if($mform->is_cancelled()) {
@@ -47,6 +47,8 @@ if($mform->is_cancelled()) {
         $DB->insert_record('block_coursefields', $coursetransfeObject, '*', MUST_EXIST);
     } else {
         $DB->update_record('block_coursefields', $object);
+        $DB->update_record('block_coursefields', $teacherObject);
+        $DB->update_record('block_coursefields', $coursetransferObject);
     }
 } else {
 $_SESSION['courseid'] = $courseid;
