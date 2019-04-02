@@ -72,9 +72,7 @@ class listform extends moodleform {
         $this->mform->setDefault($id, $text);
     }
     function add_text_editor($title, $text, $id) {
-        $textfieldoptions = array('trusttext'=>true, 'subdirs'=>true, 'maxfiles'=>$maxfiles,
-            'maxbytes'=>$maxbytes, 'context'=>$context);
-        $this->mform->addElement('editor', 'textfield_editor', get_string('fieldname', 'somemodule'),
-            null, $textfieldoptions);
+        $textfieldoptions = array('trusttext'=>true, 'subdirs'=>true, 'maxfiles'=>$maxfiles, 'maxbytes'=>$maxbytes, 'context'=>$context);
+        $this->mform->addElement('editor', $id, $title, null, $textfieldoptions);
     }
 }
