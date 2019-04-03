@@ -4,12 +4,9 @@ require_once('constructor.php');
 
 global $PAGE, $OUTPUT, $DB;
 //require_login($courseid);
+$courseid = $_SESSION['courseid'];
 
-$courseid = $_GET['id'];
-if($courseid == null) {
-    $courseid = $_SESSION['courseid'];
-}
-$PAGE->set_url('/blocks/coursefield/list.php'.'?id='.$courseid);
+$PAGE->set_url('/blocks/coursefield/list.php');
 $PAGE->set_pagelayout('standart');
 $PAGE->set_title(get_string('course_fields', 'block_coursefields'));
 $PAGE->set_heading(get_string('course_fields', 'block_coursefields'));
@@ -35,17 +32,20 @@ if ($exist['coursetransfeObject'] == 1) {
 } else {
     $coursetransferObject = createCoursetransferField($course);
 };
-$mform = createForm($courseobject, $teacherObject,$coursetransferObject);
+
+$mform = createForm($courseobject, $teacherObject, $coursetransferObject);
+
 if($mform->is_cancelled()) {
 
-} else if ($courseobject = $mform->get_data()) {
-    $courseobject = $mform->get_data()->object;
-    $teacherObject = $mform->get_data()->teacherObject;
-    $coursetransferObject = $mform->get_data()->coursetransferObject;
+} else if ($courseobject_data = $mform->get_data()) {
+    $big_object = createEndObjects($courseobject_data, $courseobject, $teacherObject, $coursetransferObject);
+    $courseobject = $big_object->courseobject;
+    $teacherObject = $big_object->teacherObject;
+    $coursetransferObject = $big_object->coursetransferObject;
     if ($exist['object'] == null) {
-        $DB->insert_record('block_coursefields', $courseobject, '*', MUST_EXIST);
+        $DB->insert_record('block_coursefields_main', $courseobject, '*', MUST_EXIST);
     } else {
-        $DB->update_record('block_coursefields', $courseobject);
+        $DB->update_record('block_coursefields_main', $courseobject, '*', MUST_EXIST);
     }
     if ($exist['teacherObject'] == null) {
         $DB->insert_record('block_coursefields_teacher', $teacherObject, '*', MUST_EXIST);

@@ -20,8 +20,8 @@ class listform extends moodleform {
                 'accepted_types' => array('document'), 'return_types'=> FILE_INTERNAL | FILE_EXTERNAL));
     }
 
-    function add_header($title) {
-        $this->mform->addElement('header','displayinfo', $title);
+    function add_header($title, $id) {
+        $this->mform->addElement('header', $id, $title);
     }
 
     function add_data_selector($title, $year, $month, $day, $id) {
@@ -31,12 +31,14 @@ class listform extends moodleform {
         $this->mform->setDefault($id, $defaulttime);
     }
 
-    function add_textfield($title, $text, $id) {
+    function add_textfield($title, $text, $id, $require = null) {
         $attributes = array('size' => '50', 'maxlength' => '100');
         $this->mform->addElement('text', $id, $title, $attributes);
         $this->mform->setType($id, PARAM_TEXT);
         $this->mform->setDefault($id, $text);
-        $this->mform->addRule($id, 'required', 'required');
+        if ($require != null) {
+            $this->mform->addRule($id, 'required', 'required');
+        }
     }
 
     function add_simple_text($title, $text, $id) {
@@ -71,8 +73,11 @@ class listform extends moodleform {
         $this->mform->addElement('textarea', $id, $title, 'wrap = "virtual" rows = "20" cols = "50"');
         $this->mform->setDefault($id, $text);
     }
-    function add_text_editor($title, $text, $id) {
+    function add_text_editor($title, $text, $id, $require = null) {
         $textfieldoptions = array('trusttext'=>true, 'subdirs'=>true, 'maxfiles'=>$maxfiles, 'maxbytes'=>$maxbytes, 'context'=>$context);
-        $this->mform->addElement('editor', $id, $title, null, $textfieldoptions);
+        $this->mform->addElement('editor', $id, $title, null, $textfieldoptions)->setValue(array('text' => $text));
+        if ($require != null) {
+            $this->mform->addRule($id, 'required', 'required');
+        }
     }
 }

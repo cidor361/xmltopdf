@@ -15,7 +15,8 @@ class block_coursefields extends block_base {
         }
 
         $id = optional_param('id', 0, PARAM_INT);
-        $url = new moodle_url('/blocks/coursefields/list.php'.'?id='.$id);
+        $url = new moodle_url('/blocks/coursefields/list.php');
+        $_SESSION['courseid'] = $id;
 
         $this->content = new stdClass;
         $this->content->text = get_string('Description_plugin', 'block_coursefields');
