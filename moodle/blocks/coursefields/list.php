@@ -3,8 +3,8 @@ require_once('../../config.php');
 require_once('constructor.php');
 
 global $PAGE, $OUTPUT, $DB;
-//require_login($courseid);
 $courseid = $_SESSION['courseid'];
+require_login($courseid);
 
 $PAGE->set_url('/blocks/coursefield/list.php');
 $PAGE->set_pagelayout('standart');
@@ -57,8 +57,8 @@ if($mform->is_cancelled()) {
     } else {
         $DB->update_record('block_coursefields_coursetr', $coursetransferObject);
     }
+    echo var_dump($big_object);
 } else {
-$_SESSION['courseid'] = $courseid;
 }
 
 echo $OUTPUT->header();

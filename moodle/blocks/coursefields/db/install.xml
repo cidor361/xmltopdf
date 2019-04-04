@@ -25,8 +25,6 @@
                 <FIELD NAME="language" TYPE="text" LENGTH="2" NOTNULL="false" UNSIGNED="true"  SEQUENCE="false"/>
                 <FIELD NAME="cert" TYPE="text" LENGTH="5" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="visitors" TYPE="text" LENGTH="20" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
-                <FIELD NAME="teachers" TYPE="text" LENGTH="50" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
-                <FIELD NAME="transfers" TYPE="text" LENGTH="20" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="results" TYPE="text" LENGTH="50" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="hours" TYPE="text" LENGTH="3" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="hours_per_week" TYPE="text" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>

@@ -5,7 +5,7 @@ class block_coursefields extends block_base {
 
     public function init()
     {
-        $this->title = get_string('pluginname', 'block_coursefields');
+        $this->title = get_string('course_fields', 'block_coursefields');
     }
 
     public function get_content()

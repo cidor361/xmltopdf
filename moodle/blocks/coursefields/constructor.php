@@ -1,4 +1,5 @@
 <?php
+defined('MOODLE_INTERNAL') || die();
 require_once('../../config.php');
 require_once('list_form.php');
 function createMainField($course) {             //TODO: поля заполняемые не преподавателями
@@ -22,8 +23,6 @@ function createMainField($course) {             //TODO: поля заполня�
     $courseobject->language = 'ru';
     $courseobject->cert = 'false';
     $courseobject->visitors = '';
-    $courseobject->teachers = '';
-    $courseobject->transfers = '';
     $courseobject->results = '';
     $courseobject->hours = '';
     $courseobject->hours_per_week = '';
@@ -54,9 +53,10 @@ function createCoursetransferField($course){
 
 function createEndObjects($data, $courseobject, $teacherObject, $coursetransferObject) {
     $courseobject->image = $data->image;
-    $courseobject->competences = $data->competences;
-    $courseobject->requirements = $data->requirements;
+    $courseobject->competences = $data->competences->text;      //в выходе editора массив с элементом 'text' (в html)
+    $courseobject->requirements = $data->requirements->text;
     $courseobject->direction = $data->direction;
+    $courseobject->institution = $data->institution;
     $courseobject->duration = $data->duration;
     $courseobject->lectures = $data->lectures;
     $courseobject->language = $data->language;
@@ -96,7 +96,6 @@ function createForm($courseobject, $teacherObject, $coursetransferObject) {
     $mform->add_text_editor(get_string('description',  'block_coursefields'), $courseobject->description, 'description', 1);
     $mform->add_text_editor(get_string('competences', 'block_coursefields'), $courseobject->competences, 'competences');
     $mform->add_text_editor(get_string('requirements', 'block_coursefields'), $courseobject->requirements, 'requirements');
-    $mform->add_text_editor(get_string('content', 'block_coursefields'), $courseobject->content, 'content');
     $mform->add_simple_text(get_string('external_url', 'block_coursefields'), $courseobject->external_url, 'external_url', 1);
     $mform->add_text_editor(get_string('direction', 'block_coursefields'), $courseobject->direction, 'direction', 1);
     $mform->add_textfield(get_string('institution', 'block_coursefields'), $courseobject->institution, 'institution', 1);
