@@ -57,7 +57,6 @@ if($mform->is_cancelled()) {
     } else {
         $DB->update_record('block_coursefields_coursetr', $coursetransferObject);
     }
-    echo var_dump($big_object);
 } else {
 }
 

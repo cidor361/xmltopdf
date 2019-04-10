@@ -2,13 +2,13 @@
 defined('MOODLE_INTERNAL') || die();
 require_once('../../config.php');
 require_once('list_form.php');
-function createMainField($course) {             //TODO: поля заполняемые не преподавателями
+function createMainField($course) {
     $courseobject = new stdClass();
     $courseobject->courseid = $course->id;
     $courseobject->partnerid = '???';
     $courseobject->title = $course->fullname;
-    $courseobject->started_at = gmdate($course->startdate, 'y-m-d');
-    $courseobject->finished_at = gmdate($course->enddate, 'y-m-d');
+    $courseobject->started_at = gmdate("Y-m-d", (int)$course->startdate);
+    $courseobject->finished_at = gmdate("Y-m-d", (int)$course->enddate);
     $courseobject->enrollment_finished_at = '';
     $courseobject->image = '';
     $courseobject->description = $course->summary;
@@ -16,9 +16,9 @@ function createMainField($course) {             //TODO: поля заполня�
     $courseobject->requirements = '';
     $courseobject->content = '';
     $courseobject->external_url = 'http://something.ru';
-    $courseobject->direction = '';
+    $courseobject->direction = '01.01.1011';
     $courseobject->institution = '';
-    $courseobject->duration = '';        //TODO: $course->timecreated; сюда перевод времени!
+    $courseobject->duration = '';
     $courseobject->lectures = '';
     $courseobject->language = 'ru';
     $courseobject->cert = 'false';
@@ -53,16 +53,14 @@ function createCoursetransferField($course){
 
 function createEndObjects($data, $courseobject, $teacherObject, $coursetransferObject) {
     $courseobject->image = $data->image;
-    $courseobject->competences = $data->competences->text;      //в выходе editора массив с элементом 'text' (в html)
-    $courseobject->requirements = $data->requirements->text;
-    $courseobject->direction = $data->direction;
+    $courseobject->competences = $data->competences["text"];      //в выходе editора массив с элементом 'text' (в html)
+    $courseobject->requirements = $data->requirements["text"];
+//    $courseobject->direction = $data->direction;
     $courseobject->institution = $data->institution;
-    $courseobject->duration = $data->duration;
+    $courseobject->duration = $data->duration["text"];
     $courseobject->lectures = $data->lectures;
     $courseobject->language = $data->language;
     $courseobject->cert = $data->cert;
-    $courseobject->teachers = $data->teachers;          //TODO: убрать +убрать из базы
-    $courseobject->transfers = $data->transfers;          //TODO: убрать +убрать из базы
     $courseobject->results = $data->results;
     $courseobject->hours = $data->hours;
     $courseobject->hours_per_week = $data->hours_per_week;
@@ -97,7 +95,7 @@ function createForm($courseobject, $teacherObject, $coursetransferObject) {
     $mform->add_text_editor(get_string('competences', 'block_coursefields'), $courseobject->competences, 'competences');
     $mform->add_text_editor(get_string('requirements', 'block_coursefields'), $courseobject->requirements, 'requirements');
     $mform->add_simple_text(get_string('external_url', 'block_coursefields'), $courseobject->external_url, 'external_url', 1);
-    $mform->add_text_editor(get_string('direction', 'block_coursefields'), $courseobject->direction, 'direction', 1);
+//    $mform->add_text_editor(get_string('direction', 'block_coursefields'), $courseobject->direction, 'direction', 1);
     $mform->add_textfield(get_string('institution', 'block_coursefields'), $courseobject->institution, 'institution', 1);
     $mform->add_text_editor(get_string('duration', 'block_coursefields'), $courseobject->duration, 'duration', 1);
     $mform->add_textfield(get_string('lectures', 'block_coursefields'), $courseobject->lectures, 'lectures');
