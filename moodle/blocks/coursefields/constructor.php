@@ -15,7 +15,7 @@ function createMainField($course) {
     $courseobject->competences = '';
     $courseobject->requirements = '';
     $courseobject->content = '';
-    $courseobject->external_url = 'http://something.ru';
+    $courseobject->external_url = 'http://sm-v-edi.main.vsu.ru/grebennikov/moodle/course/view.php?id='.$course->id;
     $courseobject->direction = '01.01.1011';
     $courseobject->institution = '';
     $courseobject->duration = '';
@@ -61,7 +61,7 @@ function createEndObjects($data, $courseobject, $teacherObject, $coursetransferO
     $courseobject->lectures = $data->lectures;
     $courseobject->language = $data->language;
     $courseobject->cert = $data->cert;
-    $courseobject->results = $data->results;
+    $courseobject->results = $data->results['text'];
     $courseobject->hours = $data->hours;
     $courseobject->hours_per_week = $data->hours_per_week;
     $courseobject->business_version = $data->business_version;
@@ -94,6 +94,9 @@ function getDBObject($course) {
 }
 
 function createForm($courseobject, $teacherObject, $coursetransferObject) {
+
+    //TODO: checkbox - create connection with db
+
     $mform = new listform();
     $mform->add_header('Свойства курса', 'course');
     $mform->add_simple_text(get_string('title', 'block_coursefields'), $courseobject->title, 'title');
@@ -110,9 +113,9 @@ function createForm($courseobject, $teacherObject, $coursetransferObject) {
     $mform->add_text_editor(get_string('duration', 'block_coursefields'), $courseobject->duration, 'duration', 1);
     $mform->add_textfield(get_string('lectures', 'block_coursefields'), $courseobject->lectures, 'lectures');
     $mform->add_textfield(get_string('language', 'block_coursefields'), $courseobject->language, 'language');
-    $mform->add_textfield(get_string('cert', 'block_coursefields'), $courseobject->cert, 'cert', 1);
+    $mform->add_checkbox(get_string('cert', 'block_coursefields'), $courseobject->cert, 'cert', 1);
     $mform->add_textfield(get_string('visitors', 'block_coursefields'), $courseobject->visitors, 'visitors');
-    $mform->add_textfield(get_string('results', 'block_coursefields'), $courseobject->results, 'results');
+    $mform->add_text_editor(get_string('results', 'block_coursefields'), $courseobject->results, 'results');
     $mform->add_textfield(get_string('accreditated', 'block_coursefields'), $courseobject->accreditated, 'accreditated');
     $mform->add_textfield(get_string('hours', 'block_coursefields'), $courseobject->hours, 'hours');
     $mform->add_textfield(get_string('hours_per_week', 'block_coursefields'), $courseobject->hours_per_week, 'hours_per_week');
@@ -177,11 +180,13 @@ function createSimpleForm($courseobject, $teacherObject, $coursetransferObject) 
     return $mform;
 }
 
-function getXMLObject($courseid, $DB) {
+function sendXMLObject($courseid, $DB) {
     $courseobject = $DB->get_record('block_coursefields_main', array('courseid' => $courseid), '*', MUST_EXIST);
+    unset($courseobject[1]);
     $teacherObject = $DB->get_record('block_coursefields_teacher', array('courseid' => $courseid), '*', MUST_EXIST);
     $coursetransferObject = $DB->get_record('block_coursefields_coursetr', array('courseid' => $courseid), '*', MUST_EXIST);
     $courseobject->teacher = $teacherObject;
     $courseobject->coursetransfer = $coursetransferObject;
-    return $courseobject;
+    $myJSON = json_encode($courseobject);
+    return $myJSON;
 }

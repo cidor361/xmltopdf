@@ -31,5 +31,5 @@ if ($mform->is_cancelled()) {
 $url = new moodle_url('/blocks/coursefields/sendlist.php');
 echo $OUTPUT->header();
 $mform->display();
-echo '<a href=' . $url . '>Отправить</a>';
+echo sendXMLObject($courseid, $DB);
 echo $OUTPUT->footer();
