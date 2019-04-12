@@ -81,8 +81,18 @@ function createEndObjects($data, $courseobject, $teacherObject, $coursetransferO
     $big_object->teacherObject = $teacherObject;
     $big_object->coursetransferObject = $coursetransferObject;
     return $big_object;
-
 }
+
+function getDBObject($course) {
+    $exist['object'] = $DB->record_exists('block_coursefields_main', array('courseid' => $courseid));
+    $exist['teacherObject'] = $DB->record_exists('block_coursefields_teacher', array('courseid' => $courseid));
+    $exist['coursetransfeObject'] = $DB->record_exists('block_coursefields_coursetr', array('courseid' => $courseid));
+
+    $courseobject = $DB->get_record('block_coursefields_main', array('courseid' => $courseid), '*', MUST_EXIST);
+    $teacherObject = $DB->get_record('block_coursefields_teacher', array('courseid' => $courseid), '*', MUST_EXIST);
+    $coursetransferObject = $DB->get_record('block_coursefields_coursetr', array('courseid' => $courseid), '*', MUST_EXIST);
+}
+
 function createForm($courseobject, $teacherObject, $coursetransferObject) {
     $mform = new listform();
     $mform->add_header('Свойства курса', 'course');
@@ -91,7 +101,7 @@ function createForm($courseobject, $teacherObject, $coursetransferObject) {
 //    $mform->add_simple_text();
 //    $mform->add_simple_text();
     $mform->add_textfield(get_string('image', 'block_coursefields'), $courseobject->image, 'image');
-    $mform->add_text_editor(get_string('description',  'block_coursefields'), $courseobject->description, 'description', 1);
+    $mform->add_simple_text(get_string('description',  'block_coursefields'), $courseobject->description, 'description', 1);
     $mform->add_text_editor(get_string('competences', 'block_coursefields'), $courseobject->competences, 'competences');
     $mform->add_text_editor(get_string('requirements', 'block_coursefields'), $courseobject->requirements, 'requirements');
     $mform->add_simple_text(get_string('external_url', 'block_coursefields'), $courseobject->external_url, 'external_url', 1);
@@ -123,4 +133,55 @@ function createForm($courseobject, $teacherObject, $coursetransferObject) {
     $mform->add_act_button();
 
     return $mform;
+}
+
+function createSimpleForm($courseobject, $teacherObject, $coursetransferObject) {
+    $mform = new listform();
+    $mform->add_header('Свойства курса', 'course');
+    $mform->add_simple_text(get_string('title', 'block_coursefields'), $courseobject->title, 'title');
+    $mform->add_simple_text(get_string('parentid', 'block_coursefields'), $courseobject->partnerid, 'parentid');
+//    $mform->add_simple_text();
+//    $mform->add_simple_text();
+    $mform->add_simple_text(get_string('image', 'block_coursefields'), $courseobject->image, 'image');
+    $mform->add_simple_text(get_string('description',  'block_coursefields'), $courseobject->description, 'description', 1);
+    $mform->add_simple_text(get_string('competences', 'block_coursefields'), $courseobject->competences, 'competences');
+    $mform->add_simple_text(get_string('requirements', 'block_coursefields'), $courseobject->requirements, 'requirements');
+    $mform->add_simple_text(get_string('external_url', 'block_coursefields'), $courseobject->external_url, 'external_url', 1);
+//    $mform->add_text_editor(get_string('direction', 'block_coursefields'), $courseobject->direction, 'direction', 1);
+    $mform->add_simple_text(get_string('institution', 'block_coursefields'), $courseobject->institution, 'institution', 1);
+    $mform->add_simple_text(get_string('duration', 'block_coursefields'), $courseobject->duration, 'duration', 1);
+    $mform->add_simple_text(get_string('lectures', 'block_coursefields'), $courseobject->lectures, 'lectures');
+    $mform->add_simple_text(get_string('language', 'block_coursefields'), $courseobject->language, 'language');
+    $mform->add_simple_text(get_string('cert', 'block_coursefields'), $courseobject->cert, 'cert', 1);
+    $mform->add_simple_text(get_string('visitors', 'block_coursefields'), $courseobject->visitors, 'visitors');
+    $mform->add_simple_text(get_string('results', 'block_coursefields'), $courseobject->results, 'results');
+    $mform->add_simple_text(get_string('accreditated', 'block_coursefields'), $courseobject->accreditated, 'accreditated');
+    $mform->add_simple_text(get_string('hours', 'block_coursefields'), $courseobject->hours, 'hours');
+    $mform->add_simple_text(get_string('hours_per_week', 'block_coursefields'), $courseobject->hours_per_week, 'hours_per_week');
+    $mform->add_simple_text(get_string('business_version', 'block_coursefields'), $courseobject->business_version, 'business_version', 1);
+    $mform->add_simple_text(get_string('promo_url', 'block_coursefields'), $courseobject->promo_url, 'promo_url');
+    $mform->add_simple_text(get_string('promo_lang', 'block_coursefields'), $courseobject->promo_lang, 'promo_lang');
+    $mform->add_simple_text(get_string('subtitles_lang', 'block_coursefields'), $courseobject->subtitles_lang, 'subtitles_lang');
+    $mform->add_simple_text(get_string('estimation_tools', 'block_coursefields'), $courseobject->estimation_tools, 'estimation_tools');
+    $mform->add_simple_text(get_string('proctoring_service', 'block_coursefields'), $courseobject->proctoring_service, 'proctoring_service');
+    $mform->add_simple_text(get_string('sessionid', 'block_coursefields'), $courseobject->sessionid, 'sessionid');
+    $mform->add_header('Преподаватели', 'teachers');
+    $mform->add_simple_text(get_string('t_title', 'block_coursefields'), $teacherObject->t_title, 't_title', 1);
+    $mform->add_simple_text(get_string('t_image', 'block_coursefields'), $teacherObject->t_image, 't_image');
+    $mform->add_simple_text(get_string('t_description', 'block_coursefields'), $teacherObject->t_description, 't_description');
+    $mform->add_header('Информация о перезачётах', 'coursetransfer');
+    $mform->add_simple_text(get_string('institution_id', 'block_coursefields'), $coursetransferObject->institution_id, 'institution_id', 1);
+    $mform->add_simple_text(get_string('direction_id', 'block_coursefields'), $coursetransferObject->direction_id, 'direction_id', 1);
+    $mform->add_act_button();
+
+    return $mform;
+}
+
+function getXMLObject($courseid, $DB) {
+    $courseobject = $DB->get_record('block_coursefields_main', array('courseid' => $courseid), '*', MUST_EXIST);
+    $teacherObject = $DB->get_record('block_coursefields_teacher', array('courseid' => $courseid), '*', MUST_EXIST);
+    $coursetransferObject = $DB->get_record('block_coursefields_coursetr', array('courseid' => $courseid), '*', MUST_EXIST);
+    $courseobject->teacher = $teacherObject;
+    $courseobject->coursetransfer = $coursetransferObject;
+    return $courseobject;
 }

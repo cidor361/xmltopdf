@@ -60,6 +60,8 @@ if($mform->is_cancelled()) {
 } else {
 }
 
+$url = new moodle_url('/blocks/coursefields/sendlist.php');
 echo $OUTPUT->header();
 $mform->display();
+echo '<a href='.$url.'>Отправить</a>';
 echo $OUTPUT->footer();
