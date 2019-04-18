@@ -1,7 +1,7 @@
 <?php
 require_once("{$CFG->libdir}/formslib.php");
 
-class listform extends moodleform {
+class listPortfForm extends moodleform {
     private $mform;
 
     function definition() {

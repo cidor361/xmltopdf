@@ -13,7 +13,7 @@ class block_xmltopdf extends block_base {
             return $this->content;
         }
 
-        $mform = new listform();
+        $mform = new listPortfForm();
         $mform->add_simple_text('', get_string('banner', 'block_xmltopdf'), 'title');
         $mform->add_act_button();
         $this->content = new stdClass;

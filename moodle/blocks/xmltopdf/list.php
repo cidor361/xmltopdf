@@ -8,15 +8,15 @@ $PAGE->set_url('/blocks/xmltopdf/list.php');
 $PAGE->set_pagelayout('standart');
 $PAGE->set_title('XMLtoPDF');
 $PAGE->set_heading(get_string('comeon', 'block_xmltopdf'));
-$listform = new listform();
-$listform->add_filepicker();
-$listform->add_act_button();
+$listPortfForm = new listPortfForm();
+$listPortfForm->add_filepicker();
+$listPortfForm->add_act_button();
 
-if($listform->is_cancelled()) {
+if($listPortfForm->is_cancelled()) {
 
-} else if ($listform->get_data()) {
-    $filename = $listform->get_new_filename('userfile');
-    $XMLString = $listform->get_file_content('userfile');
+} else if ($listPortfForm->get_data()) {
+    $filename = $listPortfForm->get_new_filename('userfile');
+    $XMLString = $listPortfForm->get_file_content('userfile');
     $_SESSION["XMLString"] = $XMLString;
     $url = new moodle_url('/blocks/xmltopdf/list2.php');
     redirect($url);
@@ -24,5 +24,5 @@ if($listform->is_cancelled()) {
 
 }
 echo $OUTPUT->header();
-$listform->display();
+$listPortfForm->display();
 echo $OUTPUT->footer();
