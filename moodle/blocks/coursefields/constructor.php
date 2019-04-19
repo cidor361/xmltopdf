@@ -180,7 +180,7 @@ function createSimpleForm($courseobject, $teacherObject, $coursetransferObject) 
     return $mform;
 }
 
-function sendXMLObject($courseid, $DB) {
+function jsonObject($courseid, $DB) {
     $courseobject = $DB->get_record('block_coursefields_main', array('courseid' => $courseid), '*', MUST_EXIST);
     unset($courseobject[1]);
     $teacherObject = $DB->get_record('block_coursefields_teacher', array('courseid' => $courseid), '*', MUST_EXIST);
@@ -189,4 +189,8 @@ function sendXMLObject($courseid, $DB) {
     $courseobject->coursetransfer = $coursetransferObject;
     $myJSON = json_encode($courseobject);
     return $myJSON;
+}
+
+function sendJsonObject($jsonString) {
+
 }

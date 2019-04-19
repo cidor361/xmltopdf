@@ -1,10 +1,10 @@
 <?php
-
 require_once('../../config.php');
 require_once('constructor.php');
 
 global $PAGE, $OUTPUT, $DB;
 $courseid = $_SESSION['courseid'];
+echo $courseid;
 require_login($courseid);
 
 $PAGE->set_url('/blocks/coursefield/list.php');
