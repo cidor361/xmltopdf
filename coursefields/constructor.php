@@ -192,5 +192,57 @@ function jsonObject($courseid, $DB) {
 }
 
 function sendJsonObject($jsonString) {
+    $method="POST";
+    $serv_addr = 'https://sso.online.edu.ru';  // ip адрес или доменное имя сервера, куда шлем данные
+    $serv_port = 80;           // номер порта
+    $serv_page = 'script.php'; // серверный скрипт принимаюший запрос
+    $timelimit = 2;
+    $data = array(
+        'request' => $jsonString
+    );
+    $post_data_text = '';
+    foreach ($data AS $key => $val)
+        $post_data_text .= $key.'='.urlencode($val).'&';
+    $post_headers = array('POST /'.$serv_page.' HTTP/1.1',
+        'Host: '.$serv_addr,
+        'Content-type: application/x-www-form-urlencoded charset=utf-8',
+        'Content-length: '.strlen($post_data_text),
+        'Accept: */*',
+        'Connection: Close',
+        '');
+    if ($method=="POST") {
+        $headers=$post_headers;
+    }
+    $headers_txt = '';
+    foreach ($headers AS $val) {
+        $headers_txt .= $val.chr(13).chr(10);
+    }
+    if ($method=="POST") {
+        $headers_txt = $headers_txt.$post_data_text.chr(13).chr(10).chr(13).chr(10);
+    }
+    $sp = fsockopen($serv_addr, $serv_port, $errno, $errstr, $timelimit);
+    if (!$sp)
+        exit('Error: '.$errstr.' #'.$errno);
+    fwrite($sp, $headers_txt);
+    $server_answer = '';
+    $server_header= '';
 
+    $start = microtime(true);
+    $header_flag = 1;
+    while(!feof($sp) && (microtime(true) - $start) < $timelimit) {
+        if ($header_flag == 1) {
+            $content = fgets($sp, 4096);
+            if ($content === chr(13).chr(10))
+                $header_flag = 0;
+            else
+                $server_header .= $content;
+        }
+        else {
+            $server_answer .= fread($sp, 4096);
+        }
+    }
+    fclose($sp);
+
+    //для отладки
+    //echo $headers_txt;
 }
