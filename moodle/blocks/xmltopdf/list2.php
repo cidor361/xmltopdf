@@ -28,7 +28,8 @@ $listPortfForm->add_text_editor('Резюме', $editstring, 'resume');
 $listPortfForm->add_act_button();
 
 if($listPortfForm->is_cancelled()) {
-
+    //TODO: доделать очистку формы!
+//    $listPortfForm->reset();
 } else if ($listPortfForm->get_data()) {
     $data = $listPortfForm->get_data()->resume;
     $string = $data['text'];

@@ -72,4 +72,9 @@ class listPortfForm extends moodleform {
             'maxbytes'=>$maxbytes, 'context'=>$context);
         $this->mform->addElement('editor', $id, $title, null, $textfieldoptions)->setValue(array('text' => $text));
     }
+
+    function reset() {
+        //TODO: доделать!
+        $this->mform->reset();
+    }
 }

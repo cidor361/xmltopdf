@@ -13,7 +13,8 @@ $listPortfForm->add_filepicker();
 $listPortfForm->add_act_button();
 
 if($listPortfForm->is_cancelled()) {
-
+    $homeurl = new moodle_url('/');
+    redirect($homeurl);
 } else if ($listPortfForm->get_data()) {
     $filename = $listPortfForm->get_new_filename('userfile');
     $XMLString = $listPortfForm->get_file_content('userfile');
