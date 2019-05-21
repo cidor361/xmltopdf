@@ -29,6 +29,7 @@ $listPortfForm->add_act_button();
 
 if($listPortfForm->is_cancelled()) {
     //TODO: доделать очистку формы!
+    header("Refresh: 0");
 //    $listPortfForm->reset();
 } else if ($listPortfForm->get_data()) {
     $data = $listPortfForm->get_data()->resume;

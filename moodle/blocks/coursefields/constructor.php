@@ -51,7 +51,8 @@ function createCoursetransferField($course){
     return $coursetransferObject;
 }
 
-function createEndObjects($data, $courseobject, $teacherObject, $coursetransferObject) {
+function createEndObjects($data, $courseobject, $teacherObject, $coursetransferObject, $courseid) {
+    $courseobject->id = $courseid;
     $courseobject->image = $data->image;
     $courseobject->competences = $data->competences["text"];      //в выходе editора массив с элементом 'text' (в html)
     $courseobject->requirements = $data->requirements["text"];
@@ -60,7 +61,11 @@ function createEndObjects($data, $courseobject, $teacherObject, $coursetransferO
     $courseobject->duration = $data->duration["text"];
     $courseobject->lectures = $data->lectures;
     $courseobject->language = $data->language;
-    $courseobject->cert = $data->cert;
+    if ($data->cert == '1') {
+        $courseobject->cert = 'true';
+    } else {
+        $courseobject->cert = 'false';
+    }
     $courseobject->results = $data->results['text'];
     $courseobject->hours = $data->hours;
     $courseobject->hours_per_week = $data->hours_per_week;
@@ -71,16 +76,18 @@ function createEndObjects($data, $courseobject, $teacherObject, $coursetransferO
     $courseobject->estimation_tools = $data->estimation_tools;
     $courseobject->proctoring_service = $data->proctoring_service;
     $courseobject->sessionid = $data->sessionid;
+    $teacherObject->id = $courseid;
     $teacherObject->t_title = $data->t_title;
     $teacherObject->t_image = $data->t_image;
     $teacherObject->t_description = $data->t_description;
+    $coursetransferObject->id = $courseid;
     $coursetransferObject->institution_id = $data->institution_id;
     $coursetransferObject->direction_id = $data->direction_id;
     $big_object = new stdClass();
     $big_object->courseobject = $courseobject;
     $big_object->teacherObject = $teacherObject;
     $big_object->coursetransferObject = $coursetransferObject;
-    return $big_object;
+    return $big_objecmstet;
 }
 
 function getDBObject($course) {
@@ -95,8 +102,11 @@ function getDBObject($course) {
 
 function createForm($courseobject, $teacherObject, $coursetransferObject) {
 
-    //TODO: checkbox - create connection with db
-
+    if ($courseobject->cert == 'true') {
+        $courseobject->cert = 1;
+    } else {
+        $courseobject->cert = 0;
+    }
     $mform = new listform();
     $mform->add_header('Свойства курса', 'course');
     $mform->add_simple_text(get_string('title', 'block_coursefields'), $courseobject->title, 'title');
@@ -182,7 +192,7 @@ function createSimpleForm($courseobject, $teacherObject, $coursetransferObject) 
 
 function jsonObject($courseid, $DB) {
     $courseobject = $DB->get_record('block_coursefields_main', array('courseid' => $courseid), '*', MUST_EXIST);
-    unset($courseobject[1]);
+//    unset($courseobject[1]);
     $teacherObject = $DB->get_record('block_coursefields_teacher', array('courseid' => $courseid), '*', MUST_EXIST);
     $coursetransferObject = $DB->get_record('block_coursefields_coursetr', array('courseid' => $courseid), '*', MUST_EXIST);
     $courseobject->teacher = $teacherObject;
@@ -192,5 +202,9 @@ function jsonObject($courseid, $DB) {
 }
 
 function sendJsonObject($jsonString) {
+
+}
+
+function getAnswer(){
 
 }

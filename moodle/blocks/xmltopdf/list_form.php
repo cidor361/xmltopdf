@@ -9,7 +9,7 @@ class listPortfForm extends moodleform {
     }
 
     function add_filepicker() {
-        $this->mform->addElement('filepicker', 'userfile', 'Please pick xml file');
+        $this->mform->addElement('filepicker', 'userfile', 'Прикрепите XML файл');
         $this->mform->addRule('userfile', null, 'required');
 //        $this->mform->disabledIf('userfile', 'url', 'noteq', '');
     }

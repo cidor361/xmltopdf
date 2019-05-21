@@ -53,9 +53,14 @@ class listform extends moodleform {
         $this->mform->setDefault('email', $text);
     }
 
-    function add_checkbox($title) {
-        $this->mform->addElement('advcheckbox', 'ratingtime', $title);
-//        $this->mform->setType("config_checkbox", PARAM_BOOL);
+    function add_checkbox($title, $text = null, $id, $state) {
+        $this->mform->addElement('advcheckbox', $id, $title);
+        if($state = true) {
+            $this->mform->setDefault($id, 1);
+        } else {
+            $this->mform->setDefault($id, 0);
+
+        }
     }
 
     function add_act_button() {
