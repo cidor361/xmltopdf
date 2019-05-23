@@ -51,8 +51,7 @@ function createCoursetransferField($course){
     return $coursetransferObject;
 }
 
-function createEndObjects($data, $courseobject, $teacherObject, $coursetransferObject, $courseid) {
-    $courseobject->id = $courseid;
+function createEndObjects($data, $courseobject, $teacherObject, $coursetransferObject) {
     $courseobject->image = $data->image;
     $courseobject->competences = $data->competences["text"];      //в выходе editора массив с элементом 'text' (в html)
     $courseobject->requirements = $data->requirements["text"];
@@ -76,29 +75,27 @@ function createEndObjects($data, $courseobject, $teacherObject, $coursetransferO
     $courseobject->estimation_tools = $data->estimation_tools;
     $courseobject->proctoring_service = $data->proctoring_service;
     $courseobject->sessionid = $data->sessionid;
-    $teacherObject->id = $courseid;
     $teacherObject->t_title = $data->t_title;
     $teacherObject->t_image = $data->t_image;
     $teacherObject->t_description = $data->t_description;
-    $coursetransferObject->id = $courseid;
     $coursetransferObject->institution_id = $data->institution_id;
     $coursetransferObject->direction_id = $data->direction_id;
     $big_object = new stdClass();
     $big_object->courseobject = $courseobject;
     $big_object->teacherObject = $teacherObject;
     $big_object->coursetransferObject = $coursetransferObject;
-    return $big_objecmstet;
+    return $big_object;
 }
 
-function getDBObject($course) {
-    $exist['object'] = $DB->record_exists('block_coursefields_main', array('courseid' => $courseid));
-    $exist['teacherObject'] = $DB->record_exists('block_coursefields_teacher', array('courseid' => $courseid));
-    $exist['coursetransfeObject'] = $DB->record_exists('block_coursefields_coursetr', array('courseid' => $courseid));
-
-    $courseobject = $DB->get_record('block_coursefields_main', array('courseid' => $courseid), '*', MUST_EXIST);
-    $teacherObject = $DB->get_record('block_coursefields_teacher', array('courseid' => $courseid), '*', MUST_EXIST);
-    $coursetransferObject = $DB->get_record('block_coursefields_coursetr', array('courseid' => $courseid), '*', MUST_EXIST);
-}
+//function getDBObject($course) {
+//    $exist['object'] = $DB->record_exists('block_coursefields_main', array('courseid' => $courseid));
+//    $exist['teacherObject'] = $DB->record_exists('block_coursefields_teacher', array('courseid' => $courseid));
+//    $exist['coursetransfeObject'] = $DB->record_exists('block_coursefields_coursetr', array('courseid' => $courseid));
+//
+//    $courseobject = $DB->get_record('block_coursefields_main', array('courseid' => $courseid), '*', MUST_EXIST);
+//    $teacherObject = $DB->get_record('block_coursefields_teacher', array('courseid' => $courseid), '*', MUST_EXIST);
+//    $coursetransferObject = $DB->get_record('block_coursefields_coursetr', array('courseid' => $courseid), '*', MUST_EXIST);
+//}
 
 function createForm($courseobject, $teacherObject, $coursetransferObject) {
 
@@ -202,9 +199,26 @@ function jsonObject($courseid, $DB) {
 }
 
 function sendJsonObject($jsonString) {
+    $ch = curl_init('http://url.ru.qq.ru');
+    curl_setopt($ch, CURLOPT_POST, true); //переключаем запрос в POST
+    curl_setopt($ch, CURLOPT_POSTFIELDS,$jsonString); //Это POST данные
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); //Отключим проверку сертификата https
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); //из той же оперы
+//    curl_exec($ch);
+//    curl_close($ch);
+    $Result = curl_exec($ch);
+    $CURL_Error = curl_errno($ch);
 
-}
+    if ($CURL_Error > 0)
+    {
+        $output =  'cURL Error: --'.$CURL_Error.'--<br>';
+        $RetStr = false;
+    }
+    else
+    {
+        $RetStr = $Result;
+    }
 
-function getAnswer(){
-
+    curl_close($ch);
+    return $output;
 }

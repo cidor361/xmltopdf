@@ -38,7 +38,7 @@ $mform = createForm($courseobject, $teacherObject, $coursetransferObject);
 if($mform->is_cancelled()) {
 
 } else if ($courseobject_data = $mform->get_data()) {
-    $big_object = createEndObjects($courseobject_data, $courseobject, $teacherObject, $coursetransferObject, $courseid);
+    $big_object = createEndObjects($courseobject_data, $courseobject, $teacherObject, $coursetransferObject);
     $courseobject = $big_object->courseobject;
     $teacherObject = $big_object->teacherObject;
     $coursetransferObject = $big_object->coursetransferObject;

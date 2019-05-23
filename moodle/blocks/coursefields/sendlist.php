@@ -23,7 +23,7 @@ $mform = createSimpleForm($courseobject, $teacherObject, $coursetransferObject);
 if ($mform->is_cancelled()) {
 
 } else if ($data = $mform->get_data()) {
-
+    $result = sendJsonObject(jsonObject($courseid, $DB));
 } else {
 
 }
@@ -31,5 +31,4 @@ if ($mform->is_cancelled()) {
 $url = new moodle_url('/blocks/coursefields/sendlist.php');
 echo $OUTPUT->header();
 $mform->display();
-echo jsonObject($courseid, $DB);
 echo $OUTPUT->footer();
