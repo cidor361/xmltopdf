@@ -31,7 +31,7 @@ function createMainField($course) {
     $courseobject->promo_lang = '';
     $courseobject->subtitles_lang = '';
     $courseobject->estimation_tools = '';
-    $courseobject->proctoring_service = 'Examus';
+//    $courseobject->proctoring_service = 'Examus';
     $courseobject->sessionid = '';
     return $courseobject;
 }
@@ -187,11 +187,18 @@ function createSimpleForm($courseobject, $teacherObject, $coursetransferObject) 
     return $mform;
 }
 
+function cleanHTMLString($string) {
+    strip_tags($string, '<p>');
+    return $string;
+}
+
+
 function jsonObject($courseid, $DB) {
     $courseobject = $DB->get_record('block_coursefields_main', array('courseid' => $courseid), '*', MUST_EXIST);
-//    unset($courseobject[1]);
     $teacherObject = $DB->get_record('block_coursefields_teacher', array('courseid' => $courseid), '*', MUST_EXIST);
     $coursetransferObject = $DB->get_record('block_coursefields_coursetr', array('courseid' => $courseid), '*', MUST_EXIST);
+    $courseobject->competences = cleanHTMLString($courseobject->competences);
+    $courseobject->duration = cleanHTMLString($courseobject->duration);
     $courseobject->teacher = $teacherObject;
     $courseobject->coursetransfer = $coursetransferObject;
     $myJSON = json_encode($courseobject);
