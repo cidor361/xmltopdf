@@ -145,7 +145,7 @@ function createForm($courseobject, $teacherObject, $coursetransferObject) {
     return $mform;
 }
 
-function createSimpleForm($courseobject, $teacherObject, $coursetransferObject) {
+function createSimpleForm($courseobject, $teacherObject, $coursetransferObject, $u) {
     $mform = new listform();
     $mform->add_header('Свойства курса', 'course');
     $mform->add_simple_text(get_string('title', 'block_coursefields'), $courseobject->title, 'title');
@@ -182,7 +182,9 @@ function createSimpleForm($courseobject, $teacherObject, $coursetransferObject) 
     $mform->add_header('Информация о перезачётах', 'coursetransfer');
     $mform->add_simple_text(get_string('institution_id', 'block_coursefields'), $coursetransferObject->institution_id, 'institution_id', 1);
     $mform->add_simple_text(get_string('direction_id', 'block_coursefields'), $coursetransferObject->direction_id, 'direction_id', 1);
-    $mform->add_act_button();
+    if ($u == true) {
+        $mform->add_act_button();
+    }
 
     return $mform;
 }

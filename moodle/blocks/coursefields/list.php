@@ -2,9 +2,20 @@
 require_once('../../config.php');
 require_once('constructor.php');
 
-global $PAGE, $OUTPUT, $DB;
+global $PAGE, $OUTPUT, $DB, $USER;
 $courseid = $_SESSION['courseid'];
 require_login($courseid);
+//if (isteacher() || isadmin() || isteacherinanycourse()) {
+//} else {
+////    $_SESSION['courseid'] = $courseid;
+//    $url = new moodle_url('/blocks/coursefield/sendlist.php');
+//    redirect($url);
+//}
+if (user_has_role_assignment($USER->id, 5) == true) {
+} else {
+    $url = new moodle_url('/blocks/coursefields/sendlist.php');
+    redirect($url);
+}
 
 $PAGE->set_url('/blocks/coursefield/list.php');
 $PAGE->set_pagelayout('standart');
@@ -36,7 +47,8 @@ if ($exist['coursetransfeObject'] == 1) {
 $mform = createForm($courseobject, $teacherObject, $coursetransferObject);
 
 if($mform->is_cancelled()) {
-
+    $url = new moodle_url('/course/view.php?id='.$courseid);
+    redirect($url);
 } else if ($courseobject_data = $mform->get_data()) {
     $big_object = createEndObjects($courseobject_data, $courseobject, $teacherObject, $coursetransferObject);
     $courseobject = $big_object->courseobject;
@@ -63,5 +75,6 @@ if($mform->is_cancelled()) {
 $url = new moodle_url('/blocks/coursefields/sendlist.php');
 echo $OUTPUT->header();
 $mform->display();
+echo '<br>Если хотите отправить данный курс в СЦОС, нажмите "Отправить"<br>';
 echo '<a href='.$url.'>Отправить</a>';
 echo $OUTPUT->footer();
