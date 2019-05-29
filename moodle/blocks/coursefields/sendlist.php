@@ -2,7 +2,7 @@
 require_once('../../config.php');
 require_once('constructor.php');
 
-global $PAGE, $OUTPUT, $DB;
+global $PAGE, $OUTPUT, $DB, $USER;
 $courseid = $_SESSION['courseid'];
 echo $courseid;
 require_login($courseid);
@@ -17,12 +17,8 @@ $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 $courseobject = $DB->get_record('block_coursefields_main', array('courseid' => $courseid), '*', MUST_EXIST);
 $teacherObject = $DB->get_record('block_coursefields_teacher', array('courseid' => $courseid), '*', MUST_EXIST);
 $coursetransferObject = $DB->get_record('block_coursefields_coursetr', array('courseid' => $courseid), '*', MUST_EXIST);
-if (user_has_role_assignment($USER->id, 5) == true) {
-    $u = true;
-} else {
-    $u = false;
-}
-$mform = createSimpleForm($courseobject, $teacherObject, $coursetransferObject, $u);
+
+$mform = createSimpleForm($courseobject, $teacherObject, $coursetransferObject, is_user_student($USER));
 
 if ($mform->is_cancelled()) {
 

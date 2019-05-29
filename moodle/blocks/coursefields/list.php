@@ -5,14 +5,8 @@ require_once('constructor.php');
 global $PAGE, $OUTPUT, $DB, $USER;
 $courseid = $_SESSION['courseid'];
 require_login($courseid);
-//if (isteacher() || isadmin() || isteacherinanycourse()) {
-//} else {
-////    $_SESSION['courseid'] = $courseid;
-//    $url = new moodle_url('/blocks/coursefield/sendlist.php');
-//    redirect($url);
-//}
-if (user_has_role_assignment($USER->id, 5) == true) {
-} else {
+
+if (is_user_student($USER)) {
     $url = new moodle_url('/blocks/coursefields/sendlist.php');
     redirect($url);
 }
