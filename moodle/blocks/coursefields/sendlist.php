@@ -4,7 +4,6 @@ require_once('constructor.php');
 
 global $PAGE, $OUTPUT, $DB, $USER;
 $courseid = $_SESSION['courseid'];
-echo $courseid;
 require_login($courseid);
 
 $PAGE->set_url('/blocks/coursefield/list.php');
@@ -32,3 +31,4 @@ $url = new moodle_url('/blocks/coursefields/sendlist.php');
 echo $OUTPUT->header();
 $mform->display();
 echo $OUTPUT->footer();
+echo var_dump($result);

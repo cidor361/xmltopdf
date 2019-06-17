@@ -1,6 +1,7 @@
 <?php
 require_once('../../config.php');
 require_once('constructor.php');
+require 'info.php';
 
 global $PAGE, $OUTPUT, $DB, $USER;
 $courseid = $_SESSION['courseid'];
@@ -25,7 +26,7 @@ $exist['coursetransfeObject'] = $DB->record_exists('block_coursefields_coursetr'
 if ($exist['object'] == 1) {
     $courseobject = $DB->get_record('block_coursefields_main', array('courseid' => $courseid), '*', MUST_EXIST);
 } else {
-    $courseobject = createMainField($course);
+    $courseobject = createMainField($course, $info);
 };
 if ($exist['teacherObject'] == 1) {
     $teacherObject = $DB->get_record('block_coursefields_teacher', array('courseid' => $courseid), '*', MUST_EXIST);

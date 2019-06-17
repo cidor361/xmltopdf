@@ -2,10 +2,11 @@
 defined('MOODLE_INTERNAL') || die();
 require_once('../../config.php');
 require_once('list_form.php');
-function createMainField($course) {
+
+function createMainField($course, $info) {
     $courseobject = new stdClass();
     $courseobject->courseid = $course->id;
-    $courseobject->partnerid = '???';
+    $courseobject->partnerid = $info['partnerid'];
     $courseobject->title = $course->fullname;
     $courseobject->started_at = gmdate("Y-m-d", (int)$course->startdate);
     $courseobject->finished_at = gmdate("Y-m-d", (int)$course->enddate);
@@ -17,7 +18,7 @@ function createMainField($course) {
     $courseobject->content = '';
     $courseobject->external_url = 'http://sm-v-edi.main.vsu.ru/grebennikov/moodle/course/view.php?id='.$course->id;
     $courseobject->direction = '01.01.1011';
-    $courseobject->institution = '';
+    $courseobject->institution = $info['institution'];
     $courseobject->duration = '';
     $courseobject->lectures = '';
     $courseobject->language = 'ru';
@@ -51,13 +52,12 @@ function createCoursetransferField($course){
     return $coursetransferObject;
 }
 
-function createEndObjects($data, $courseobject, $teacherObject, $coursetransferObject) {
+function createEndObjects($data, $courseobject, $teacherObject, $coursetransferObject, $info) {
     $courseobject->image = $data->image;
     $courseobject->competences = $data->competences["text"];      //в выходе editора массив с элементом 'text' (в html)
     $courseobject->requirements = $data->requirements["text"];
 //    $courseobject->direction = $data->direction;
-    $courseobject->institution = $data->institution;
-    $courseobject->duration = $data->duration["text"];
+    $courseobject->duration = $data->duration;
     $courseobject->lectures = $data->lectures;
     $courseobject->language = $data->language;
     if ($data->cert == '1') {
@@ -116,8 +116,8 @@ function createForm($courseobject, $teacherObject, $coursetransferObject) {
     $mform->add_text_editor(get_string('requirements', 'block_coursefields'), $courseobject->requirements, 'requirements');
     $mform->add_simple_text(get_string('external_url', 'block_coursefields'), $courseobject->external_url, 'external_url', 1);
 //    $mform->add_text_editor(get_string('direction', 'block_coursefields'), $courseobject->direction, 'direction', 1);
-    $mform->add_textfield(get_string('institution', 'block_coursefields'), $courseobject->institution, 'institution', 1);
-    $mform->add_text_editor(get_string('duration', 'block_coursefields'), $courseobject->duration, 'duration', 1);
+    $mform->add_simple_text(get_string('institution', 'block_coursefields'), $courseobject->institution, 'institution', 1);
+    $mform->add_textfield(get_string('duration', 'block_coursefields'), $courseobject->duration, 'duration', 1);
     $mform->add_textfield(get_string('lectures', 'block_coursefields'), $courseobject->lectures, 'lectures');
     $mform->add_textfield(get_string('language', 'block_coursefields'), $courseobject->language, 'language');
     $mform->add_checkbox(get_string('cert', 'block_coursefields'), $courseobject->cert, 'cert', 1);
@@ -199,36 +199,54 @@ function jsonObject($courseid, $DB) {
     $teacherObject = $DB->get_record('block_coursefields_teacher', array('courseid' => $courseid), '*', MUST_EXIST);
     $coursetransferObject = $DB->get_record('block_coursefields_coursetr', array('courseid' => $courseid), '*', MUST_EXIST);
     $courseobject->competences = cleanHTMLString($courseobject->competences);
-    $courseobject->duration = cleanHTMLString($courseobject->duration);
+//    $courseobject->duration = cleanHTMLString($courseobject->duration);
     $courseobject->teacher = $teacherObject;
     $courseobject->coursetransfer = $coursetransferObject;
     $myJSON = json_encode($courseobject);
     return $myJSON;
 }
 
-function sendJsonObject($jsonString) {
-    $ch = curl_init('http://url.ru.qq.ru');
-    curl_setopt($ch, CURLOPT_POST, true); //переключаем запрос в POST
-    curl_setopt($ch, CURLOPT_POSTFIELDS,$jsonString); //Это POST данные
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); //Отключим проверку сертификата https
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); //из той же оперы
-//    curl_exec($ch);
+//function sendJsonObject($jsonString) {
+//    $ch = curl_init('https://preprod.oeplatform.ru/api/cources/v0/course');
+//    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+//    curl_setopt($ch, CURLOPT_POST, true); //переключаем запрос в POST
+//    curl_setopt($ch, CURLOPT_POSTFIELDS,$jsonString); //Это POST данные
+////    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); //Отключим проверку сертификата https
+////    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); //из той же оперы
+//    curl_setopt($ch, CURLOPT_TIMEOUT, 120);        // таймаут ответа
+//    curl_setopt($ch, CURLOPT_MAXREDIRS, 10);       // останавливаться после 10-ого редиректа (не много ли!?)
+//    $Result = curl_exec($ch);
+//    $err     = curl_errno( $ch );
+//    $errmsg  = curl_error( $ch );
 //    curl_close($ch);
-    $Result = curl_exec($ch);
-    $CURL_Error = curl_errno($ch);
+//    return $errmsg;
+//}
 
-    if ($CURL_Error > 0)
-    {
-        $output =  'cURL Error: --'.$CURL_Error.'--<br>';
-        $RetStr = false;
-    }
-    else
-    {
-        $RetStr = $Result;
+
+function sendJsonObject($jsonString) {
+    $url = "https://preprod.oeplatform.ru/ru/api/cources/v0/course";
+    $content = $jsonString;
+
+    $curl = curl_init($url);
+    curl_setopt($curl, CURLOPT_HEADER, false);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_HTTPHEADER,
+        array("Content-type: application/json"));
+    curl_setopt($curl, CURLOPT_POST, true);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $content);
+
+    $json_response = curl_exec($curl);
+
+    $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+    if ($status != 201) {
+        die("Error: call to URL $url failed with status $status, response $json_response, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
     }
 
-    curl_close($ch);
-    return $output;
+
+    curl_close($curl);
+
+    $response = json_decode($json_response, true);
 }
 
 function is_user_student($USER) {
