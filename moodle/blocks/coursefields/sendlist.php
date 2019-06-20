@@ -1,6 +1,7 @@
 <?php
 require_once('../../config.php');
 require_once('constructor.php');
+require 'info.php';
 
 global $PAGE, $OUTPUT, $DB, $USER;
 $courseid = $_SESSION['courseid'];
@@ -22,7 +23,7 @@ $mform = createSimpleForm($courseobject, $teacherObject, $coursetransferObject, 
 if ($mform->is_cancelled()) {
 
 } else if ($data = $mform->get_data()) {
-    $result = sendJsonObject(jsonObject($courseid, $DB));
+    $result = sendJsonObject(jsonObject($courseid, $DB), $info['address']);
 } else {
 
 }
@@ -31,4 +32,5 @@ $url = new moodle_url('/blocks/coursefields/sendlist.php');
 echo $OUTPUT->header();
 $mform->display();
 echo $OUTPUT->footer();
+echo jsonObject($courseid, $DB);
 echo var_dump($result);

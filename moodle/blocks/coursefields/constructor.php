@@ -198,6 +198,9 @@ function jsonObject($courseid, $DB) {
     $courseobject = $DB->get_record('block_coursefields_main', array('courseid' => $courseid), '*', MUST_EXIST);
     $teacherObject = $DB->get_record('block_coursefields_teacher', array('courseid' => $courseid), '*', MUST_EXIST);
     $coursetransferObject = $DB->get_record('block_coursefields_coursetr', array('courseid' => $courseid), '*', MUST_EXIST);
+    unset($courseobject->id);
+    unset($teacherObject->id);
+    unset($coursetransferObject->id);
     $courseobject->competences = cleanHTMLString($courseobject->competences);
 //    $courseobject->duration = cleanHTMLString($courseobject->duration);
     $courseobject->teacher = $teacherObject;
@@ -206,34 +209,16 @@ function jsonObject($courseid, $DB) {
     return $myJSON;
 }
 
-//function sendJsonObject($jsonString) {
-//    $ch = curl_init('https://preprod.oeplatform.ru/api/cources/v0/course');
-//    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-//    curl_setopt($ch, CURLOPT_POST, true); //переключаем запрос в POST
-//    curl_setopt($ch, CURLOPT_POSTFIELDS,$jsonString); //Это POST данные
-////    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); //Отключим проверку сертификата https
-////    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); //из той же оперы
-//    curl_setopt($ch, CURLOPT_TIMEOUT, 120);        // таймаут ответа
-//    curl_setopt($ch, CURLOPT_MAXREDIRS, 10);       // останавливаться после 10-ого редиректа (не много ли!?)
-//    $Result = curl_exec($ch);
-//    $err     = curl_errno( $ch );
-//    $errmsg  = curl_error( $ch );
-//    curl_close($ch);
-//    return $errmsg;
-//}
 
-
-function sendJsonObject($jsonString) {
-    $url = "https://preprod.oeplatform.ru/ru/api/cources/v0/course";
-    $content = $jsonString;
-
+function sendJsonObject($jsonString, $url) {
     $curl = curl_init($url);
     curl_setopt($curl, CURLOPT_HEADER, false);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($curl, CURLOPT_HTTPHEADER,
         array("Content-type: application/json"));
+    curl_setopt($curl, CURLOPT_REFERER, 'https://mooc.vsu.ru/');
     curl_setopt($curl, CURLOPT_POST, true);
-    curl_setopt($curl, CURLOPT_POSTFIELDS, $content);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonString);
 
     $json_response = curl_exec($curl);
 
