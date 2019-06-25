@@ -16,7 +16,7 @@ function createMainField($course, $info) {
     $courseobject->competences = '';
     $courseobject->requirements = '';
     $courseobject->content = '';
-    $courseobject->external_url = 'http://sm-v-edi.main.vsu.ru/grebennikov/moodle/course/view.php?id='.$course->id;
+    $courseobject->external_url = $info['courselink'].$course->id;
     $courseobject->direction = '01.01.1011';
     $courseobject->institution = $info['institution'];
     $courseobject->duration = '';
@@ -86,16 +86,6 @@ function createEndObjects($data, $courseobject, $teacherObject, $coursetransferO
     $big_object->coursetransferObject = $coursetransferObject;
     return $big_object;
 }
-
-//function getDBObject($course) {
-//    $exist['object'] = $DB->record_exists('block_coursefields_main', array('courseid' => $courseid));
-//    $exist['teacherObject'] = $DB->record_exists('block_coursefields_teacher', array('courseid' => $courseid));
-//    $exist['coursetransfeObject'] = $DB->record_exists('block_coursefields_coursetr', array('courseid' => $courseid));
-//
-//    $courseobject = $DB->get_record('block_coursefields_main', array('courseid' => $courseid), '*', MUST_EXIST);
-//    $teacherObject = $DB->get_record('block_coursefields_teacher', array('courseid' => $courseid), '*', MUST_EXIST);
-//    $coursetransferObject = $DB->get_record('block_coursefields_coursetr', array('courseid' => $courseid), '*', MUST_EXIST);
-//}
 
 function createForm($courseobject, $teacherObject, $coursetransferObject) {
 
@@ -188,11 +178,27 @@ function createSimpleForm($courseobject, $teacherObject, $coursetransferObject, 
     return $mform;
 }
 
+function is_dbobj_exist($courseid, $DB) {
+    $exist['object'] = $DB->record_exists('block_coursefields_main', array('courseid' => $courseid));
+    $exist['teacherObject'] = $DB->record_exists('block_coursefields_teacher', array('courseid' => $courseid));
+    $exist['coursetransfeObject'] = $DB->record_exists('block_coursefields_coursetr', array('courseid' => $courseid));
+    return $exist;
+}
+
+function is_user_student($USER) {
+    if (user_has_role_assignment($USER->id, 5) == true
+        OR user_has_role_assignment($USER->id, 6) == true
+        OR user_has_role_assignment($USER->id, 7) == true) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 function cleanHTMLString($string) {
     strip_tags($string, '<p>');
     return $string;
 }
-
 
 function jsonObject($courseid, $DB) {
     $courseobject = $DB->get_record('block_coursefields_main', array('courseid' => $courseid), '*', MUST_EXIST);
@@ -209,8 +215,7 @@ function jsonObject($courseid, $DB) {
     return $myJSON;
 }
 
-
-function sendJsonObject($jsonString, $url) {
+function  add_course($jsonString, $url) {
     $curl = curl_init($url);
     curl_setopt($curl, CURLOPT_HEADER, false);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -219,27 +224,30 @@ function sendJsonObject($jsonString, $url) {
     curl_setopt($curl, CURLOPT_REFERER, 'https://mooc.vsu.ru/');
     curl_setopt($curl, CURLOPT_POST, true);
     curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonString);
-
     $json_response = curl_exec($curl);
-
     $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-
     if ($status != 201) {
         die("Error: call to URL $url failed with status $status, response $json_response, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
     }
-
-
     curl_close($curl);
-
     $response = json_decode($json_response, true);
 }
 
-function is_user_student($USER) {
-    if (user_has_role_assignment($USER->id, 5) == true
-        OR user_has_role_assignment($USER->id, 6) == true
-        OR user_has_role_assignment($USER->id, 7) == true) {
-        return true;
-    } else {
-        return false;
-    }
+function update_course() {
+
+}
+
+function change_status() {
+
+}
+
+function get_status_of_course($courseid_platform, $info) {
+    $curl = curl_init($info['get_status_url'].$courseid_platform);
+    curl_setopt_array($curl, [
+        CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_URL => $info['get_status_url'].$courseid_platform,
+        CURLOPT_USERAGENT => 'Codular Sample cURL Request'
+    ]);
+    $resp = curl_exec($curl);
+    curl_close($curl);
 }

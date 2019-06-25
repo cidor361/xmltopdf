@@ -19,9 +19,7 @@ $PAGE->set_heading(get_string('course_fields', 'block_coursefields'));
 $PAGE->set_context(context_course::instance($courseid));
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
-$exist['object'] = $DB->record_exists('block_coursefields_main', array('courseid' => $courseid));
-$exist['teacherObject'] = $DB->record_exists('block_coursefields_teacher', array('courseid' => $courseid));
-$exist['coursetransfeObject'] = $DB->record_exists('block_coursefields_coursetr', array('courseid' => $courseid));
+$exist = is_dbobj_exist($courseid, $DB);
 
 if ($exist['object'] == 1) {
     $courseobject = $DB->get_record('block_coursefields_main', array('courseid' => $courseid), '*', MUST_EXIST);
@@ -67,7 +65,7 @@ if($mform->is_cancelled()) {
 } else {
 }
 
-$url = new moodle_url('/blocks/coursefields/sendlist.php');
+$url = new moodle_url($info['sendlisturl']);
 echo $OUTPUT->header();
 $mform->display();
 echo '<br>Если хотите отправить данный курс в СЦОС, нажмите "Отправить"<br>';
