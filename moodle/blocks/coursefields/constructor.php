@@ -3,6 +3,48 @@ defined('MOODLE_INTERNAL') || die();
 require_once('../../config.php');
 require_once('list_form.php');
 
+function create_start_object($course, $info, $course_innfo_id = '') {
+    $Object = new stdClass();
+    $Object->internal_courseid = $course->id;
+    $Object->parentid = $info['partnerid'];
+    $Object->id = $course_innfo_id;
+    $Object->title = $course->fullname;
+    $Object->started_at = gmdate("Y-m-d", (int)$course->startdate);
+    $Object->finished_at = gmdate("Y-m-d", (int)$course->enddate);
+//    $Object->enrollment_finished_at = gmdate("Y-m-d", (int)$a);
+    $Object->image = '';
+    $Object->description = $course->summary;
+    $Object->competences = '';
+    $Object->requirements = new stdClass();
+    $Object->content = '';
+    $Object->external_url = $info['courselink'].$course->id;
+    $Object->direction = new stdClass();
+    $Object->institution = $info['institution'];
+    $Object->duration = '';
+    $Object->lectures = '';
+    $Object->language = '';
+    $Object->cert = '';
+    $Object->visitors = '';
+    $Object->teachers = new stdClass();
+    $Object->teachers->teacher[0]->title = '';
+    $Object->teachers->teacher[0]->image = '';
+    $Object->teachers->teacher[0]->description = '';
+    $Object->transfers = new stdClass();
+    $Object->transfers->courseTransfer[0]->institution_id = '';
+    $Object->transfers->courseTransfer[0]->direction_id = '';
+    $Object->results = '';
+    $Object->accreditated = '';
+    $Object->hours = '';
+    $Object->hours_per_week = '';
+    $Object->ness_version = '';
+    $Object->promo_url = '';
+    $Object->promo_lang = '';
+    $Object->subtitles_lang = '';
+    $Object->estimation_tools = '';
+    $Object->proctoring_service = '';
+    $Object->sessionid = '';
+}
+
 function createMainField($course, $info) {
     $courseobject = new stdClass();
     $courseobject->courseid = $course->id;
@@ -194,6 +236,18 @@ function is_user_student($USER) {
         return false;
     }
 }
+
+function boolen_convert($expression) {
+    if ($expression == '0') {
+        $expression = 'false';}
+    if ($expression == '1'){
+        $expression = 'true';}
+    if ($expression == true) {
+        $expression = '1'}
+    if ($expression == false) {
+        $expression = '0';}
+}
+
 
 function cleanHTMLString($string) {
     strip_tags($string, '<p>');
