@@ -70,4 +70,5 @@ echo $OUTPUT->header();
 $mform->display();
 echo '<br>Если хотите отправить данный курс в СЦОС, нажмите "Отправить"<br>';
 echo '<a href='.$url.'>Отправить</a>';
+echo var_dump($courseobject);
 echo $OUTPUT->footer();

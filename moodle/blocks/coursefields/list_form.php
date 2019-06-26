@@ -55,7 +55,7 @@ class listform extends moodleform {
 
     function add_checkbox($title, $text = null, $id, $state) {
         $this->mform->addElement('advcheckbox', $id, $title);
-        if($state = true) {
+        if($state == true) {
             $this->mform->setDefault($id, 1);
         } else {
             $this->mform->setDefault($id, 0);
