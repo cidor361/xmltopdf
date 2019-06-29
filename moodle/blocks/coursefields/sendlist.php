@@ -22,7 +22,7 @@ $mform = createSimpleForm($courseobject, $teacherObject, $coursetransferObject, 
 if ($mform->is_cancelled()) {
 
 } else if ($data = $mform->get_data()) {
-    $result = add_course(jsonObject($courseid, $DB), $info['address']);
+    $result = add_course($info['address'], jsonObject($courseid, $DB));
 } else {
 
 }

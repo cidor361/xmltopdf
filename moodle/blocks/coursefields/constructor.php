@@ -348,7 +348,7 @@ function jsonObject($courseid, $DB) {
     return $myJSON;
 }
 
-function  add_course($jsonString, $url) {
+function  add_course($url, $jsonString) {
     $curl = curl_init($url);
     curl_setopt($curl, CURLOPT_HEADER, false);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -366,11 +366,11 @@ function  add_course($jsonString, $url) {
     $response = json_decode($json_response, true);
 }
 
-//function update_course() {
+//function update_course($url, $course_id_ext, $jsonString) {
 //
 //}
 
-//function change_status() {
+//function change_status($url, $course_id_ext) {
 //
 //}
 
