@@ -4,30 +4,29 @@ require_once('constructor.php');
 require 'info.php';
 
 global $PAGE, $OUTPUT, $DB, $USER;
-$courseid = $_SESSION['courseid'];
-require_login($courseid);
+$internal_courseid = $_SESSION['internal_courseid'];
+require_login($internal_courseid);
 
 $PAGE->set_url('/blocks/coursefield/list.php');
 $PAGE->set_pagelayout('standart');
 $PAGE->set_title(get_string('course_fields', 'block_coursefields'));
 $PAGE->set_heading(get_string('course_fields', 'block_coursefields'));
-$PAGE->set_context(context_course::instance($courseid));
+$PAGE->set_context(context_course::instance($internal_courseid));
 
-$courseobject = $DB->get_record('block_coursefields_main', array('courseid' => $courseid), '*', MUST_EXIST);
-$teacherObject = $DB->get_record('block_coursefields_teacher', array('courseid' => $courseid), '*', MUST_EXIST);
-$coursetransferObject = $DB->get_record('block_coursefields_coursetr', array('courseid' => $courseid), '*', MUST_EXIST);
+$Object = $DB->get_record('block_coursefields_json', array('internal_courseid' => $internal_courseid), '*', MUST_EXIST);
+$Object = get_obj_from_json($Object->json, $internal_courseid);
 
-$mform = createSimpleForm($courseobject, $teacherObject, $coursetransferObject, is_user_student($USER));
+$mform = create_simple_field($Object);
 
 if ($mform->is_cancelled()) {
 
 } else if ($data = $mform->get_data()) {
-    $result = add_course($info['address'], jsonObject($courseid, $DB));
+    add_course($info['address'], jsonObject($internal_courseid, $DB));
 } else {
 
 }
 
-$url = new moodle_url('/blocks/coursefields/sendlist.php');
 echo $OUTPUT->header();
 $mform->display();
+echo var_dump($Object);
 echo $OUTPUT->footer();
