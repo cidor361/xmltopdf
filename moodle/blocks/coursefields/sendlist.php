@@ -13,20 +13,20 @@ $PAGE->set_title(get_string('course_fields', 'block_coursefields'));
 $PAGE->set_heading(get_string('course_fields', 'block_coursefields'));
 $PAGE->set_context(context_course::instance($internal_courseid));
 
-$Object = $DB->get_record('block_coursefields_json', array('internal_courseid' => $internal_courseid), '*', MUST_EXIST);
-$Object = get_obj_from_json($Object->json, $internal_courseid);
+$Object = $DB->get_record('block_coursefields', array('internal_courseid' => $internal_courseid), '*', MUST_EXIST);
+$json = $Object->json;
+$Object = get_obj_from_json($Object->json, $internal_courseid, $Object->id);
 
-$mform = create_simple_field($Object);
+$mform = create_simple_field($Object, $USER);
 
 if ($mform->is_cancelled()) {
 
 } else if ($data = $mform->get_data()) {
-    add_course($info['address'], jsonObject($internal_courseid, $DB));
+    add_course($info['address'], $json);
 } else {
 
 }
 
 echo $OUTPUT->header();
 $mform->display();
-echo var_dump($Object);
 echo $OUTPUT->footer();

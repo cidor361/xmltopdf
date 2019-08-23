@@ -3,10 +3,10 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
     <TABLES>
-        <TABLE NAME="block_coursefields_json" COMMENT="Table for extra course field">
+        <TABLE NAME="block_coursefields" COMMENT="Table for extra course field">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true" NEXT="partnerid"/>
-                <FIELD NAME="json" TYPE="text" LENGTH="2000" NOTNULL="true" SEQUENCE="false" NEXT="courseid" PREVIOUS="id"/>
+                <FIELD NAME="json" TYPE="text" LENGTH="20000" NOTNULL="true" SEQUENCE="false" NEXT="courseid" PREVIOUS="id"/>
                 <FIELD NAME="internal_courseid" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="external_courseid"/>
                 <FIELD NAME="external_courseid" TYPE="char" LENGTH="50" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="internal_courseid"   />
             </FIELDS>

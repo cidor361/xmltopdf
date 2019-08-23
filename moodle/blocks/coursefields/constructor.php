@@ -23,7 +23,7 @@ function create_start_object($course, $info) {
     $Object->duration = '';
     $Object->lectures = '';
     $Object->language = '';
-    $Object->cert = '';
+    $Object->cert = '0';
     $Object->visitors = '';
     $Object->teachers = new stdClass();
     $Object->teachers->teacher[0]->title = '';
@@ -85,7 +85,7 @@ function create_full_field($Object) {
     return $mform;
 }
 
-function create_simple_field($Object) {
+function create_simple_field($Object, $USER) {
     $mform = new listform();
     $mform->add_header('Свойства курса', 'course');
     $mform->add_simple_text(get_string('title', 'block_coursefields'), $Object->title, 'title');
@@ -120,16 +120,18 @@ function create_simple_field($Object) {
     $mform->add_header('Информация о перезачётах', 'coursetransfer');
     $mform->add_simple_text(get_string('institution_id', 'block_coursefields'), $Object->transfers->courseTransfer[0]->institution_id, 'institution_id', 1);
     $mform->add_simple_text(get_string('direction_id', 'block_coursefields'), $Object->transfers->courseTransfer[0]->direction_id, 'direction_id', 1);
-    $mform->add_act_button();
+    if (!is_user_student($USER)) {
+        $mform->add_act_button();
+    }
     return $mform;
 }
 
 function is_dbobj_exist($DB, $internal_courseid = null, $external_courseid = null) {
     if ($internal_courseid != null) {
-        $exist = $DB->record_exists('block_coursefields_json', array('internal_courseid' => $internal_courseid));
+        $exist = $DB->record_exists('block_coursefields', array('internal_courseid' => $internal_courseid));
     }
     if ($external_courseid != null) {
-        $exist = $DB->record_exists('block_coursefields_json', array('internal_courseid' => $external_courseid));
+        $exist = $DB->record_exists('block_coursefields', array('internal_courseid' => $external_courseid));
     }
     return $exist;
 }
@@ -145,7 +147,7 @@ function is_user_student($USER)
     }
 }
 
-function reformat_formdata($Object, $formdata) {
+function reformat_formdata($Object, $formdata, $id, $external_courseid) {
     $Object->image = $formdata->image;
     $Object->competences = $formdata->competences["text"];
     $Object->requirements = $formdata->requirements["text"];
@@ -172,8 +174,8 @@ function reformat_formdata($Object, $formdata) {
     $Object->transfers->courseTransfer[0]->direction_id = $formdata->direction_id;
     $Object_for_db = new stdClass();
     $Object_for_db->internal_courseid = $Object->internal_courseid;
-    $Object_for_db->external_courseid = $Object->external_courseid;
-    $Object_for_db->id = '';
+    $Object_for_db->external_courseid = $external_courseid;
+    $Object_for_db->id = $id;
     $Object_for_db->json = get_json_object($Object);
     return $Object_for_db;
 }
@@ -200,11 +202,12 @@ function get_json_object($Object) {
     $json = json_encode($Object);
     return $json;
 }
-function get_obj_from_json($json, $internal_courseid) {
+function get_obj_from_json($json, $internal_courseid, $id) {
     $obj = json_decode($json);
     $obj->external_courseid = $obj->id;
     $obj->internal_courseid = $internal_courseid;
-    unset($obj->id);
+    $obj->id = $id;
+//    unset($obj->id);
     return $obj;
 }
 
@@ -212,8 +215,7 @@ function  add_course($url, $jsonString) {
     $curl = curl_init($url);
     curl_setopt($curl, CURLOPT_HEADER, false);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($curl, CURLOPT_HTTPHEADER,
-        array("Content-type: application/json"));
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
     curl_setopt($curl, CURLOPT_REFERER, 'https://mooc.vsu.ru/');
     curl_setopt($curl, CURLOPT_POST, true);
     curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonString);

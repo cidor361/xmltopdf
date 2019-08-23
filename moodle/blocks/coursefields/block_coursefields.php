@@ -10,13 +10,13 @@ class block_coursefields extends block_base {
 
     public function get_content()
     {
+        global $COURSE;
         if ($this->content != null) {
             return $this->content;
         }
 
-        $id = optional_param('id', 0, PARAM_INT);
         $url = new moodle_url('/blocks/coursefields/list.php');
-        $_SESSION['internal_courseid'] = $id;
+        $_SESSION['internal_courseid'] = $COURSE->id;;
 
         $this->content = new stdClass;
         $this->content->text = get_string('Description_plugin', 'block_coursefields');

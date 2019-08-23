@@ -1,5 +1,5 @@
 <?php
-$string['pluginname'] = 'Extra course fields';
+$string['pluginname'] = 'Свойства курса';
 $string['Description_plugin'] = 'Этот плагин позволяет добавить дополнительные поля для отправки курса на портал';
 $string['course_fields'] = 'Свойства курса';
 $string['parentid'] = 'Идентификатор Платформы';

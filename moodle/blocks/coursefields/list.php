@@ -27,8 +27,8 @@ $course = $DB->get_record('course', array('id' => $internal_courseid), '*', MUST
 $exist = is_dbobj_exist($DB, $internal_courseid);
 
 if ($exist) {
-    $Object = $DB->get_record('block_coursefields_json', array('internal_courseid' => $internal_courseid));
-    $Object = get_obj_from_json($Object->json, $internal_courseid);
+    $Object = $DB->get_record('block_coursefields', array('internal_courseid' => $internal_courseid));
+    $Object = get_obj_from_json($Object->json, $internal_courseid, $Object->id);
 } else {
     $Object = create_start_object($course, $info);
 }
@@ -38,11 +38,13 @@ if($mform->is_cancelled()) {
     $url = new moodle_url('/course/view.php?id='.$internal_courseid);
     redirect($url);
 } else if ($formdata = $mform->get_data()) {
-    $Object = reformat_formdata($Object, $formdata);
+    $Object = reformat_formdata($Object, $formdata, $Object->id, '0000000000'.$Object->id);
     if ($exist) {
-        $DB->update_record('block_coursefields_json', $Object, $bulk=false);
-    } else {
-        $DB->insert_record('block_coursefields_json', $Object, '*', MUST_EXIST);
+//        unset($Object->id);
+//        $DB->set_field('block_coursefields', 'json', $Object->json);
+        $DB->update_record('block_coursefields', $Object, $bulk=false);
+        } else {
+        $DB->insert_record('block_coursefields', $Object, '*', MUST_EXIST);
     }
 } else {
 //    get_course_status();
@@ -51,7 +53,6 @@ if($mform->is_cancelled()) {
 $url = new moodle_url($info['sendlisturl']);
 echo $OUTPUT->header();
 $mform->display();
-echo '<br>Если хотите отправить данный курс в СЦОС, нажмите "Отправить"<br>';
+echo '<br>Если хотите отправить данный курс в СЦОС, нажмите "Отправить"<br/>';
 echo '<a href='.$url.'>Отправить</a>';
-echo $qq;
 echo $OUTPUT->footer();
