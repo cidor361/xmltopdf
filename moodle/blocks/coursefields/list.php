@@ -7,8 +7,13 @@ global $PAGE, $OUTPUT, $DB, $USER;
 $internal_courseid = $_SESSION['internal_courseid'];
 require_login($internal_courseid);
 
+//$coursecontext = context_course::instance($internal_courseid);
+//if (has_capability('block/coursefields:view',$coursecontext, $USER->id)) {
+//    $url = new moodle_url('/blocks/coursefields/sendlist.php');
+//    redirect($url);
+//}
 
-if (is_user_student($USER)) {
+if (is_user_student($USER->id)) {
     $url = new moodle_url('/blocks/coursefields/sendlist.php');
     redirect($url);
 }

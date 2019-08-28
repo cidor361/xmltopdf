@@ -12,7 +12,6 @@ defined('MOODLE_INTERNAL') || die();
             'manager' => CAP_ALLOW
         ),
  
-//        'clonepermissionsfrom' => 'moodle/my:manageblocks'  //TODO: full capabilities!
     ),
  
     'block/coursefields:addinstance' => array(

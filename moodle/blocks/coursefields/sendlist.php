@@ -13,7 +13,9 @@ $PAGE->set_title(get_string('course_fields', 'block_coursefields'));
 $PAGE->set_heading(get_string('course_fields', 'block_coursefields'));
 $PAGE->set_context(context_course::instance($internal_courseid));
 
-$Object = $DB->get_record('block_coursefields', array('internal_courseid' => $internal_courseid), '*', MUST_EXIST);
+if ($DB->record_exists('block_coursefields',array('internal_courseid' => $internal_courseid))) {
+    $Object = $DB->get_record('block_coursefields', array('internal_courseid' => $internal_courseid), '*', MUST_EXIST);
+        }
 $json = $Object->json;
 $Object = get_obj_from_json($Object->json, $internal_courseid, $Object->id);
 
