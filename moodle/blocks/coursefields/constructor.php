@@ -303,3 +303,111 @@ function reg_on_course_obj() {
     return $reg_on_course_obj;
 }
 
+function reg_on_course_list() {
+    $reg_on_course_list = new stdClass();
+    $reg_on_course_list->courseId = ;
+    $reg_on_course_list->sessionId = ;
+    $reg_on_course_list->usiaId = ;
+    $reg_on_course_list->saced = ;
+    return $reg_on_course_list;
+}
+
+function reg_on_course_list_groupe() {
+    $reg_on_course_list_groupe = new stdClass();
+    $reg_on_course_list_groupe->courseId = ;
+    $reg_on_course_list_groupe->sessionId = ;
+    $reg_on_course_list_groupe->usiaId = ;
+    return $reg_on_course_list_groupe;
+}
+
+function con_reg_on_course_list(){
+    $con_reg_on_course_list = new stdClass();
+    return $con_reg_on_course_list;
+}
+
+function con_reg_on_course_list_groupe(){
+    $con_reg_on_course_list_groupe = new stdClass();
+    return $con_reg_on_course_list_groupe;
+}
+function check_reg_on_course_list(){
+    $check_reg_on_course_list = new stdClass();
+    $check_reg_on_course_list->courseId = ;
+    $check_reg_on_course_list->sessionId = ;
+    $check_reg_on_course_list->usiaId = ;
+    $check_reg_on_course_list->date = ;
+    $check_reg_on_course_list->rating = ;
+    $check_reg_on_course_list->progress = ;
+    $check_reg_on_course_list->proctored = ;
+    $check_reg_on_course_list->checkpointName = ;
+    $check_reg_on_course_list->checkpointId = ;
+    return $check_reg_on_course_list;
+}
+
+function ans_course_publ_obj(){
+    $ans_course_publ_obj = new stdClass();
+    $ans_course_publ_obj->usiaId = ;
+    $ans_course_publ_obj->date = ;
+    $ans_course_publ_obj->checkpointId = ;
+    $ans_course_publ_obj->saved = ;
+    return $ans_course_publ_obj;
+}
+
+function obj_publ_prog_study(){
+    $obj_publ_prog_study = new stdClass();
+    $obj_publ_prog_study->courseId = ;
+    $obj_publ_prog_study->sessionId = ;
+    $obj_publ_prog_study->usiaId = ;
+    $obj_publ_prog_study->progress = ;
+    return obj_publ_prog_study;
+}
+
+function obj_ans_on_req_publ_mass_prog_study(){
+    $obj_ans_on_req_publ_mass_prog_study = new stdClass();
+    $obj_ans_on_req_publ_mass_prog_study-> usiaId = ;
+    $obj_ans_on_req_publ_mass_prog_study-> courseId = ;
+    $obj_ans_on_req_publ_mass_prog_study-> sessionId = ;
+    $obj_ans_on_req_publ_mass_prog_study-> progress = ;
+    $obj_ans_on_req_publ_mass_prog_study-> saved = ;
+    return $obj_ans_on_req_publ_mass_prog_study;
+}
+
+function obj_req_on_publ_cert_in_portfolio(){
+    $obj_req_on_publ_cert_in_portfolio = new stdClass();
+    $obj_req_on_publ_cert_in_portfolio -> certNumber = ;
+    $obj_req_on_publ_cert_in_portfolio -> date = ;
+    $obj_req_on_publ_cert_in_portfolio -> studentName = ;
+    $obj_req_on_publ_cert_in_portfolio -> studentSurname = ;
+    $obj_req_on_publ_cert_in_portfolio -> studentPatronymicName = ;
+    $obj_req_on_publ_cert_in_portfolio -> userId = ;
+    $obj_req_on_publ_cert_in_portfolio -> courseId = ;
+    $obj_req_on_publ_cert_in_portfolio -> sessionId = ;
+    $obj_req_on_publ_cert_in_portfolio -> otherMetadata = ;
+    $obj_req_on_publ_cert_in_portfolio -> enrollAct = ;
+    $obj_req_on_publ_cert_in_portfolio -> enrollDate = ;
+    $obj_req_on_publ_cert_in_portfolio -> comlAct = ;
+    $obj_req_on_publ_cert_in_portfolio -> complDate = ;
+    $obj_req_on_publ_cert_in_portfolio -> IdentityDocument = ;
+    $obj_req_on_publ_cert_in_portfolio -> eduDoc = ;
+    return $obj_req_on_publ_cert_in_portfolio;
+}
+
+function obj_ans_on_req_read_cert(){
+    $obj_ans_on_req_read_cert = new stdClass();
+    $obj_ans_on_req_read_cert -> certId = ;
+    $obj_ans_on_req_read_cert -> certNumber = ;
+    $obj_ans_on_req_read_cert -> date = ;
+    $obj_ans_on_req_read_cert -> courseName = ;
+    $obj_ans_on_req_read_cert -> studentName = ;
+    $obj_ans_on_req_read_cert -> studentSurname = ;
+    $obj_ans_on_req_read_cert -> studentPatronymicName = ;
+    $obj_ans_on_req_read_cert -> userId = ;
+    $obj_ans_on_req_read_cert -> courseId = ;
+    $obj_ans_on_req_read_cert -> sessionId = ;
+    $obj_ans_on_req_read_cert -> otherMetadata = ;
+    $obj_ans_on_req_read_cert -> enrollAct = ;
+    $obj_ans_on_req_read_cert -> enrollDate = ;
+    $obj_ans_on_req_read_cert -> comlAct = ;
+    $obj_ans_on_req_read_cert -> complDate = ;
+    $obj_ans_on_req_read_cert -> status = ;
+    return $obj_ans_on_req_read_cert;
+}
