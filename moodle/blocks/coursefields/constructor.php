@@ -213,51 +213,57 @@ function get_obj_from_json($json, $internal_courseid, $id) {
 
 function  add_course($url, $jsonString) {
     $curl = curl_init($url);
-    curl_setopt($curl, CURLOPT_HEADER, false);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
-    curl_setopt($curl, CURLOPT_REFERER, 'https://mooc.vsu.ru/');
-    curl_setopt($curl, CURLOPT_POST, true);
-    curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonString);
-    $json_response = curl_exec($curl);
+    curl_setopt_array($curl, [
+        CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_HTTPHEADER => 'Content-type: application/json',
+        CURLOPT_REFERER => 'https://mooc.vsu.ru/',
+        CURLOPT_URL => $url,
+        CURLOPT_POST => 1,
+        CURLOPT_POSTFIELDS => [
+            json => $jsonString,
+            ],
+    ]);
+    $resp = curl_exec($curl);
     $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     if ($status != 201) {
-        die("Error: call to URL $url failed with status $status, response $json_response, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
+        die("Error: call to URL $url failed with status $status, response $resp, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
     }
     curl_close($curl);
-    $response = json_decode($json_response, true);
 }
 
 function update_course($url, $course_id_ext, $jsonString) {
     $curl = curl_init($url);
-    curl_setopt($curl, CURLOPT_HEADER, false);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
-    curl_setopt($curl, CURLOPT_REFERER, 'https://mooc.vsu.ru/');
-    curl_setopt($curl, CURLOPT_PUT, true);
-    curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonString);
-    $json_response = curl_exec($curl);
+    curl_setopt_array($curl, [
+        CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_HTTPHEADER => 'Content-type: application/json',
+        CURLOPT_REFERER => 'https://mooc.vsu.ru/',
+        CURLOPT_PUT => 1,
+        CURLOPT_POSTFIELDS => [
+            json => $jsonString
+        ]
+    ]);
+    $resp = curl_exec($curl);
     $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     if ($status != 201) {
-        die("Error: call to URL $url failed with status $status, response $json_response, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
+        die("Error: call to URL $url failed with status $status, response $resp, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
     }
     curl_close($curl);
-    $response = json_decode($json_response, true);
+    $response = json_decode($resp, true);
 }
-//
-function change_status($url, $course_id_ext) {
+
+function change_status_of_course($url, $course_id_ext) {
     $curl = curl_init($url);
-    curl_setopt($curl, CURLOPT_HEADER, false);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($curl, CURLOPT_REFERER, 'https://mooc.vsu.ru/');
-    curl_setopt($curl, CURLOPT_PUT, true);
+    curl_setopt_array($curl,[
+        CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_PUT => 1,
+        CURLOPT_REFERER => 'https://mooc.vsu.ru/'
+    ]);
     $json_response = curl_exec($curl);
     $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     if ($status != 201) {
         die("Error: call to URL $url failed with status $status, response $json_response, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
     }
     curl_close($curl);
-    $response = json_decode($json_response, true);
 }
 
 function get_grade_status_course($url) {
@@ -271,17 +277,29 @@ function get_grade_status_course($url) {
     curl_close($curl);
 }
 
-function get_status_of_course($url, $course_id_ext, $info) {
-    $curl = curl_init($info['get_status_url'].$course_id_ext);
+function execute_portfolio($reg_on_course_obj) {
+    $curl = curl_init();
     curl_setopt_array($curl, [
+        CURLOPT_URL => $url,
         CURLOPT_RETURNTRANSFER => 1,
-        CURLOPT_URL => $info['get_status_url'].$course_id_ext,
-        CURLOPT_USERAGENT => 'Codular Sample cURL Request'
+        CURLOPT_POST => 1,
+        CURLOPT_POSTFIELDS => [
+            json => $reg_on_course_obj
+        ]
     ]);
     $resp = curl_exec($curl);
     $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-    if ($status != 201) {
-        die("Error: call to URL $url failed with status $status, response $resp, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
-    }
     curl_close($curl);
 }
+
+function reg_on_course_obj() {
+    $reg_on_course_obj = new stdClass();
+    $reg_on_course_obj->courseId = ;
+    $reg_on_course_obj->sessionId = ;
+    $reg_on_course_obj->usiaId = ;
+    $reg_on_course_obj->enrollDate = ;
+    $reg_on_course_obj->sessionStart = ;
+    $reg_on_course_obj->sessionEnd = ;
+    return $reg_on_course_obj;
+}
+
