@@ -228,25 +228,60 @@ function  add_course($url, $jsonString) {
     $response = json_decode($json_response, true);
 }
 
-//function update_course($url, $course_id_ext, $jsonString) {
+function update_course($url, $course_id_ext, $jsonString) {
+    $curl = curl_init($url);
+    curl_setopt($curl, CURLOPT_HEADER, false);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
+    curl_setopt($curl, CURLOPT_REFERER, 'https://mooc.vsu.ru/');
+    curl_setopt($curl, CURLOPT_PUT, true);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonString);
+    $json_response = curl_exec($curl);
+    $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    if ($status != 201) {
+        die("Error: call to URL $url failed with status $status, response $json_response, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
+    }
+    curl_close($curl);
+    $response = json_decode($json_response, true);
+}
 //
-//}
-//
-//function change_status($url, $course_id_ext) {
-//
-//}
-//
-//function get_course_status() {
-//
-//}
+function change_status($url, $course_id_ext) {
+    $curl = curl_init($url);
+    curl_setopt($curl, CURLOPT_HEADER, false);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_REFERER, 'https://mooc.vsu.ru/');
+    curl_setopt($curl, CURLOPT_PUT, true);
+    $json_response = curl_exec($curl);
+    $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    if ($status != 201) {
+        die("Error: call to URL $url failed with status $status, response $json_response, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
+    }
+    curl_close($curl);
+    $response = json_decode($json_response, true);
+}
 
-function get_status_of_course($courseid_platform, $info) {
-    $curl = curl_init($info['get_status_url'].$courseid_platform);
+function get_grade_status_course($url) {
+    $curl = curl_init();
     curl_setopt_array($curl, [
         CURLOPT_RETURNTRANSFER => 1,
-        CURLOPT_URL => $info['get_status_url'].$courseid_platform,
+        CURLOPT_URL => $url,
+    ]);
+    $resp = curl_exec($curl);
+    $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    curl_close($curl);
+}
+
+function get_status_of_course($url, $course_id_ext, $info) {
+    $curl = curl_init($info['get_status_url'].$course_id_ext);
+    curl_setopt_array($curl, [
+        CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_URL => $info['get_status_url'].$course_id_ext,
         CURLOPT_USERAGENT => 'Codular Sample cURL Request'
     ]);
     $resp = curl_exec($curl);
+    $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    if ($status != 201) {
+        die("Error: call to URL $url failed with status $status, response $json_response, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
+    }
     curl_close($curl);
 }
