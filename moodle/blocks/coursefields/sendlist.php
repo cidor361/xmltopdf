@@ -19,7 +19,7 @@ if ($DB->record_exists('block_coursefields',array('internal_courseid' => $intern
 $json = $Object->json;
 $Object = get_obj_from_json($Object->json, $internal_courseid, $Object->id);
 
-$mform = create_simple_field($Object, $USER);
+$mform = create_simple_field($Object, $USER->id);
 
 if ($mform->is_cancelled()) {
 
