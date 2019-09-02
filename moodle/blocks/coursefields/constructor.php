@@ -146,7 +146,11 @@ function is_user_student($userid) {
     }
 }
 
-function reformat_formdata($Object, $formdata, $id, $external_courseid) {
+function reformat_formdata_for_db($Object, $formdata, $external_courseid) {
+    $Object_for_db = new stdClass();
+    $Object_for_db->internal_courseid = $Object->internal_courseid;
+    $Object_for_db->external_courseid = $external_courseid;
+    $Object_for_db->id = $Object->id;
     $Object->image = $formdata->image;
     $Object->competences = $formdata->competences["text"];
     $Object->requirements = $formdata->requirements["text"];
@@ -171,19 +175,20 @@ function reformat_formdata($Object, $formdata, $id, $external_courseid) {
     $Object->teachers->teacher[0]->description = $formdata->t_description;
     $Object->transfers->courseTransfer[0]->institution_id = $formdata->institution_id;
     $Object->transfers->courseTransfer[0]->direction_id = $formdata->direction_id;
-    $Object_for_db = new stdClass();
-    $Object_for_db->internal_courseid = $Object->internal_courseid;
-    $Object_for_db->external_courseid = $external_courseid;
-    $Object_for_db->id = $id;
-    $Object_for_db->json = get_json_object($Object);
+    if ($Object->external_courseid != '') {
+        $Object->id = $Object->external_courseid;
+    }
+    unset($Object->external_courseid);
+    unset($Object->internal_courseid);
+    $Object_for_db->json = json_encode($Object);
     return $Object_for_db;
 }
 
 function boolen_convert($expression) {
     if ($expression == '0') {
-        $expression = 'false';}
+        $expression = false;}
     if ($expression == '1'){
-        $expression = 'true';}
+        $expression = true;}
     if ($expression == true) {
         $expression = '1';}
     if ($expression == false) {
@@ -191,16 +196,6 @@ function boolen_convert($expression) {
     return $expression;
 }
 
-function get_json_object($Object) {
-    $Object->id = '';
-    if ($Object->external_courseid != '') {
-        $Object->id = $Object->external_courseid;
-    }
-    unset($Object->external_courseid);
-    unset($Object->internal_courseid);
-    $json = json_encode($Object);
-    return $json;
-}
 function get_obj_from_json($json, $internal_courseid, $id) {
     $obj = json_decode($json);
     $obj->external_courseid = $obj->id;
@@ -217,7 +212,10 @@ function  add_course($url, $jsonString) {
         CURLOPT_HTTPHEADER => 'Content-type: application/json',
         CURLOPT_REFERER => 'https://mooc.vsu.ru/',
         CURLOPT_URL => $url,
-        CURLOPT_POST => 1,
+        CURLOPT_SSL_VERIFYPEER => 1,
+        CURLOPT_SSL_VERIFYHOST => 2,
+        CURLOPT_CAINFO => '1023601560510.crt',
+    CURLOPT_POST => 1,
         CURLOPT_POSTFIELDS => [
             json => $jsonString,
             ],
@@ -281,6 +279,9 @@ function execute_portfolio($url, $reg_on_course_obj) {
     curl_setopt_array($curl, [
         CURLOPT_URL => $url,
         CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_SSL_VERIFYPEER => 1,
+        CURLOPT_SSL_VERIFYHOST => 2,
+        CURLOPT_CAINFO => '1023601560510.crt',
         CURLOPT_POST => 1,
         CURLOPT_POSTFIELDS => [
             json => $reg_on_course_obj

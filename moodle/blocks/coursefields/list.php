@@ -7,9 +7,8 @@ global $PAGE, $OUTPUT, $DB, $USER;
 $internal_courseid = $_SESSION['internal_courseid'];
 require_login($internal_courseid);
 
-//$coursecontext = context_course::instance($internal_courseid);
-//if (has_capability('block/coursefields:view',$coursecontext, $USER->id)) {
-//    $url = new moodle_url('/blocks/coursefields/sendlist.php');
+//if ($internal_courseid = null) {
+//    $url =
 //    redirect($url);
 //}
 
@@ -43,7 +42,7 @@ if($mform->is_cancelled()) {
     $url = new moodle_url('/course/view.php?id='.$internal_courseid);
     redirect($url);
 } else if ($formdata = $mform->get_data()) {
-    $Object = reformat_formdata($Object, $formdata, $Object->id, '0000000000'.$Object->id);
+    $Object = reformat_formdata_for_db($Object, $formdata, '0000000000'.$Object->id);
     if ($exist) {
 //        unset($Object->id);
 //        $DB->set_field('block_coursefields', 'json', $Object->json);

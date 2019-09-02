@@ -10,17 +10,21 @@ class block_coursefields extends block_base {
 
     public function get_content()
     {
-        global $COURSE;
+        global $COURSE, $USER;
         if ($this->content != null) {
             return $this->content;
         }
 
-        $url = new moodle_url('/blocks/coursefields/list.php');
         $_SESSION['internal_courseid'] = $COURSE->id;;
 
         $this->content = new stdClass;
         $this->content->text = get_string('Description_plugin', 'block_coursefields');
-        $this->content->footer = '<a href='.$url.'>Редактировать</a>';
+        $url = new moodle_url('/blocks/coursefields/list.php');
+        $this->content->footer = '<a href='.$url.'>Редактирование/Просмотр</a>';
+        if (user_has_role_assignment($USER->id, 0) ) {
+            $url = new moodle_url('/blocks/coursefields/portfolio.php');
+            $this->content->footer .= '<br><a href='.$url.'>Портфолио</a>';
+        }
 
         return $this->content;
     }
