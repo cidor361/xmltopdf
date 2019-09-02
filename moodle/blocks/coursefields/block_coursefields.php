@@ -21,7 +21,7 @@ class block_coursefields extends block_base {
         $this->content->text = get_string('Description_plugin', 'block_coursefields');
         $url = new moodle_url('/blocks/coursefields/list.php');
         $this->content->footer = '<a href='.$url.'>Редактирование/Просмотр</a>';
-        if (user_has_role_assignment($USER->id, 0) ) {
+        if (is_primary_admin($USER->id)) {
             $url = new moodle_url('/blocks/coursefields/portfolio.php');
             $this->content->footer .= '<br><a href='.$url.'>Портфолио</a>';
         }
