@@ -6,13 +6,9 @@ require 'info.php';
 global $PAGE, $OUTPUT, $DB, $USER;
 $internal_courseid = $_SESSION['internal_courseid'];
 require_login($internal_courseid);
+$context = get_context_instance(CONTEXT_COURSE, $internal_courseid);
 
-//if ($internal_courseid = null) {
-//    $url =
-//    redirect($url);
-//}
-
-if (is_user_student($USER->id)) {
+if (is_user_student($context, $USER->id)) {
     $url = new moodle_url('/blocks/coursefields/sendlist.php');
     redirect($url);
 }
@@ -20,7 +16,7 @@ if (is_user_student($USER->id)) {
 $course = $DB->get_record('course', array('id' => $internal_courseid), '*', MUST_EXIST);
 $internal_courseid = $course->id;
 
-$PAGE->set_url('/blocks/coursefield/list.php');
+$PAGE->set_url('/blocks/coursefields/list.php');
 $PAGE->set_pagelayout('standart');
 $PAGE->set_title(get_string('course_fields', 'block_coursefields'));
 $PAGE->set_heading(get_string('course_fields', 'block_coursefields'));

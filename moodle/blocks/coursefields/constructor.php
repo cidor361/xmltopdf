@@ -85,7 +85,7 @@ function create_full_field($Object) {
     return $mform;
 }
 
-function create_simple_field($Object, $userid) {
+function create_simple_field($Object, $userid, $context) {
     $mform = new listform();
     $mform->add_header('Свойства курса', 'course');
     $mform->add_simple_text(get_string('title', 'block_coursefields'), $Object->title, 'title');
@@ -120,7 +120,7 @@ function create_simple_field($Object, $userid) {
     $mform->add_header('Информация о перезачётах', 'coursetransfer');
     $mform->add_simple_text(get_string('institution_id', 'block_coursefields'), $Object->transfers->courseTransfer[0]->institution_id, 'institution_id', 1);
     $mform->add_simple_text(get_string('direction_id', 'block_coursefields'), $Object->transfers->courseTransfer[0]->direction_id, 'direction_id', 1);
-    if (!is_user_student($userid)) {
+    if (!is_user_student($context, $userid)) {
         $mform->add_act_button();
     }
     return $mform;
@@ -136,14 +136,23 @@ function is_dbobj_exist($DB, $internal_courseid = null, $external_courseid = nul
     return $exist;
 }
 
-function is_user_student($userid) {
-    if (user_has_role_assignment($userid, 5) == true
-        OR user_has_role_assignment($userid, 6) == true
-        OR user_has_role_assignment($userid, 7) == true) {
-        return true;
-    } else {
-        return false;
+function is_user_student($context, $userid) {
+    $roles = get_user_roles($context, $userid, false);
+    $i = 1;
+    $rolearray = array();
+    foreach ($roles as $role) {
+        $rolearray[$i] = (int)$role->roleid;
+        $i = $i + 1;
     }
+    $roleid = min($rolearray);
+    if ($roleid > 4) {
+        $is_student = true;
+    }
+    if ($roleid < 5 OR is_primary_admin($userid) == true) {
+        $is_student = false;
+    }
+    return $is_student;
+
 }
 
 function reformat_formdata_for_db($Object, $formdata, $external_courseid) {
@@ -205,7 +214,7 @@ function get_obj_from_json($json, $internal_courseid, $id) {
     return $obj;
 }
 
-function  add_course($url, $jsonString) {
+function  add_course($url, $jsonString, $keyfile, $certfile) {
     $curl = curl_init($url);
     curl_setopt_array($curl, [
         CURLOPT_RETURNTRANSFER => 1,
@@ -214,8 +223,9 @@ function  add_course($url, $jsonString) {
         CURLOPT_URL => $url,
         CURLOPT_SSL_VERIFYPEER => 1,
         CURLOPT_SSL_VERIFYHOST => 2,
-        CURLOPT_CAINFO => '1023601560510.crt',
-    CURLOPT_POST => 1,
+        CURLOPT_CAINFO => $certfile,
+        CURLOPT_SSLKEY => $keyfile,
+        CURLOPT_POST => 1,
         CURLOPT_POSTFIELDS => [
             json => $jsonString,
             ],

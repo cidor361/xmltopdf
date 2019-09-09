@@ -15,7 +15,7 @@ class block_coursefields extends block_base {
             return $this->content;
         }
 
-        $_SESSION['internal_courseid'] = $COURSE->id;;
+        $_SESSION['internal_courseid'] = $COURSE->id;
 
         $this->content = new stdClass;
         $this->content->text = get_string('Description_plugin', 'block_coursefields');
