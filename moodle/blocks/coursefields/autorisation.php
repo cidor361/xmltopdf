@@ -38,4 +38,4 @@ function point_of_auth($url, $client_id, $response_type, $redirect_url) {
     echo $data;
 }
 
-echo var_dump(get_token_password($info['token_url'], 'mooc_vsu_ru', '7b9ff246-d7d9-48e9-83c6-4e51d985838d', 'riapolov@vsu.ru', 'vsu_2018'));
+echo var_dump(get_token_password($info['token_url'], 'mooc_vsu_ru', '7b9ff246-d7d9-48e9-83c6-4e51d985838d', 'riapolov@vsu.ru', 'vsu_2019'));

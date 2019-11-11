@@ -3,11 +3,21 @@ defined('MOODLE_INTERNAL') || die();
 require_once('../../config.php');
 require_once('list_form.php');
 
+  function array_filter_recursive($input)
+  {
+    foreach ($input as &$value)
+    {
+      if (is_array($value))
+      {
+        $value = array_filter_recursive($value);
+      }
+    }
+   
+    return array_filter($input);
+  }
+
 function create_start_object($course, $info) {
     $Object = new stdClass();
-    $Object->internal_courseid = $course->id;
-    $Object->external_courseid = '';
-    $Object->parentid = $info['partnerid'];
     $Object->title = $course->fullname;
     $Object->started_at = gmdate("Y-m-d", (int)$course->startdate);
     $Object->finished_at = gmdate("Y-m-d", (int)$course->enddate);
@@ -25,10 +35,10 @@ function create_start_object($course, $info) {
     $Object->language = '';
     $Object->cert = '0';
     $Object->visitors = '';
-    $Object->teachers = new stdClass();
-    $Object->teachers->teacher[0]->title = '';
-    $Object->teachers->teacher[0]->image = '';
-    $Object->teachers->teacher[0]->description = '';
+    $Object->teachers = array();
+    $Object->teachers[0]->display_name = '';
+    $Object->teachers[0]->image = '';
+    $Object->teachers[0]->description = '';
     $Object->transfers = new stdClass();
     $Object->transfers->courseTransfer[0]->institution_id = '';
     $Object->transfers->courseTransfer[0]->direction_id = '';
@@ -50,7 +60,6 @@ function create_full_field($Object) {
     $mform = new listform();
     $mform->add_header('Свойства курса', 'course');
     $mform->add_simple_text(get_string('title', 'block_coursefields'), $Object->title, 'title');
-    $mform->add_simple_text(get_string('parentid', 'block_coursefields'), $Object->partnerid, 'parentid');
     $mform->add_textfield(get_string('image', 'block_coursefields'), $Object->image, 'image');
     $mform->add_simple_text(get_string('description',  'block_coursefields'), $Object->description, 'description', 1);
     $mform->add_text_editor(get_string('competences', 'block_coursefields'), $Object->competences, 'competences');
@@ -73,11 +82,11 @@ function create_full_field($Object) {
     $mform->add_textfield(get_string('subtitles_lang', 'block_coursefields'), $Object->subtitles_lang, 'subtitles_lang');
     $mform->add_textfield(get_string('estimation_tools', 'block_coursefields'), $Object->estimation_tools, 'estimation_tools');
     $mform->add_textfield(get_string('proctoring_service', 'block_coursefields'), $Object->proctoring_service, 'proctoring_service');
-    $mform->add_textfield(get_string('sessionid', 'block_coursefields'), $Object->sessionid, 'sessionid');
+//    $mform->add_textfield(get_string('sessionid', 'block_coursefields'), $Object->sessionid, 'sessionid');
     $mform->add_header('Преподаватели', 'teachers');
-    $mform->add_textfield(get_string('t_title', 'block_coursefields'), $Object->teachers->teacher[0]->title, 't_title', 1);
-    $mform->add_textfield(get_string('t_image', 'block_coursefields'), $Object->teachers->teacher[0]->image, 't_image');
-    $mform->add_textfield(get_string('t_description', 'block_coursefields'), $Object->teachers->teacher[0]->description, 't_description');
+    $mform->add_textfield(get_string('t_title', 'block_coursefields'), $Object->teachers[0]->display_name, 't_title', 1);
+    $mform->add_textfield(get_string('t_image', 'block_coursefields'), $Object->teachers[0]->image, 't_image');
+    $mform->add_textfield(get_string('t_description', 'block_coursefields'), $Object->teachers[0]->description, 't_description');
     $mform->add_header('Информация о перезачётах', 'coursetransfer');
     $mform->add_textfield(get_string('institution_id', 'block_coursefields'), $Object->transfers->courseTransfer[0]->institution_id, 'institution_id', 1);
     $mform->add_textfield(get_string('direction_id', 'block_coursefields'), $Object->transfers->courseTransfer[0]->direction_id, 'direction_id', 1);
@@ -89,7 +98,6 @@ function create_simple_field($Object, $userid, $context) {
     $mform = new listform();
     $mform->add_header('Свойства курса', 'course');
     $mform->add_simple_text(get_string('title', 'block_coursefields'), $Object->title, 'title');
-    $mform->add_simple_text(get_string('parentid', 'block_coursefields'), $Object->partnerid, 'parentid');
     $mform->add_simple_text(get_string('image', 'block_coursefields'), $Object->image, 'image');
     $mform->add_simple_text(get_string('description',  'block_coursefields'), $Object->description, 'description', 1);
     $mform->add_simple_text(get_string('competences', 'block_coursefields'), $Object->competences, 'competences');
@@ -112,11 +120,11 @@ function create_simple_field($Object, $userid, $context) {
     $mform->add_simple_text(get_string('subtitles_lang', 'block_coursefields'), $Object->subtitles_lang, 'subtitles_lang');
     $mform->add_simple_text(get_string('estimation_tools', 'block_coursefields'), $Object->estimation_tools, 'estimation_tools');
     $mform->add_simple_text(get_string('proctoring_service', 'block_coursefields'), $Object->proctoring_service, 'proctoring_service');
-    $mform->add_simple_text(get_string('sessionid', 'block_coursefields'), $Object->sessionid, 'sessionid');
+//    $mform->add_simple_text(get_string('sessionid', 'block_coursefields'), $Object->sessionid, 'sessionid');
     $mform->add_header('Преподаватели', 'teachers');
-    $mform->add_simple_text(get_string('t_title', 'block_coursefields'), $Object->teachers->teacher[0]->title, 't_title', 1);
-    $mform->add_simple_text(get_string('t_image', 'block_coursefields'), $Object->teachers->teacher[0]->image, 't_image');
-    $mform->add_simple_text(get_string('t_description', 'block_coursefields'), $Object->teachers->teacher[0]->description, 't_description');
+    $mform->add_simple_text(get_string('t_title', 'block_coursefields'), $Object->teachers[0]->display_name, 't_title', 1);
+    $mform->add_simple_text(get_string('t_image', 'block_coursefields'), $Object->teachers[0]->image, 't_image');
+    $mform->add_simple_text(get_string('t_description', 'block_coursefields'), $Object->teachers[0]->description, 't_description');
     $mform->add_header('Информация о перезачётах', 'coursetransfer');
     $mform->add_simple_text(get_string('institution_id', 'block_coursefields'), $Object->transfers->courseTransfer[0]->institution_id, 'institution_id', 1);
     $mform->add_simple_text(get_string('direction_id', 'block_coursefields'), $Object->transfers->courseTransfer[0]->direction_id, 'direction_id', 1);
@@ -130,9 +138,9 @@ function is_dbobj_exist($DB, $internal_courseid = null, $external_courseid = nul
     if ($internal_courseid != null) {
         $exist = $DB->record_exists('block_coursefields', array('internal_courseid' => $internal_courseid));
     }
-    if ($external_courseid != null) {
-        $exist = $DB->record_exists('block_coursefields', array('internal_courseid' => $external_courseid));
-    }
+//    if ($external_courseid != null) {
+//        $exist = $DB->record_exists('block_coursefields', array('internal_courseid' => $external_courseid));
+//    }
     return $exist;
 }
 
@@ -152,14 +160,13 @@ function is_user_student($context, $userid) {
         $is_student = false;
     }
     return $is_student;
-
 }
 
-function reformat_formdata_for_db($Object, $formdata, $external_courseid) {
+function reformat_formdata_for_db($Object, $formdata, $internal_courseid, $external_courseid) {
     $Object_for_db = new stdClass();
-    $Object_for_db->internal_courseid = $Object->internal_courseid;
+    $Object_for_db->internal_courseid = $internal_courseid;
     $Object_for_db->external_courseid = $external_courseid;
-    $Object_for_db->id = $Object->id;
+    $Object_for_db->id = $internal_courseid;
     $Object->image = $formdata->image;
     $Object->competences = $formdata->competences["text"];
     $Object->requirements = $formdata->requirements["text"];
@@ -179,17 +186,15 @@ function reformat_formdata_for_db($Object, $formdata, $external_courseid) {
     $Object->estimation_tools = $formdata->estimation_tools;
     $Object->proctoring_service = $formdata->proctoring_service;
     $Object->sessionid = $formdata->sessionid;
-    $Object->teachers->teacher[0]->title = $formdata->t_title;
-    $Object->teachers->teacher[0]->image = $formdata->t_image;
-    $Object->teachers->teacher[0]->description = $formdata->t_description;
+    $Object->teachers[0]->display_name = $formdata->t_title;
+    $Object->teachers[0]->image = $formdata->t_image;
+    $Object->teachers[0]->description = $formdata->t_description;
     $Object->transfers->courseTransfer[0]->institution_id = $formdata->institution_id;
     $Object->transfers->courseTransfer[0]->direction_id = $formdata->direction_id;
-    if ($Object->external_courseid != '') {
-        $Object->id = $Object->external_courseid;
-    }
     unset($Object->external_courseid);
     unset($Object->internal_courseid);
-    $Object_for_db->json = json_encode($Object);
+    $Object_for_db->json = str_replace('\\', '', json_encode($Object, JSON_UNESCAPED_UNICODE));
+//     $Object_for_db->json = json_encode($Object_for_db->json, JSON_UNESCAPED_SLASHES);
     return $Object_for_db;
 }
 
@@ -198,33 +203,27 @@ function boolen_convert($expression) {
         $expression = false;}
     if ($expression == '1'){
         $expression = true;}
-    if ($expression == true) {
-        $expression = '1';}
-    if ($expression == false) {
-        $expression = '0';}
     return $expression;
 }
 
-function get_obj_from_json($json, $internal_courseid, $id) {
+function get_obj_from_json($json, $id=NULL) {
     $obj = json_decode($json);
     $obj->external_courseid = $obj->id;
-    $obj->internal_courseid = $internal_courseid;
-    $obj->id = $id;
-//    unset($obj->id);
     return $obj;
 }
 
-function  add_course($url, $jsonString, $keyfile, $certfile) {
-    $curl = curl_init($url);
+function add_course($url, $jsonString, $keyfile, $certfile) {
+    $curl = curl_init('https://preprod.oeplatform.ru/ru/api/cources/v0/course/');
     curl_setopt_array($curl, [
         CURLOPT_RETURNTRANSFER => 1,
         CURLOPT_HTTPHEADER => 'Content-type: application/json',
         CURLOPT_REFERER => 'https://mooc.vsu.ru/',
-        CURLOPT_URL => $url,
+//        CURLOPT_URL => 'https://preprod.oeplatform.ru/ru/api/cources/v0/course/',
         CURLOPT_SSL_VERIFYPEER => 1,
         CURLOPT_SSL_VERIFYHOST => 2,
-        CURLOPT_CAINFO => $certfile,
-        CURLOPT_SSLKEY => $keyfile,
+//        CURLOPT_CAINFO => $certfile,
+//        CURLOPT_SSLKEY => $keyfile,
+        CURLOPT_USERPWD => 'riapolov@vsu.ru : vsu_2019',
         CURLOPT_POST => 1,
         CURLOPT_POSTFIELDS => [
             json => $jsonString,
@@ -232,11 +231,35 @@ function  add_course($url, $jsonString, $keyfile, $certfile) {
     ]);
     $resp = curl_exec($curl);
     $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-    if ($status != 201) {
+    if ($status != 200) {
         die("Error: call to URL $url failed with status $status, response $resp, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
     }
     curl_close($curl);
 }
+
+//function add_course($url, $jsonString, $keyfile, $certfile) {
+//    $curl = curl_init($url);
+//    curl_setopt_array($curl, [
+//        CURLOPT_RETURNTRANSFER => 1,
+//        CURLOPT_HTTPHEADER => 'Content-type: application/json',
+//        CURLOPT_REFERER => 'https://mooc.vsu.ru/',
+//        CURLOPT_URL => $url,
+//        CURLOPT_SSL_VERIFYPEER => 1,
+//        CURLOPT_SSL_VERIFYHOST => 2,
+//        CURLOPT_CAINFO => $certfile,
+//        CURLOPT_SSLKEY => $keyfile,
+//        CURLOPT_POST => 1,
+//        CURLOPT_POSTFIELDS => [
+//            json => $jsonString,
+//            ],
+//    ]);
+//    $resp = curl_exec($curl);
+//    $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+//    if ($status != 200) {
+//        die("Error: call to URL $url failed with status $status, response $resp, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
+//    }
+//    curl_close($curl);
+//}
 
 //function update_course($url, $course_id_ext, $jsonString) {
 //    $curl = curl_init($url);
