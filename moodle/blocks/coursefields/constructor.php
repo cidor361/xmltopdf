@@ -3,93 +3,53 @@ defined('MOODLE_INTERNAL') || die();
 require_once('../../config.php');
 require_once('list_form.php');
 
-  function array_filter_recursive($input)
-  {
-    foreach ($input as &$value)
-    {
-      if (is_array($value))
-      {
-        $value = array_filter_recursive($value);
-      }
-    }
-   
-    return array_filter($input);
-  }
-
-function create_start_object($course, $info) {
-    $Object = new stdClass();
-    $Object->title = $course->fullname;
-    $Object->started_at = gmdate("Y-m-d", (int)$course->startdate);
-    $Object->finished_at = gmdate("Y-m-d", (int)$course->enddate);
-    $Object->enrollment_finished_at = '';//= gmdate("Y-m-d", (int)$a);
-    $Object->image = '';
-    $Object->description = $course->summary;
-    $Object->competences = '';
-    $Object->requirements = new stdClass();
-    $Object->content = '';
-    $Object->external_url = $info['courselink'].$course->id;
-    $Object->direction = new stdClass();
-    $Object->institution = $info['institution'];
-    $Object->duration = '';
-    $Object->lectures = '';
-    $Object->language = '';
-    $Object->cert = '0';
-    $Object->visitors = '';
-    $Object->teachers = array();
-    $Object->teachers[0]->display_name = '';
-    $Object->teachers[0]->image = '';
-    $Object->teachers[0]->description = '';
-    $Object->transfers = new stdClass();
-    $Object->transfers->courseTransfer[0]->institution_id = '';
-    $Object->transfers->courseTransfer[0]->direction_id = '';
-    $Object->results = '';
-    $Object->accreditated = '';
-    $Object->hours = '';
-    $Object->hours_per_week = '';
-    $Object->ness_version = '';
-    $Object->promo_url = '';
-    $Object->promo_lang = '';
-    $Object->subtitles_lang = '';
-    $Object->estimation_tools = '';
-    $Object->proctoring_service = '';
-    $Object->sessionid = '';
-    return $Object;
-}
+//  function array_filter_recursive($input)
+//  {
+//    foreach ($input as &$value)
+//    {
+//      if (is_array($value))
+//      {
+//        $value = array_filter_recursive($value);
+//      }
+//    }
+//
+//    return array_filter($input);
+//  }
 
 function create_full_field($Object) {
     $mform = new listform();
     $mform->add_header('Свойства курса', 'course');
     $mform->add_simple_text(get_string('title', 'block_coursefields'), $Object->title, 'title');
-    $mform->add_textfield(get_string('image', 'block_coursefields'), $Object->image, 'image');
+//    $mform->add_textfield(get_string('image', 'block_coursefields'), $Object->image, 'image');
     $mform->add_simple_text(get_string('description',  'block_coursefields'), $Object->description, 'description', 1);
     $mform->add_text_editor(get_string('competences', 'block_coursefields'), $Object->competences, 'competences');
     $mform->add_text_editor(get_string('requirements', 'block_coursefields'), $Object->requirements, 'requirements');
     $mform->add_simple_text(get_string('external_url', 'block_coursefields'), $Object->external_url, 'external_url', 1);
 //    $mform->add_text_editor(get_string('direction', 'block_coursefields'), $Object->direction, 'direction', 1);
-    $mform->add_simple_text(get_string('institution', 'block_coursefields'), $Object->institution, 'institution', 1);
+//    $mform->add_simple_text(get_string('institution', 'block_coursefields'), $Object->institution, 'institution', 1);
     $mform->add_textfield(get_string('duration', 'block_coursefields'), $Object->duration, 'duration', 1);
     $mform->add_textfield(get_string('lectures', 'block_coursefields'), $Object->lectures, 'lectures');
     $mform->add_textfield(get_string('language', 'block_coursefields'), $Object->language, 'language');
     $mform->add_checkbox(get_string('cert', 'block_coursefields'), $Object->cert, 'cert', $Object->cert);
 //    $mform->add_textfield(get_string('visitors', 'block_coursefields'), $Object->visitors, 'visitors');
-    $mform->add_text_editor(get_string('results', 'block_coursefields'), $Object->results, 'results');
-    $mform->add_textfield(get_string('accreditated', 'block_coursefields'), $Object->accreditated, 'accreditated');
+//    $mform->add_text_editor(get_string('results', 'block_coursefields'), $Object->results, 'results');
+//    $mform->add_textfield(get_string('accreditated', 'block_coursefields'), $Object->accreditated, 'accreditated');
     $mform->add_textfield(get_string('hours', 'block_coursefields'), $Object->hours, 'hours');
     $mform->add_textfield(get_string('hours_per_week', 'block_coursefields'), $Object->hours_per_week, 'hours_per_week');
-    $mform->add_textfield(get_string('business_version', 'block_coursefields'), $Object->business_version, 'business_version', 1);
+//    $mform->add_textfield(get_string('business_version', 'block_coursefields'), $Object->business_version, 'business_version', 1);
     $mform->add_textfield(get_string('promo_url', 'block_coursefields'), $Object->promo_url, 'promo_url');
     $mform->add_textfield(get_string('promo_lang', 'block_coursefields'), $Object->promo_lang, 'promo_lang');
     $mform->add_textfield(get_string('subtitles_lang', 'block_coursefields'), $Object->subtitles_lang, 'subtitles_lang');
-    $mform->add_textfield(get_string('estimation_tools', 'block_coursefields'), $Object->estimation_tools, 'estimation_tools');
-    $mform->add_textfield(get_string('proctoring_service', 'block_coursefields'), $Object->proctoring_service, 'proctoring_service');
+//    $mform->add_textfield(get_string('estimation_tools', 'block_coursefields'), $Object->estimation_tools, 'estimation_tools');
+//    $mform->add_textfield(get_string('proctoring_service', 'block_coursefields'), $Object->proctoring_service, 'proctoring_service');
 //    $mform->add_textfield(get_string('sessionid', 'block_coursefields'), $Object->sessionid, 'sessionid');
     $mform->add_header('Преподаватели', 'teachers');
     $mform->add_textfield(get_string('t_title', 'block_coursefields'), $Object->teachers[0]->display_name, 't_title', 1);
     $mform->add_textfield(get_string('t_image', 'block_coursefields'), $Object->teachers[0]->image, 't_image');
     $mform->add_textfield(get_string('t_description', 'block_coursefields'), $Object->teachers[0]->description, 't_description');
-    $mform->add_header('Информация о перезачётах', 'coursetransfer');
-    $mform->add_textfield(get_string('institution_id', 'block_coursefields'), $Object->transfers->courseTransfer[0]->institution_id, 'institution_id', 1);
-    $mform->add_textfield(get_string('direction_id', 'block_coursefields'), $Object->transfers->courseTransfer[0]->direction_id, 'direction_id', 1);
+//    $mform->add_header('Информация о перезачётах', 'coursetransfer');
+//    $mform->add_textfield(get_string('institution_id', 'block_coursefields'), $Object->transfers->courseTransfer[0]->institution_id, 'institution_id', 1);
+//    $mform->add_textfield(get_string('direction_id', 'block_coursefields'), $Object->transfers->courseTransfer[0]->direction_id, 'direction_id', 1);
     $mform->add_act_button();
     return $mform;
 }
@@ -98,49 +58,84 @@ function create_simple_field($Object, $userid, $context) {
     $mform = new listform();
     $mform->add_header('Свойства курса', 'course');
     $mform->add_simple_text(get_string('title', 'block_coursefields'), $Object->title, 'title');
-    $mform->add_simple_text(get_string('image', 'block_coursefields'), $Object->image, 'image');
+//    $mform->add_simple_text(get_string('image', 'block_coursefields'), $Object->image, 'image');
     $mform->add_simple_text(get_string('description',  'block_coursefields'), $Object->description, 'description', 1);
     $mform->add_simple_text(get_string('competences', 'block_coursefields'), $Object->competences, 'competences');
     $mform->add_simple_text(get_string('requirements', 'block_coursefields'), $Object->requirements, 'requirements');
     $mform->add_simple_text(get_string('external_url', 'block_coursefields'), $Object->external_url, 'external_url', 1);
 //    $mform->add_simple_text(get_string('direction', 'block_coursefields'), $Object->direction, 'direction', 1);
-    $mform->add_simple_text(get_string('institution', 'block_coursefields'), $Object->institution, 'institution', 1);
+//    $mform->add_simple_text(get_string('institution', 'block_coursefields'), $Object->institution, 'institution', 1);
     $mform->add_simple_text(get_string('duration', 'block_coursefields'), $Object->duration, 'duration', 1);
     $mform->add_simple_text(get_string('lectures', 'block_coursefields'), $Object->lectures, 'lectures');
     $mform->add_simple_text(get_string('language', 'block_coursefields'), $Object->language, 'language');
     $mform->add_simple_text(get_string('cert', 'block_coursefields'), $Object->cert, 'cert', 1);
 //    $mform->add_simple_text(get_string('visitors', 'block_coursefields'), $Object->visitors, 'visitors');
-    $mform->add_simple_text(get_string('results', 'block_coursefields'), $Object->results, 'results');
-    $mform->add_simple_text(get_string('accreditated', 'block_coursefields'), $Object->accreditated, 'accreditated');
+//    $mform->add_simple_text(get_string('results', 'block_coursefields'), $Object->results, 'results');
+//    $mform->add_simple_text(get_string('accreditated', 'block_coursefields'), $Object->accreditated, 'accreditated');
     $mform->add_simple_text(get_string('hours', 'block_coursefields'), $Object->hours, 'hours');
     $mform->add_simple_text(get_string('hours_per_week', 'block_coursefields'), $Object->hours_per_week, 'hours_per_week');
-    $mform->add_simple_text(get_string('business_version', 'block_coursefields'), $Object->business_version, 'business_version', 1);
+//    $mform->add_simple_text(get_string('business_version', 'block_coursefields'), $Object->business_version, 'business_version', 1);
     $mform->add_simple_text(get_string('promo_url', 'block_coursefields'), $Object->promo_url, 'promo_url');
     $mform->add_simple_text(get_string('promo_lang', 'block_coursefields'), $Object->promo_lang, 'promo_lang');
     $mform->add_simple_text(get_string('subtitles_lang', 'block_coursefields'), $Object->subtitles_lang, 'subtitles_lang');
-    $mform->add_simple_text(get_string('estimation_tools', 'block_coursefields'), $Object->estimation_tools, 'estimation_tools');
-    $mform->add_simple_text(get_string('proctoring_service', 'block_coursefields'), $Object->proctoring_service, 'proctoring_service');
+//    $mform->add_simple_text(get_string('estimation_tools', 'block_coursefields'), $Object->estimation_tools, 'estimation_tools');
+//    $mform->add_simple_text(get_string('proctoring_service', 'block_coursefields'), $Object->proctoring_service, 'proctoring_service');
 //    $mform->add_simple_text(get_string('sessionid', 'block_coursefields'), $Object->sessionid, 'sessionid');
     $mform->add_header('Преподаватели', 'teachers');
     $mform->add_simple_text(get_string('t_title', 'block_coursefields'), $Object->teachers[0]->display_name, 't_title', 1);
     $mform->add_simple_text(get_string('t_image', 'block_coursefields'), $Object->teachers[0]->image, 't_image');
     $mform->add_simple_text(get_string('t_description', 'block_coursefields'), $Object->teachers[0]->description, 't_description');
-    $mform->add_header('Информация о перезачётах', 'coursetransfer');
-    $mform->add_simple_text(get_string('institution_id', 'block_coursefields'), $Object->transfers->courseTransfer[0]->institution_id, 'institution_id', 1);
-    $mform->add_simple_text(get_string('direction_id', 'block_coursefields'), $Object->transfers->courseTransfer[0]->direction_id, 'direction_id', 1);
+//    $mform->add_header('Информация о перезачётах', 'coursetransfer');
+//    $mform->add_simple_text(get_string('institution_id', 'block_coursefields'), $Object->transfers->courseTransfer[0]->institution_id, 'institution_id', 1);
+//    $mform->add_simple_text(get_string('direction_id', 'block_coursefields'), $Object->transfers->courseTransfer[0]->direction_id, 'direction_id', 1);
     if (!is_user_student($context, $userid)) {
         $mform->add_act_button();
     }
     return $mform;
 }
 
-function is_dbobj_exist($DB, $internal_courseid = null, $external_courseid = null) {
-    if ($internal_courseid != null) {
-        $exist = $DB->record_exists('block_coursefields', array('internal_courseid' => $internal_courseid));
-    }
-//    if ($external_courseid != null) {
-//        $exist = $DB->record_exists('block_coursefields', array('internal_courseid' => $external_courseid));
-//    }
+function create_start_object($course, $info, $USER) {
+    $Object = new stdClass();
+    $Object->title = $course->fullname;
+    $Object->started_at = gmdate("Y-m-d", (int)$course->startdate);
+    $Object->finished_at = gmdate("Y-m-d", (int)$course->enddate);
+//    $Object->enrollment_finished_at = gmdate("Y-m-d", (int)$course->startdate);
+////    $Object->image = '';
+    $Object->description = $course->summary;
+//    $Object->competences = '';
+//    $Object->requirements = new stdClass();
+//    $Object->content = '';
+    $Object->external_url = $info['courselink'].$course->id;
+////    $Object->direction = new stdClass();
+    $Object->institution = $info['institution'];
+    $Object->duration = '';
+//    $Object->lectures = '';
+    $Object->language = 'ru';
+    $Object->cert = '0';
+//    $Object->visitors = '';
+    $Object->teachers = array();
+    $Object->teachers[0]->display_name = $USER->firstname.' '.$USER->lastname;
+//    $Object->teachers[0]->image = '';
+//    $Object->teachers[0]->description = '';
+//    $Object->transfers = array();
+//    $Object->transfers->courseTransfer[0]->institution_id = $info['partnerid'];
+//    $Object->transfers->courseTransfer[0]->direction_id = '';
+//    $Object->results = '';
+//    $Object->accreditated = '';
+//    $Object->hours = '';
+//    $Object->hours_per_week = '';
+    $Object->business_version = '1';
+//    $Object->promo_url = '';
+//    $Object->promo_lang = 'ru';
+//    $Object->subtitles_lang = 'en';
+//    $Object->estimation_tools = 'прокторинг';
+//    $Object->proctoring_service = 'Examus';
+//    $Object->sessionid = '';
+    return $Object;
+}
+
+function dbobj_exist($DB, $internal_courseid = null) {
+    $exist = $DB->record_exists('block_coursefields', array('internal_courseid' => $internal_courseid));
     return $exist;
 }
 
@@ -164,60 +159,65 @@ function is_user_student($context, $userid) {
 
 function reformat_formdata_for_db($Object, $formdata, $internal_courseid, $external_courseid) {
     $Object_for_db = new stdClass();
+//    $Object_for_db->id = $internal_courseid;
     $Object_for_db->internal_courseid = $internal_courseid;
-    $Object_for_db->external_courseid = $external_courseid;
-    $Object_for_db->id = $internal_courseid;
-    $Object->image = $formdata->image;
-    $Object->competences = $formdata->competences["text"];
-    $Object->requirements = $formdata->requirements["text"];
-    $Object->direction = $formdata->direction;
-    $Object->duration = $formdata->duration;
-    $Object->lectures = $formdata->lectures;
-    $Object->language = $formdata->language;
-    $Object->cert = boolen_convert($formdata->cert);
-    $Object->results = $formdata->results["text"];
-    $Object->accreditated = $formdata->accreditated;
-    $Object->hours = $formdata->hours;
-    $Object->hours_per_week = $formdata->hours_per_week;
-    $Object->business_version = $formdata->business_version;
-    $Object->promo_url = $formdata->promo_url;
-    $Object->promo_lang = $formdata->promo_lang;
-    $Object->subtitles_lang = $formdata->subtitles_lang;
-    $Object->estimation_tools = $formdata->estimation_tools;
-    $Object->proctoring_service = $formdata->proctoring_service;
-    $Object->sessionid = $formdata->sessionid;
-    $Object->teachers[0]->display_name = $formdata->t_title;
-    $Object->teachers[0]->image = $formdata->t_image;
-    $Object->teachers[0]->description = $formdata->t_description;
-    $Object->transfers->courseTransfer[0]->institution_id = $formdata->institution_id;
-    $Object->transfers->courseTransfer[0]->direction_id = $formdata->direction_id;
+    if($external_courseid != null) {$Object->id = $external_courseid;};
+    if(!empty($formdata->image)) {$Object->image = $formdata->image;};
+    if(!empty($formdata->competences["text"])) {$Object->competences = $formdata->competences["text"];};
+    if(!empty($formdata->requirements["text"])) {$Object->requirements = $formdata->requirements["text"];};
+    if(!empty($formdata->direction)) {
+        $Object->direction = new stdClass();
+        $Object->direction = $formdata->direction;};
+    if(!empty($formdata->duration)) {$Object->duration = $formdata->duration;};
+    if(!empty($formdata->lectures)) {$Object->lectures = $formdata->lectures;};
+    if(!empty($formdata->language)) {$Object->language = $formdata->language;};
+    $Object->cert = filter_var($formdata->cert, FILTER_VALIDATE_BOOLEAN);
+    if(!empty($formdata->results["text"])) {$Object->results = $formdata->results["text"];};
+    if(!empty($formdata->accreditated)) {$Object->accreditated = $formdata->accreditated;};
+    if(!empty($formdata->hours)) {$Object->hours = $formdata->hours;};
+    if(!empty($formdata->hours_per_week)) {$Object->hours_per_week = $formdata->hours_per_week;};
+    if(!empty($formdata->business_version)) {$Object->business_version = $formdata->business_version;};
+    if(!empty($formdata->promo_url)) {$Object->promo_url = $formdata->promo_url;};
+    if(!empty($formdata->promo_lang)) {$Object->promo_lang = $formdata->promo_lang;};
+    if(!empty($formdata->subtitles_lang)) {$Object->subtitles_lang = $formdata->subtitles_lang;};
+    if(!empty($formdata->estimation_tools)) {$Object->estimation_tools = $formdata->estimation_tools;};
+    if(!empty($formdata->proctoring_service)) {$Object->proctoring_service = $formdata->proctoring_service;};
+    if(!empty($formdata->sessionid)) {$Object->sessionid = $formdata->sessionid;};
+    if(!empty($formdata->t_title)) {$Object->teachers[0]->display_name = $formdata->t_title;};
+    if(!empty($formdata->t_image)) {$Object->teachers[0]->image = $formdata->t_image;};
+    if(!empty($formdata->t_description)) {$Object->teachers[0]->description = $formdata->t_description;};
+//    if(!empty($formdata->institution_id)) {$Object->transfers->courseTransfer[0]->institution_id = $formdata->institution_id;};
+//    if(!empty($formdata->direction_id)) {$Object->transfers->courseTransfer[0]->direction_id = $formdata->direction_id;};
     unset($Object->external_courseid);
     unset($Object->internal_courseid);
-    $Object_for_db->json = str_replace('\\', '', json_encode($Object, JSON_UNESCAPED_UNICODE));
-//     $Object_for_db->json = json_encode($Object_for_db->json, JSON_UNESCAPED_SLASHES);
+    $Object_for_db->json = json_encode($Object, JSON_UNESCAPED_UNICODE);
     return $Object_for_db;
 }
 
-function boolen_convert($expression) {
-    if ($expression == '0') {
-        $expression = false;}
-    if ($expression == '1'){
-        $expression = true;}
-    return $expression;
-}
-
-function get_obj_from_json($json, $id=NULL) {
+function get_obj_from_json($json) {
     $obj = json_decode($json);
-    $obj->external_courseid = $obj->id;
     return $obj;
 }
+
+function get_json_for_sending($Object, $info) {
+    $Object_for_sending = new stdClass();
+    $Object_for_sending->partnerId =$info['partnerid'];
+    $Object_for_sending->package = new stdClass();
+    $Object_for_sending->package->items = array();
+    $Object_for_sending->package->items[0] = $Object->json;
+    $Object_for_sending = str_replace('\\', '', json_encode($Object_for_sending, JSON_UNESCAPED_UNICODE));
+    $Object_for_sending = trim($Object_for_sending, '"');
+    return $Object_for_sending;
+}
+
+
 
 function add_course($url, $jsonString, $keyfile, $certfile) {
     $curl = curl_init('https://preprod.oeplatform.ru/ru/api/cources/v0/course/');
     curl_setopt_array($curl, [
         CURLOPT_RETURNTRANSFER => 1,
         CURLOPT_HTTPHEADER => 'Content-type: application/json',
-        CURLOPT_REFERER => 'https://mooc.vsu.ru/',
+//        CURLOPT_REFERER => 'https://mooc.vsu.ru/',
 //        CURLOPT_URL => 'https://preprod.oeplatform.ru/ru/api/cources/v0/course/',
         CURLOPT_SSL_VERIFYPEER => 1,
         CURLOPT_SSL_VERIFYHOST => 2,

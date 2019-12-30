@@ -24,6 +24,8 @@ class block_coursefields extends block_base {
         if (is_primary_admin($USER->id)) {
             $url = new moodle_url('/blocks/coursefields/portfolio.php');
             $this->content->footer .= '<br><a href='.$url.'>Портфолио</a>';
+            $url = new moodle_url('blocks/coursefields/admin_page.php');
+            $this->content->footer .= '<br><a href="'.$url.'>Администрирование</a>';
         }
 
         return $this->content;

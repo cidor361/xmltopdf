@@ -18,15 +18,9 @@ $PAGE->set_context(context_course::instance($internal_courseid));
 if ($DB->record_exists('block_coursefields',array('internal_courseid' => $internal_courseid))) {
     $Object = $DB->get_record('block_coursefields', array('internal_courseid' => $internal_courseid), '*', MUST_EXIST);
         }
-$json = $Object->json;
-$json2 = json_decode($json);
-$send_obj = new stdClass();
-$send_obj->partnerId = $info['partnerid'];
-$send_obj->package = new stdClass();
-$send_obj->package->items = $json2;
-$json = json_encode($send_obj);
-
-$mform = create_simple_field(get_obj_from_json($Object->json), $USER->id, $context);
+$json = get_json_for_sending($Object, $info);
+$Object = json_decode($Object->json);
+$mform = create_simple_field($Object, $USER->id, $context);
 
 if ($mform->is_cancelled()) {
     $url = new moodle_url('/blocks/coursefields/list.php');
@@ -40,15 +34,15 @@ if ($mform->is_cancelled()) {
     curl_setopt($curl, CURLOPT_POST, 1);
     curl_setopt($curl, CURLOPT_POSTFIELDS, $json);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt_array($curl, [
+//    curl_setopt_array($curl, [
 //         CURLOPT_REFERER => 'https://mooc.vsu.ru/',
 //         CURLOPT_SSL_VERIFYPEER => 1,
 //         CURLOPT_SSL_VERIFYHOST => 2,
-//        CURLOPT_CAINFO => $certfile,
-//        CURLOPT_SSLKEY => $keyfile,
+//         CURLOPT_CAINFO => $certfile,
+//         CURLOPT_SSLKEY => $keyfile,
 //         CURLOPT_POST => 1,
 //         CURLOPT_POSTFIELDS => [
-    ]);
+//    ]);
     $resp = curl_exec($curl);
     $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     if ($status != 200) {

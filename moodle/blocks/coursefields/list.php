@@ -20,20 +20,13 @@ $PAGE->set_heading(get_string('course_fields', 'block_coursefields'));
 $PAGE->set_context(context_course::instance($internal_courseid));
 
 $course = $DB->get_record('course', array('id' => $internal_courseid), '*', MUST_EXIST);
-$exist = is_dbobj_exist($DB, $internal_courseid);
-if ($exist) {
-    $Object_db = $DB->get_record('block_coursefields', array('internal_courseid' => $internal_courseid));
-    $Object = get_obj_from_json($Object_db->json);
+if (dbobj_exist($DB, $internal_courseid)) {
+    $Object = $DB->get_record('block_coursefields', array('internal_courseid' => $internal_courseid));
+    $_SESSION['id'] = $Object->id;
+    $id = $Object->id;
+    $Object = json_decode($Object->json);
 } else {
-    $Object = create_start_object($course, $info);
-}
-$pseudo_courseid = '0000000000'.$internal_courseid;
-
-if ($Object->external_courseid != $pseudo_courseid) {
-    $_SESSION['external_courseid'] = $Object_db->external_courseid;
-    $external_courseid = $Object_db->external_courseid;
-} else {
-    $_SESSION['pseudo_courseid'] = $pseudo_courseid;
+    $Object = create_start_object($course, $info, $USER);
 }
 
 $mform = create_full_field($Object);
@@ -42,10 +35,10 @@ if($mform->is_cancelled()) {
     $url = new moodle_url('/course/view.php?id='.$internal_courseid);
     redirect($url);
 } else if ($formdata = $mform->get_data()) {
-    $Object = reformat_formdata_for_db($Object, $formdata, $internal_courseid, $pseudo_courseid);
-   $Output_var = $Object;
-    if ($exist) {
-        $DB->update_record('block_coursefields', $Object, $bulk=false);
+    $Object = reformat_formdata_for_db($Object, $formdata, $internal_courseid, $external_courseid);
+    $Object->id = $id;
+    if (dbobj_exist($DB, $internal_courseid)) {
+        $DB->update_record('block_coursefields', $Object);
         } else {
         $DB->insert_record('block_coursefields', $Object, '*', MUST_EXIST);
     }
@@ -59,5 +52,5 @@ $mform->display();
 echo '<br><b>28 октября плагин был обновлён, советуем нажать кнопку "Сохранить" во избежании несоответствия данных в базе данных</b></br>';
 echo '<br>Если хотите отправить данный курс в СЦОС, нажмите "Отправить"<br/>';
 echo '<a href='.$url.'>Отправить</a></br>';
-echo var_dump($Output_var);
+echo var_dump($Object);
 echo $OUTPUT->footer();
