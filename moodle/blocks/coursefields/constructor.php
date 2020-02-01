@@ -3,27 +3,14 @@ defined('MOODLE_INTERNAL') || die();
 require_once('../../config.php');
 require_once('list_form.php');
 
-//  function array_filter_recursive($input)
-//  {
-//    foreach ($input as &$value)
-//    {
-//      if (is_array($value))
-//      {
-//        $value = array_filter_recursive($value);
-//      }
-//    }
-//
-//    return array_filter($input);
-//  }
-
 function create_full_field($Object) {
     $mform = new listform();
     $mform->add_header('Свойства курса', 'course');
     $mform->add_simple_text(get_string('title', 'block_coursefields'), $Object->title, 'title');
 //    $mform->add_textfield(get_string('image', 'block_coursefields'), $Object->image, 'image');
     $mform->add_simple_text(get_string('description',  'block_coursefields'), $Object->description, 'description', 1);
-    $mform->add_text_editor(get_string('competences', 'block_coursefields'), $Object->competences, 'competences');
-    $mform->add_text_editor(get_string('requirements', 'block_coursefields'), $Object->requirements, 'requirements');
+    $mform->add_text_editor(get_string('competences', 'block_coursefields'), add_tags_competences($Object->competences), 'competences');
+//    $mform->add_text_editor(get_string('requirements', 'block_coursefields'), $Object->requirements, 'requirements');
     $mform->add_simple_text(get_string('external_url', 'block_coursefields'), $Object->external_url, 'external_url', 1);
 //    $mform->add_text_editor(get_string('direction', 'block_coursefields'), $Object->direction, 'direction', 1);
 //    $mform->add_simple_text(get_string('institution', 'block_coursefields'), $Object->institution, 'institution', 1);
@@ -60,8 +47,8 @@ function create_simple_field($Object, $userid, $context) {
     $mform->add_simple_text(get_string('title', 'block_coursefields'), $Object->title, 'title');
 //    $mform->add_simple_text(get_string('image', 'block_coursefields'), $Object->image, 'image');
     $mform->add_simple_text(get_string('description',  'block_coursefields'), $Object->description, 'description', 1);
-    $mform->add_simple_text(get_string('competences', 'block_coursefields'), $Object->competences, 'competences');
-    $mform->add_simple_text(get_string('requirements', 'block_coursefields'), $Object->requirements, 'requirements');
+    $mform->add_simple_text(get_string('competences', 'block_coursefields'), add_tags_competences($Object->competences), 'competences');
+//    $mform->add_simple_text(get_string('requirements', 'block_coursefields'), $Object->requirements, 'requirements');
     $mform->add_simple_text(get_string('external_url', 'block_coursefields'), $Object->external_url, 'external_url', 1);
 //    $mform->add_simple_text(get_string('direction', 'block_coursefields'), $Object->direction, 'direction', 1);
 //    $mform->add_simple_text(get_string('institution', 'block_coursefields'), $Object->institution, 'institution', 1);
@@ -163,8 +150,8 @@ function reformat_formdata_for_db($Object, $formdata, $internal_courseid, $exter
     $Object_for_db->internal_courseid = $internal_courseid;
     if($external_courseid != null) {$Object->id = $external_courseid;};
     if(!empty($formdata->image)) {$Object->image = $formdata->image;};
-    if(!empty($formdata->competences["text"])) {$Object->competences = $formdata->competences["text"];};
-    if(!empty($formdata->requirements["text"])) {$Object->requirements = $formdata->requirements["text"];};
+    if(!empty($formdata->competences["text"])) {$Object->competences = strip_tags_competences($formdata->competences["text"]);};
+//    if(!empty($formdata->requirements["text"])) {$Object->requirements = $formdata->requirements["text"];};
     if(!empty($formdata->direction)) {
         $Object->direction = new stdClass();
         $Object->direction = $formdata->direction;};
@@ -210,7 +197,17 @@ function get_json_for_sending($Object, $info) {
     return $Object_for_sending;
 }
 
+function strip_tags_competences($string) {
+    $string = str_replace('</p><p>', '\n', $string);
+    $string =  strip_tags($string, '');
+    return $string;
+}
 
+function add_tags_competences($string) {
+    $string = str_replace('\n', '</p><p>', $string);
+    $string = '<p>'.$string.'</p>';
+    return $string;
+}
 
 function add_course($url, $jsonString, $keyfile, $certfile) {
     $curl = curl_init('https://preprod.oeplatform.ru/ru/api/cources/v0/course/');

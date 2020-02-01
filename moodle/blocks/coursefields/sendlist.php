@@ -55,5 +55,5 @@ if ($mform->is_cancelled()) {
 
 echo $OUTPUT->header();
 $mform->display();
-echo var_dump($json);
+//echo var_dump($json);
 echo $OUTPUT->footer();

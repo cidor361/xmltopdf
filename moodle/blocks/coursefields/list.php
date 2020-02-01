@@ -49,8 +49,6 @@ if($mform->is_cancelled()) {
 $url = new moodle_url($info['sendlisturl']);
 echo $OUTPUT->header();
 $mform->display();
-echo '<br><b>28 октября плагин был обновлён, советуем нажать кнопку "Сохранить" во избежании несоответствия данных в базе данных</b></br>';
-echo '<br>Если хотите отправить данный курс в СЦОС, нажмите "Отправить"<br/>';
-echo '<a href='.$url.'>Отправить</a></br>';
-echo var_dump($Object);
+echo '<br>Если хотите отправить данный курс в СЦОС, нажмите "<a href='.$url.'>Отправить</a>"<br/>';
+//echo var_dump($Object);
 echo $OUTPUT->footer();
