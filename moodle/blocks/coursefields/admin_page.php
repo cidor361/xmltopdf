@@ -1,6 +1,6 @@
 <?php
 require_once('../../config.php');
-require_once('list_form.php');
+require_once('lib.php');
 require 'info.php';
 
 $internal_courseid = $SESSION['internal_courseid'];

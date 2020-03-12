@@ -1,5 +1,5 @@
 <?php
-require_once("list_form.php");
+require_once("lib.php");
 
 class block_coursefields extends block_base {
 
