@@ -3,8 +3,8 @@ require_once('../../config.php');
 require_once('constructor.php');
 require 'info.php';
 
-global $PAGE, $OUTPUT, $DB, $USER;
-$internal_courseid = $_SESSION['internal_courseid'];
+global $PAGE, $OUTPUT, $DB, $USER, $SESSION;
+$internal_courseid = $SESSION->internal_courseid;
 $context = get_context_instance(CONTEXT_COURSE, $internal_courseid);
 require_login($internal_courseid);
 if (is_user_student($context, $USER->id)) {
@@ -20,10 +20,11 @@ $PAGE->set_context(context_course::instance($internal_courseid));
 $course = $DB->get_record('course', array('id' => $internal_courseid), '*', MUST_EXIST);
 if (dbobj_exist($DB, $internal_courseid)) {
     $Object = $DB->get_record('block_coursefields', array('internal_courseid' => $internal_courseid));
-    $_SESSION['id'] = $Object->id;
-    $_SESSION['external_courseid'] = $Object->external_courseid;
+    $SESSION->id = $Object->id;
+    $SESSION->external_courseid = $Object->external_courseid;
     $Object = get_obj_from_json($Object);
-//     $course_status = get_grade_status_course($info['get_status_url'], $_SESSION['external_courseid'])
+    $login_password = 'riapolov@vsu.ru:vsu_2019';
+    $external_status = get_grade_status_course($info['get_status_url'], $SESSION->external_courseid, $login_password);
 } else {
     $Object = create_start_object($course, $info, $USER);
 }
@@ -35,7 +36,7 @@ if($mform->is_cancelled()) {
     redirect($url);
 } else if ($formdata = $mform->get_data()) {
     $Object = get_form_data($Object, $formdata);
-    $Object_for_db = add_data_for_db($Object, $internal_courseid, $external_courseid, $_SESSION['id']);
+    $Object_for_db = add_data_for_db($Object, $internal_courseid, $external_courseid, $SESSION->id);
     if (dbobj_exist($DB, $internal_courseid)) {
         $DB->update_record('block_coursefields', $Object_for_db);
         } else {
@@ -49,5 +50,6 @@ $url = new moodle_url($info['sendlisturl']);
 echo $OUTPUT->header();
 $mform->display();
 echo '<br>Если хотите отправить данный курс в СЦОС, нажмите "<a href='.$url.'>Отправить</a>"<br/>';
-// echo var_dump($Object);
+echo var_dump($external_status).'</br>';
+echo var_dump($SESSION->external_courseid);
 echo $OUTPUT->footer();

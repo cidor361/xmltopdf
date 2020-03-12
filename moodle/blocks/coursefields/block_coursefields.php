@@ -10,12 +10,12 @@ class block_coursefields extends block_base {
 
     public function get_content()
     {
-        global $COURSE, $USER;
+        global $COURSE, $USER, $SESSION;
         if ($this->content != null) {
             return $this->content;
         }
 
-        $_SESSION['internal_courseid'] = $COURSE->id;
+        $SESSION->internal_courseid = $COURSE->id;
 
         $this->content = new stdClass;
         $this->content->text = get_string('Description_plugin', 'block_coursefields');

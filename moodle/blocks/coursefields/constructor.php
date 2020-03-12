@@ -91,7 +91,7 @@ function create_start_object($course, $info, $USER) {
     $Object->started_at = gmdate("Y-m-d", (int)$course->startdate);
     $Object->finished_at = gmdate("Y-m-d", (int)$course->enddate);
 //    $Object->enrollment_finished_at = gmdate("Y-m-d", (int)$course->startdate);
-   $Object->image = '';
+    $Object->image = '';
     $Object->description = strip_html_tags($course->summary);
 //    $Object->content = '';
     $Object->external_url = $info['courselink'].$course->id;
@@ -116,7 +116,7 @@ function create_start_object($course, $info, $USER) {
     $Object->business_version = '1';
     $Object->promo_url = '';
     $Object->promo_lang = '';
-   $Object->subtitles_lang = '';
+    $Object->subtitles_lang = '';
     $Object->estimation_tools = '';
     $Object->proctoring_service = '';
     $Object->sessionid = '';
@@ -193,7 +193,7 @@ function get_obj_from_json($Object) {
     return $Object;
     }
 
-function get_json_for_sending($Object, $info) {
+function get_json_for_sending($Object, $info, $external_courseid=null) {
     $duration = $Object->duration;
     $Object->duration = new stdClass();
     $Object->duration->code = "week";
@@ -205,6 +205,9 @@ function get_json_for_sending($Object, $info) {
     $json->package = new stdClass();
     $json->package->items = array();
     $json->package->items[0] = $Object;
+    if ($external_courseid != null) {
+        $json->package->items->id = $external_courseid;
+        }
     $json = json_encode($json, JSON_UNESCAPED_UNICODE);
     $json = str_replace('\\', '', $json);
     $json = strip_html_tags($json);
@@ -253,50 +256,54 @@ function add_course($url, $jsonString, $login_password) {
     return $response;
 }
 
-//function update_course($url, $course_id_ext, $jsonString) {
-//    $curl = curl_init($url);
-//    curl_setopt_array($curl, [
-//        CURLOPT_RETURNTRANSFER => 1,
-//        CURLOPT_HTTPHEADER => 'Content-type: application/json',
-//        CURLOPT_REFERER => 'https://mooc.vsu.ru/',
-//        CURLOPT_PUT => 1,
-//        CURLOPT_POSTFIELDS => [
-//            json => $jsonString
-//        ]
-//    ]);
-//    $resp = curl_exec($curl);
-//    $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-//    if ($status != 201) {
-//        die("Error: call to URL $url failed with status $status, response $resp, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
-//    }
-//    curl_close($curl);
-//    $response = json_decode($resp, true);
-//}
-
-function get_grade_status_course($url, $external_courseid) {
-    $curl = curl_init();
-    curl_setopt_array($curl, [
-        CURLOPT_RETURNTRANSFER => 1,
-        CURLOPT_URL => $url,
-    ]);
-    $resp = curl_exec($curl);
-    $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-    curl_close($curl);
-}
-
-function change_status_of_course($url, $course_id_ext) {
+function update_ext_course($url, $jsonString, $login_password) {
+    $login_password = base64_encode($login_password);
     $curl = curl_init($url);
-    curl_setopt_array($curl, [
-        CURLOPT_RETURNTRANSFER => 1,
-        CURLOPT_PUT => 1,
-        CURLOPT_REFERER => 'https://mooc.vsu.ru/'
-    ]);
-    $json_response = curl_exec($curl);
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "PUT",
+        CURLOPT_POSTFIELDS => $jsonString,
+        CURLOPT_HTTPHEADER => array(
+            "Referer: https://mooc.vsu.ru/",
+            "Content-Type: application/json",
+            "Authorization: Basic $login_password"
+            ),
+        ));
+    $response = curl_exec($curl);
     $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-    if ($status != 201) {
-        die("Error: call to URL $url failed with status $status, response $json_response, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
+    if ($status != 200) {
+        die("Error: call to URL $url failed with status $status, response $resp, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
     }
     curl_close($curl);
+    return $response;
+}
+
+function get_grade_status_course($url, $external_courseid, $login_password) {
+    $login_password = base64_encode($login_password);
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => $url.$external_courseid,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "GET",
+        CURLOPT_HTTPHEADER => array(
+            "Authorization: Basic $login_password"
+        ),
+    ));
+    $response = curl_exec($curl);
+    $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    curl_close($curl);
+    return $response;
 }
 
 function execute_portfolio($url, $reg_on_course_obj) {

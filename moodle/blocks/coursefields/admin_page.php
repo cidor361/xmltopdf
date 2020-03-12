@@ -3,7 +3,7 @@ require_once('../../config.php');
 require_once('list_form.php');
 require 'info.php';
 
-$internal_courseid = $_SESSION['internal_courseid'];
+$internal_courseid = $SESSION['internal_courseid'];
 $context = get_context_instance(CONTEXT_COURSE, $internal_courseid);
 require_login($internal_courseid);
 $PAGE->set_url('/blocks/coursefields/list.php');
