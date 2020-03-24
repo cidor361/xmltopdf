@@ -1,24 +1,38 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This is a one-line short description of the file.
+ *
+ * You can have a rather longer description of the file as well,
+ * if you like, and it can span multiple lines.
+ *
+ * @package    block_coursefields
+ * @category   block
+ * @copyright  2008 Kim Bloggs
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
-require_once('../../config.php');
+require('../../config.php');
 require_once('lib.php');
 
-function get_status($status) {
-    $status = json_decode($status);
-    if (isset($status->status)) {
-        if ($status->status = 'course not found') {
-            return 'Курс не загружен';
-        }
-        if ($status->status = 'in_progress') {
-            return 'Курс в обработке';
-        }
-    }
-
-}
-
-function create_full_field($Object, $status = null) {
+function create_full_field($Object)
+{
     $mform = new listform();
-    //TODO: Добавить статус курса
     $mform->add_header('Свойства курса', 'course');
     $mform->add_simple_text(get_string('title', 'block_coursefields'), $Object->title, 'title');
     $mform->add_textfield(get_string('image', 'block_coursefields'), $Object->image, 'image');
@@ -57,7 +71,8 @@ function create_full_field($Object, $status = null) {
     return $mform;
 }
 
-function create_simple_field($Object, $userid, $context) {
+function create_simple_field($Object, $userid, $context)
+{
     $mform = new listform();
     $mform->add_header('Свойства курса', 'course');
     $mform->add_simple_text(get_string('title', 'block_coursefields'), $Object->title, 'title');
@@ -99,7 +114,8 @@ function create_simple_field($Object, $userid, $context) {
     return $mform;
 }
 
-function create_start_object($course, $info, $USER) {
+function create_start_object($course, $info, $USER)
+{
     $Object = new stdClass();
     $Object->title = $course->fullname;
     $Object->started_at = gmdate("Y-m-d", (int)$course->startdate);
@@ -137,12 +153,14 @@ function create_start_object($course, $info, $USER) {
     return $Object;
 }
 
-function dbobj_exist($DB, $internal_courseid = null) {
+function dbobj_exist($DB, $internal_courseid = null)
+{
     $exist = $DB->record_exists('block_coursefields', array('internal_courseid' => $internal_courseid));
     return $exist;
 }
 
-function is_user_student($context, $userid) {
+function is_user_student($context, $userid)
+{
     $roles = get_user_roles($context, $userid, false);
     $i = 1;
     $rolearray = array();
@@ -160,7 +178,8 @@ function is_user_student($context, $userid) {
     return $is_student;
 }
 
-function get_form_data($Object, $formdata) {
+function get_form_data($Object, $formdata)
+{
     if (!empty($formdata->image)) {
         $Object->image = $formdata->image;
     };
@@ -228,7 +247,8 @@ function get_form_data($Object, $formdata) {
     return $Object;
 }
 
-function add_data_for_db($Object, $internal_courseid, $external_courseid, $id = null) {
+function add_data_for_db($Object, $internal_courseid, $external_courseid, $id = null)
+{
     $Object_for_db = new stdClass();
     $Object_for_db->id = $id;
     $Object_for_db->json = json_encode($Object, JSON_UNESCAPED_UNICODE);
@@ -240,7 +260,8 @@ function add_data_for_db($Object, $internal_courseid, $external_courseid, $id = 
     return $Object_for_db;
 }
 
-function get_obj_from_json($Object) {
+function get_obj_from_json($Object)
+{
     unset($Object->internal_courseid);
     unset($Object->external_courseid);
     unset($Object->id);
@@ -249,7 +270,8 @@ function get_obj_from_json($Object) {
     return $Object;
 }
 
-function get_json_for_sending($Object, $info, $external_courseid = null) {
+function get_json_for_sending($Object, $info, $external_courseid = null)
+{
     $duration = $Object->duration;
     $Object->duration = new stdClass();
     $Object->duration->code = "week";
@@ -270,26 +292,30 @@ function get_json_for_sending($Object, $info, $external_courseid = null) {
     return $json;
 }
 
-function strip_html_tags($string) {
+function strip_html_tags($string)
+{
     $string = strip_tags($string, '');
     $string = str_replace("\n", '', $string);
     $string = str_replace("\r", '', $string);
     return $string;
 }
 
-function strip_tags_competences($string) {
+function strip_tags_competences($string)
+{
     $string = str_replace('</p><p>', '\n', $string);
     $string = strip_tags($string, '');
     return $string;
 }
 
-function add_tags_competences($string) {
+function add_tags_competences($string)
+{
     $string = str_replace('\n', '</p><p>', $string);
     $string = '<p>' . $string . '</p>';
     return $string;
 }
 
-function add_course($url, $jsonString, $login_password) {
+function add_course($url, $jsonString, $login_password)
+{
     $login_password = base64_encode($login_password);
     $curl = curl_init();
     curl_setopt_array($curl, array(
@@ -312,7 +338,8 @@ function add_course($url, $jsonString, $login_password) {
     return $response;
 }
 
-function update_ext_course($url, $jsonString, $login_password) {
+function update_ext_course($url, $jsonString, $login_password)
+{
     $login_password = base64_encode($login_password);
     $curl = curl_init($url);
     curl_setopt_array($curl, array(
@@ -340,7 +367,8 @@ function update_ext_course($url, $jsonString, $login_password) {
     return $response;
 }
 
-function get_grade_status_course($url, $external_courseid, $login_password) {
+function get_grade_status_course($url, $external_courseid, $login_password)
+{
     $login_password = base64_encode($login_password);
     $curl = curl_init();
     curl_setopt_array($curl, array(
@@ -362,7 +390,8 @@ function get_grade_status_course($url, $external_courseid, $login_password) {
     return $response;
 }
 
-function execute_portfolio($url, $reg_on_course_obj) {
+function execute_portfolio($url, $reg_on_course_obj)
+{
     $curl = curl_init();
     curl_setopt_array($curl, [
         CURLOPT_URL => $url,
