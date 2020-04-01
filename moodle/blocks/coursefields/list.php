@@ -55,6 +55,23 @@ if (dbobj_exist($DB, $internal_courseid)) {
     $Object = create_start_object($course, $info, $USER);
 }
 
+
+$mform = $this->_form;
+
+$mform->addElement('header', 'course_header', 'Свойства курса');
+$mform->addElement('static', 'title', get_string('title', 'block_coursefields'), $Object->title);
+$attributes = array('size' => '50', 'maxlength' => '100');
+$mform->addElement('text', 'image', get_string('image', 'block_coursefields'), $attributes);
+$mform->setType('image', PARAM_TEXT);
+$mform->setDefault('image', $Object->image);
+$mform->addElement('static', $id, $title, $text);
+$mform->addElement('static', 'description', get_string('description', 'block_coursefields'), $Object->description);
+$mform->addElement('static', 'started_at', get_string('started_at', 'block_coursefields'), $Object->started_at);
+$mform->addElement('static', 'finished_at', get_string('finished_at', 'block_coursefields'), $Object->finished_at);
+$mform->addElement('static', 'competences', get_string('competences', 'block_coursefields'), $Object->competences);
+$mform->addElement('static', 'requirements', get_string('requirements', 'block_coursefields'), $Object->requirements);
+$mform->addElement('static', 'external_url', get_string('external_url', 'block_coursefields'), $Object->external_url);
+
 $mform = create_full_field($Object);
 
 if($mform->is_cancelled()) {

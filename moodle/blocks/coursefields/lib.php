@@ -30,8 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 require('../../config.php');
 require_once('lib.php');
 
-function create_full_field($Object)
-{
+function create_full_field($Object) {
     $mform = new listform();
     $mform->add_header('Свойства курса', 'course');
     $mform->add_simple_text(get_string('title', 'block_coursefields'), $Object->title, 'title');
@@ -71,8 +70,7 @@ function create_full_field($Object)
     return $mform;
 }
 
-function create_simple_field($Object, $userid, $context)
-{
+function create_simple_field($Object, $userid, $context) {
     $mform = new listform();
     $mform->add_header('Свойства курса', 'course');
     $mform->add_simple_text(get_string('title', 'block_coursefields'), $Object->title, 'title');
@@ -114,8 +112,7 @@ function create_simple_field($Object, $userid, $context)
     return $mform;
 }
 
-function create_start_object($course, $info, $USER)
-{
+function create_start_object($course, $info, $USER) {
     $Object = new stdClass();
     $Object->title = $course->fullname;
     $Object->started_at = gmdate("Y-m-d", (int)$course->startdate);
@@ -153,14 +150,12 @@ function create_start_object($course, $info, $USER)
     return $Object;
 }
 
-function dbobj_exist($DB, $internal_courseid = null)
-{
+function dbobj_exist($DB, $internal_courseid = null) {
     $exist = $DB->record_exists('block_coursefields', array('internal_courseid' => $internal_courseid));
     return $exist;
 }
 
-function is_user_student($context, $userid)
-{
+function is_user_student($context, $userid) {
     $roles = get_user_roles($context, $userid, false);
     $i = 1;
     $rolearray = array();

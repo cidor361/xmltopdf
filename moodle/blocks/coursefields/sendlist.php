@@ -69,7 +69,6 @@ if ($mform->is_cancelled()) {
 
 echo $OUTPUT->header();
 $mform->display();
-if (!empty($responseo)){
+if (!empty($responseo)) {
     echo var_dump($response).'</br>';}
-// if (file_put_contents("test.txt", $json)){echo "Sucsess write file!";}else{echo "Fail write file!";}
 echo $OUTPUT->footer();
