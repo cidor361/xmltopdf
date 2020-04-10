@@ -39,3 +39,4 @@ $string['t_image'] = 'Ссылка на изображение';
 $string['t_description'] = 'Описание';
 $string['institution_id'] = 'Идентификатор учебного заведения';
 $string['direction_id'] = 'Идентификатор направления';
+$string['teachers'] = 'Преподаватели';
