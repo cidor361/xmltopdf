@@ -17,8 +17,8 @@
 /**
  * Plugin version and other meta-data are defined here.
  *
- * @package     block_unenrolpl
- * @copyright   2018 Igor <cidor361@gmail.com>
+ * @package     block_userlist
+ * @copyright   2020 Igor <cidor361@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -26,6 +26,5 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_userlist';
 $plugin->release = '0.1.0';
-$plugin->version = 2020040900;
+$plugin->version = 2020041302;
 $plugin->requires = 2015111300;
-//$plugin->maturity = MATURITY_ALPHA;

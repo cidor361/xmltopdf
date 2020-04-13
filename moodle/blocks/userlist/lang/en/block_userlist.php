@@ -1,4 +1,6 @@
 <?php
+defined('MOODLE_INTERNAL') || die();
+
 $string['pluginname'] = 'User report';
 $string['userlist'] = 'User report block';
 $string['userlist:addinstance'] = 'Add a new user report block';
