@@ -42,7 +42,7 @@ header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 
 $handle = fopen('php://output', 'w');
 ob_clean();
-$users = get_role_users(5, get_context_instance(CONTEXT_COURSE, $SESSION->courseid));
+$users = get_role_users(5, context_course::instance($SESSION->courseid));
 $i = 1;
 foreach($users as $user) {
 	$myuser = new stdClass();
