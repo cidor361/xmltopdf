@@ -26,36 +26,35 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../../config.php');
-require_once($CFG->dirroot.'/user/profile/lib.php');
-$context = $SESSION->blockcontext;
+defined('MOODLE_INTERNAL') || die();
 
-if (!has_capability('block/userlist:view', $context)) {
-  print_error('nopermissiontoviewforum');
-} else {
+class block_userlist extends block_base {
 
-
-header('Content-Description: File Transfer');
-header('Content-Type: application/csv');
-header("Content-Disposition: attachment; filename=page-data-export.csv");
-header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-
-$handle = fopen('php://output', 'w');
-ob_clean();
-$users = get_role_users(5, get_context_instance(CONTEXT_COURSE, $SESSION->courseid));
-$i = 1;
-foreach($users as $user) {
-	$myuser = new stdClass();
-	$myuser->id = $user->id;
-	profile_load_data($myuser);
-	$reportuser = $myuser->profile_field_naprspec.','.
-		$myuser->profile_field_idgroup.','.
-		$user->lastname.','.$user->firstname.','.
-		$user->middlename.','.$user->email;
-	$data = str_getcsv($reportuser);
-	fputcsv($handle, $data);
-	$i = $i + 1;
-}
-ob_flush();
-fclose($handle);
+    public function init() {
+        $this->title = get_string('userlist', 'block_userlist');
+    }
+    
+    public function get_content() {
+        
+		global $COURSE, $SESSION;
+		
+		if ($this->content != null) {
+				return $this->content;
+			}
+			
+        if (!has_capability('block/userlist:view', $this->context)) {
+			return null;
+		}
+		
+        $this->content = new stdClass;
+ 		$this->content->text = '<a href="'.'/blocks/userlist/index.php'.'">Скачать список студентов</a>';
+		$SESSION->blockcontext = $this->page->context;
+		$SESSION->courseid = $COURSE->id;
+//		$context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+				
+    }
+    
+    function instance_allow_config() {
+        return false;
+    }
 }

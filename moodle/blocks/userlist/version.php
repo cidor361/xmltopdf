@@ -15,16 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * This is a one-line short description of the file.
  *
- * @package     block_userlist
- * @copyright   2020 Igor <cidor361@gmail.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * You can have a rather longer description of the file as well,
+ * if you like, and it can span multiple lines.
+ *
+ * @package    block_userlist
+ * @category   block
+ * @copyright  2020 Igor Grebennikov
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_userlist';
 $plugin->release = '0.1.0';
-$plugin->version = 2020041302;
+$plugin->version = 2020041408;
 $plugin->requires = 2015111300;
+//$plugin->maturity = MATURITY_ALPHA;
