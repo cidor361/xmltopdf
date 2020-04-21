@@ -42,8 +42,6 @@ $capabilities = array(
 			'coursecreator'  => CAP_ALLOW,
 			'manager'        => CAP_ALLOW
         ),
-		
-
     ),	
 	
 );

@@ -26,8 +26,38 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+require_once('../../config.php');
+require_once('editfields_form.php');
+require_login();
 
-$plugin->component = 'block_coursefields';
-$plugin->version = 2020042100;
-$plugin->requires = 2011062400;
+
+$PAGE->set_url('/blocks/coursefields/editfields.php');
+//$PAGE->set_pagelayout('standart');
+$PAGE->set_title('Поля курса');
+//$PAGE->set_heading('Поля курса');
+//$PAGE->set_context(context_course:instance($SESSION->courseid));
+
+$exist = $DB->record_exists('block_coursefields', array('internal_courseid' => $internal_courseid));
+if ($exist) {
+    $Object = $DB->get_record('block_coursefields', array('internal_courseid' => $internal_courseid));
+}
+
+
+$mform = new editfields_form();
+if ($mform->is_cancelled()) {
+    $url = new moodle_url('/course/view.php?id='.$COURSE->id);
+    redirect($url); //TODO: get courseid!
+} elseif ($fromform = $mform->get_data()) {
+
+} elseif ($fromform = $mform->no_submit_button_pressed()) {
+    $url = new moodle_url('/blocks/coursefields/checkfields.php');
+    redirect($url);
+} else {
+
+    $mform->set_data($toform);
+    $mform->display();
+}
+
+echo $OUTPUT->header();
+
+echo $OUTPUT->footer();

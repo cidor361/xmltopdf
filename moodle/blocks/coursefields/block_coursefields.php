@@ -28,7 +28,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__.'lib.php');
+//require_once(__DIR__.'lib.php');
 
 class block_coursefields extends block_base {
 
@@ -41,19 +41,23 @@ class block_coursefields extends block_base {
             return $this->content;
         }
 
-        $SESSION->internal_courseid = $COURSE->id;
+        if (!has_capability('block/coursefield:viewblock', $this->context)) {
+            return null;
+        }
+
+//        $SESSION->internal_courseid = $COURSE->id;
 
         $this->content = new stdClass;
         $this->content->text = get_string('Description_plugin', 'block_coursefields');
-        $url = new moodle_url('/blocks/coursefields/list.php');
-        $this->content->footer = '<a href='.$url.'>Редактирование/Просмотр</a>';
-        if (is_primary_admin($USER->id)) {
+        $url = new moodle_url('/blocks/coursefields/editfields.php');
+        $this->content->footer = html_writer::link($url, 'Редактирование/Просмотр');
+        $SESSION->courseid = $COURSE->id;
+        /*if (is_primary_admin($USER->id)) {
             $url = new moodle_url('/blocks/coursefields/portfolio.php');
-            $this->content->footer .= '<br><a href='.$url.'>Портфолио</a>';
+            $this->content->footer .= html_writer::link($url, 'Портфолио');
             $url = new moodle_url('blocks/coursefields/admin_page.php');
-            $this->content->footer .= '<br><a href="'.$url.'">Администрирование</a>';
-        }
+            $this->content->footer .= html_writer::link($url, 'Администрирование');
+        }*/ //TODO: made access for admin!
 
-        return $this->content;
     }
 }
