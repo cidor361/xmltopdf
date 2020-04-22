@@ -48,7 +48,11 @@ if ($mform->is_cancelled()) {
     $url = new moodle_url('/course/view.php?id='.$COURSE->id);
     redirect($url); //TODO: get courseid!
 } elseif ($fromform = $mform->get_data()) {
-
+    if ($exist) {
+        $DB->update_record('block_coursefields', $Object_for_db);
+    } else {
+        $DB->insert_record('block_coursefields', $Object_for_db, '*', MUST_EXIST);
+    }
 } elseif ($fromform = $mform->no_submit_button_pressed()) {
     $url = new moodle_url('/blocks/coursefields/checkfields.php');
     redirect($url);
@@ -59,5 +63,4 @@ if ($mform->is_cancelled()) {
 }
 
 echo $OUTPUT->header();
-
 echo $OUTPUT->footer();

@@ -22,10 +22,31 @@
  *
  * @package    block_coursefields
  * @category   block
- * @copyright  2008 Kim Bloggs
+ * @copyright  2020 Igor Grebennikov
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-require('../../config.php');
+require_once('../../config.php');
+require_once('checkfields_form.php');
+require_login();
 
+$PAGE->set_url('/blocks/coursefields/checkfields.php');
+//$PAGE->set_pagelayout('standart');
+$PAGE->set_title('Поля курса');
+//$PAGE->set_heading('Поля курса');
+//$PAGE->set_context(context_course:instance($SESSION->courseid));
+
+$mform = new checkfields_form();
+
+if($mform->is_cancelled()) {
+    $url = new moodle_url('/blocks/coursefields/editfields.php');
+    redirect($url);
+} else if ($formdata = $mform->get_data()) {
+
+} else {
+    $mform->set_data($toform);
+    $mform->display();
+}
+
+echo $OUTPUT->header();
+echo $OUTPUT->footer();
