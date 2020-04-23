@@ -28,6 +28,7 @@
 
 require_once('../../config.php');
 require_once('editfields_form.php');
+require('lib.php');
 require_login();
 
 
@@ -36,23 +37,35 @@ $PAGE->set_url('/blocks/coursefields/editfields.php');
 $PAGE->set_title('Поля курса');
 //$PAGE->set_heading('Поля курса');
 //$PAGE->set_context(context_course:instance($SESSION->courseid));
+$internal_courseid = $SESSION->courseid;
 
 $exist = $DB->record_exists('block_coursefields', array('internal_courseid' => $internal_courseid));
 if ($exist) {
-    $Object = $DB->get_record('block_coursefields', array('internal_courseid' => $internal_courseid));
+    $fromdb = $DB->get_record('block_coursefields', array('internal_courseid' => $internal_courseid));
+    $toform = json_decode($fromdb->json);
+} else {
+    $course = $DB->get_record('course', array('id' => $internal_courseid), '*', MUST_EXIST);
+    $toform = get_course_info($course, $USER);
 }
-
 
 $mform = new editfields_form();
 if ($mform->is_cancelled()) {
-    $url = new moodle_url('/course/view.php?id='.$COURSE->id);
-    redirect($url); //TODO: get courseid!
+    $url = new moodle_url('/course/view.php?id='.$internal_courseid);
+    redirect($url);
 } elseif ($fromform = $mform->get_data()) {
+
     if ($exist) {
-        $DB->update_record('block_coursefields', $Object_for_db);
+        $todb = $fromdb;
+        $todb->json = json_encode($fromform);
+        $DB->update_record('block_coursefields', $todb);
     } else {
-        $DB->insert_record('block_coursefields', $Object_for_db, '*', MUST_EXIST);
+        $todb = new stdClass();
+        $todb->internal_courseid = $internal_courseid;
+        $todb->json = json_encode($fromform);
+        $DB->insert_record('block_coursefields', $todb, '*', MUST_EXIST);
     }
+    $mform->set_data($toform);
+    $mform->display();
 } elseif ($fromform = $mform->no_submit_button_pressed()) {
     $url = new moodle_url('/blocks/coursefields/checkfields.php');
     redirect($url);

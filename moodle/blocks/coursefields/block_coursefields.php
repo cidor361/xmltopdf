@@ -37,6 +37,8 @@ class block_coursefields extends block_base {
     }
 
     public function get_content() {
+        global $COURSE, $SESSION;
+
         if ($this->content != null) {
             return $this->content;
         }

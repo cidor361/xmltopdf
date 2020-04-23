@@ -27,5 +27,25 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-require('../../config.php');
 
+function get_course_info($course, $USER, $info=null) {
+    $toform = new stdClass();
+    $toform->title = $course->fullname;
+    $toform->started_at = gmdate("Y-m-d", (int)$course->startdate);
+    $toform->finished_at = gmdate("Y-m-d", (int)$course->enddate);
+    $toform->description = strip_html_tags($course->summary);
+    $toform->external_url = $info['courselink'] . $course->id;
+    $toform->institution = $info['institution'];
+    $toform->language = 'ru';
+    $toform->teachers = array();
+    $toform->teachers[0]->display_name = $USER->firstname . ' ' . $USER->lastname;
+    return $toform;
+}
+
+function strip_html_tags($string)
+{
+    $string = strip_tags($string, '');
+    $string = str_replace("\n", ' ', $string);
+    $string = str_replace("\r", '', $string);
+    return $string;
+}

@@ -35,8 +35,15 @@ $PAGE->set_url('/blocks/coursefields/checkfields.php');
 $PAGE->set_title('Поля курса');
 //$PAGE->set_heading('Поля курса');
 //$PAGE->set_context(context_course:instance($SESSION->courseid));
+$internal_courseid = $SESSION->courseid;
 
 $mform = new checkfields_form();
+
+$exist = $DB->record_exists('block_coursefields', array('internal_courseid' => $internal_courseid));
+if ($exist) {
+    $fromdb = $DB->get_record('block_coursefields', array('internal_courseid' => $internal_courseid));
+    $toform = json_decode($fromdb->json);
+}
 
 if($mform->is_cancelled()) {
     $url = new moodle_url('/blocks/coursefields/editfields.php');
@@ -44,9 +51,10 @@ if($mform->is_cancelled()) {
 } else if ($formdata = $mform->get_data()) {
 
 } else {
-    $mform->set_data($toform);
+//    $mform->set_data($toform);
     $mform->display();
 }
 
 echo $OUTPUT->header();
+var_dump($toform);
 echo $OUTPUT->footer();
