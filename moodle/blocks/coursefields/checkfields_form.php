@@ -32,45 +32,65 @@ require_once("$CFG->libdir/formslib.php");
 class checkfields_form extends moodleform {
 
     public function definition() {
-        global $CFG;
+
+        $maxbytes = 500;
+        $maxfiles = 0;
+        $context = null;
+        $attr = array('size' => '100', 'maxlength' => '200');
+
 
         $mform = $this->_form;
 
-        $mform->addElement('header', 'course', 'Свойства курса');
-        $mform->addElement('static', 'title', get_string('title', 'block_coursefields'), $Object->title);
-        $mform->addElement('static', 'image', get_string('image', 'block_coursefields'), $Object->image);
-        $mform->addElement('static', 'description', get_string('description', 'block_coursefields'), $Object->description);
-        $mform->addElement('static', 'started_at', get_string('started_at', 'block_coursefields'), $Object->started_at);
-        $mform->addElement('static', 'finished_at', get_string('finished_at', 'block_coursefields'), $Object->finished_at);
-        $mform->addElement('static', 'competences', get_string('competences', 'block_coursefields'), $Object->competences);
-//        $mform->addElement('static', 'requirements', get_string('requirements', 'block_coursefields'), $Object->requirements);
-        $mform->addElement('static', 'external_url', get_string('external_url', 'block_coursefields'), $Object->external_url);
-        $mform->addElement('static', 'direction', get_string('direction', 'block_coursefields'), $Object->direction->text);
-//        $mform->addElement('static', 'institution', get_string('institution', 'block_coursefields'), $Object->institution);
-        $mform->addElement('static', 'duration', get_string('duration', 'block_coursefields'), $Object->duration);
-        $mform->addElement('static', 'lectures', get_string('lectures', 'block_coursefields'), $Object->lectures);
-        $mform->addElement('static', 'language', get_string('language', 'block_coursefields'), $Object->language);
-        $mform->addElement('static', 'cert', get_string('cert', 'block_coursefields'), $Object->cert);
-//        $mform->addElement('static', 'visitors', get_string('visitors', 'block_coursefields'), $Object->visitors);
-        $mform->addElement('static', 'results', get_string('results', 'block_coursefields'), $Object->results);
-//        $mform->addElement('static', 'accreditated', get_string('accreditated', 'block_coursefields'), $Object->accreditated);
-        $mform->addElement('static', 'hours', get_string('hours', 'block_coursefields'), $Object->hours);
-        $mform->addElement('static', 'hours_per_week', get_string('hours_per_week', 'block_coursefields'), $Object->hours_per_week);
-        $mform->addElement('static', 'business_version', get_string('business_version', 'block_coursefields'), $Object->business_version);
-        $mform->addElement('static', 'promo_url', get_string('promo_url', 'block_coursefields'), $Object->promo_url);
-        $mform->addElement('static', 'promo_lang', get_string('promo_lang', 'block_coursefields'), $Object->promo_lang);
-        $mform->addElement('static', 'subtitles_lang', get_string('subtitles_lang', 'block_coursefields'), $Object->subtitles_lang);
-//        $mform->addElement('static', 'estimation_tools', get_string('estimation_tools', 'block_coursefields'), $Object->estimation_tools);
-        $mform->addElement('static', 'proctoring_service', get_string('proctoring_service', 'block_coursefields'), $Object->proctoring_service);
-//        $mform->addElement('static', 'sessionid', get_string('sessionid', 'block_coursefields'), $Object->sessionid);
-        $mform->addElement('header', 'teachers', 'Преподаватели');
-        $mform->addElement('static', 't_title', get_string('t_title', 'block_coursefields'), $Object->teachers[0]->display_name);
-        $mform->addElement('static', 't_image', get_string('t_image', 'block_coursefields'), $Object->teachers[0]->image);
-        $mform->addElement('static', 't_description', get_string('t_description', 'block_coursefields'), $Object->teachers[0]->description);
-        $mform->addElement('header', 'coursetransfer', 'Информация о перезачётах');
-        $mform->addElement('static', 'institution_id', get_string('institution_id', 'block_coursefields'), $Object->transfers->courseTransfer[0]->institution_id);
-        $mform->addElement('static', 'direction_id', get_string('direction_id', 'block_coursefields'), $Object->transfers->courseTransfer[0]->direction_id);
+        $mform->addElement('header', 'course_header', 'Свойства курса');
+        $mform->addElement('static', 'title', get_string('title', 'block_coursefields'));
+        $mform->addElement('text', 'image', get_string('image', 'block_coursefields'), $attr)->freeze();
+//        $mform->setDefault('image', $Object->image);
+        $mform->addElement('static', 'description', get_string('description', 'block_coursefields'));
+        $mform->addElement('static', 'started_at', get_string('started_at', 'block_coursefields'));
+        $mform->addElement('static', 'finished_at', get_string('finished_at', 'block_coursefields'));
+//        $mform->addElement('text', 'competences', get_string('competences', 'block_coursefields'));
+//        $mform->addElement('text', 'requirements', get_string('requirements', 'block_coursefields'));
+        $mform->addElement('static', 'external_url', get_string('external_url', 'block_coursefields'));
+        $mform->addElement('text', 'direction', get_string('direction', 'block_coursefields'), $attr)->freeze();
+        $mform->addElement('text', 'duration', get_string('duration', 'block_coursefields'), $attr)->freeze();
+        $mform->setType('duration', PARAM_TEXT);
+        $mform->addElement('text', 'lectures', get_string('lectures', 'block_coursefields'), $attr)->freeze();
+        $mform->setType('lectures', PARAM_TEXT);
+        $mform->addElement('text', 'language', get_string('language', 'block_coursefields'), $attr)->freeze();
+        $mform->setType('language', PARAM_TEXT);
+        $mform->addElement('advcheckbox', 'cert', '', get_string('cert', 'block_coursefields'))->freeze();
+        $mform->setDefault('cert', 0);
+        $mform->addElement('text', 'results', get_string('results', 'block_coursefields'), $attr)->freeze();
+        $mform->setType('results', PARAM_TEXT);
+        $mform->addElement('text', 'hours', get_string('hours', 'block_coursefields'), $attr)->freeze();
+        $mform->setType('hours', PARAM_TEXT);
+        $mform->addElement('text', 'hours_per_week', get_string('hours_per_week', 'block_coursefields'), $attr)->freeze();
+        $mform->setType('hours_per_week', PARAM_TEXT);
+        $mform->addElement('text', 'business_version', get_string('business_version', 'block_coursefields'), $attr)->freeze();
+        $mform->setType('business_version', PARAM_TEXT);
+        $mform->addElement('text', 'promo_url', get_string('promo_url', 'block_coursefields'), $attr)->freeze();
+        $mform->setType('promo_url', PARAM_TEXT);
+        $mform->addElement('text', 'promo_lang', get_string('promo_lang', 'block_coursefields'), $attr)->freeze();
+        $mform->setType('promo_lang', PARAM_TEXT);
+        $mform->addElement('text', 'subtitles_lang', get_string('subtitles_lang', 'block_coursefields'), $attr)->freeze();
+        $mform->setType('subtitles_lang', PARAM_TEXT);
+        $mform->addElement('text', 'estimation_tools', get_string('estimation_tools', 'block_coursefields'), $attr)->freeze();
+        $mform->setType('estimation_tools', PARAM_TEXT);
+        $mform->addElement('text', 'proctoring_service', get_string('proctoring_service', 'block_coursefields'), $attr)->freeze();
+        $mform->setType('proctoring_service', PARAM_TEXT);
+
+        $mform->addElement('header', 'teachers', get_string('teachers', 'block_coursefields'));
+        $mform->addElement('text', 't_title', get_string('t_title', 'block_coursefields'), $attr)->freeze();
+        $mform->setType('t_title', PARAM_TEXT);
+        $mform->addElement('text', 't_image', get_string('t_image', 'block_coursefields'), $attr)->freeze();
+        $mform->setType('t_image', PARAM_TEXT);
+        $mform->addElement('text', 't_description', get_string('t_description', 'block_coursefields'), $attr)->freeze();
+        $mform->setType('t_description', PARAM_TEXT);
+
         $this->add_action_buttons($cancel = true, $submitlabel='Отправить');
+
+
+
 
     }
 

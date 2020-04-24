@@ -49,3 +49,128 @@ function strip_html_tags($string)
     $string = str_replace("\r", '', $string);
     return $string;
 }
+
+function add_tags_competences($string)
+{
+    $string = str_replace('\n', '</p><p>', $string);
+    $string = '<p>' . $string . '</p>';
+    return $string;
+}
+
+function strip_tags_competences($string)
+{
+    $string = str_replace('</p><p>', '\n', $string);
+    $string = strip_tags($string, '');
+    return $string;
+}
+
+function add_data_for_db($Object, $internal_courseid, $external_courseid, $id = null)
+{
+    $Object_for_db = new stdClass();
+    $Object_for_db->id = $id;
+    $Object_for_db->json = json_encode($Object, JSON_UNESCAPED_UNICODE);
+    $Object_for_db->internal_courseid = $internal_courseid;
+    $Object_for_db->external_courseid = $external_courseid;
+    if (!empty($id)) {
+        $Object_for_db->id;
+    };
+    return $Object_for_db;
+}
+
+function get_json_for_sending($toform, $info)
+{
+    $duration = $toform->duration;
+    $toform->duration = new stdClass();
+    $toform->duration->code = "week";
+    $toform->duration->value = $duration;
+    $toform->direction = array($toform->direction->text);
+    $toform->cert = filter_var($toform->cert, FILTER_VALIDATE_BOOLEAN);
+    $json = new stdClass();
+    $json->partnerId = $info['partnerid'];
+    $json->package = new stdClass();
+    $json->package->items = array();
+    $json->package->items[0] = $toform;
+    if ($external_courseid != null) {
+        $json->package->items->id = $external_courseid;
+    }
+    $json = json_encode($json, JSON_UNESCAPED_UNICODE);
+    $json = str_replace('\\', '', $json);
+    $json = strip_html_tags($json);
+    return $json;
+}
+
+function add_course($url, $jsonString, $login_password)
+{
+    $login_password = base64_encode($login_password);
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => "$jsonString",
+        CURLOPT_HTTPHEADER => array(
+            "Content-Type: application/json",
+            "Authorization: Basic $login_password"
+        ),
+    ));
+    $response = curl_exec($curl);
+    curl_close($curl);
+    return $response;
+}
+
+function update_ext_course($url, $jsonString, $login_password)
+{
+    $login_password = base64_encode($login_password);
+    $curl = curl_init($url);
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "PUT",
+        CURLOPT_POSTFIELDS => $jsonString,
+        CURLOPT_HTTPHEADER => array(
+            "Referer: https://mooc.vsu.ru/",
+            "Content-Type: application/json",
+            "Authorization: Basic $login_password"
+        ),
+    ));
+    $response = curl_exec($curl);
+    $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    if ($status != 200) {
+        die("Error: call to URL $url failed with status $status, response $resp, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
+    }
+    curl_close($curl);
+    return $response;
+}
+
+function get_grade_status_course($url, $external_courseid, $login_password)
+{
+    $login_password = base64_encode($login_password);
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => $url . $external_courseid,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "GET",
+        CURLOPT_HTTPHEADER => array(
+            "Authorization: Basic $login_password"
+        ),
+    ));
+    $response = curl_exec($curl);
+    $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    curl_close($curl);
+    return $response;
+}

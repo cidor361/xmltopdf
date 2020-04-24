@@ -51,10 +51,10 @@ if($mform->is_cancelled()) {
 } else if ($formdata = $mform->get_data()) {
 
 } else {
-//    $mform->set_data($toform);
+    $mform->set_data($toform);
     $mform->display();
 }
 
 echo $OUTPUT->header();
-var_dump($toform);
+echo var_dump($fromdb);
 echo $OUTPUT->footer();
