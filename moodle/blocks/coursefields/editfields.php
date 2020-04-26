@@ -53,7 +53,6 @@ if ($mform->is_cancelled()) {
     $url = new moodle_url('/course/view.php?id='.$internal_courseid);
     redirect($url);
 } elseif ($fromform = $mform->get_data()) {
-
     if ($exist) {
         $todb = $fromdb;
         $todb->json = json_encode($fromform);

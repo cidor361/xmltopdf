@@ -28,6 +28,7 @@
 
 require_once('../../config.php');
 require_once('checkfields_form.php');
+require('lib.php');
 require_login();
 
 $PAGE->set_url('/blocks/coursefields/checkfields.php');
@@ -56,5 +57,5 @@ if($mform->is_cancelled()) {
 }
 
 echo $OUTPUT->header();
-echo var_dump($fromdb);
+echo var_dump(get_json_for_sending($toform, $info));
 echo $OUTPUT->footer();

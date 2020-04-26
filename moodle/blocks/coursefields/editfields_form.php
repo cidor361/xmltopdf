@@ -33,24 +33,21 @@ class editfields_form extends moodleform {
 
     public function definition() {
 
-        $maxbytes = 500;
-        $maxfiles = 0;
         $context = null;
         $attr = array('size' => '100', 'maxlength' => '200');
-
 
         $mform = $this->_form;
 
         $mform->addElement('header', 'course_header', 'Свойства курса');
-        $mform->addElement('text', 'title', get_string('title', 'block_coursefields'), $attr)->freeze();
+        $mform->addElement('text', 'title', get_string('title', 'block_coursefields'), $attr);
         $mform->addElement('text', 'image', get_string('image', 'block_coursefields'), $attr);
         $mform->setType('image', PARAM_TEXT);
-        $mform->addElement('text', 'description', get_string('description', 'block_coursefields'), $attr)->freeze();
-        $mform->addElement('text', 'started_at', get_string('started_at', 'block_coursefields'), $attr)->freeze();
-        $mform->addElement('text', 'finished_at', get_string('finished_at', 'block_coursefields'), $attr)->freeze();
+        $mform->addElement('text', 'description', get_string('description', 'block_coursefields'), $attr);
+        $mform->addElement('text', 'started_at', get_string('started_at', 'block_coursefields'), $attr);
+        $mform->addElement('text', 'finished_at', get_string('finished_at', 'block_coursefields'), $attr);
 //        $mform->addElement('text', 'competences', get_string('competences', 'block_coursefields'));
 //        $mform->addElement('text', 'requirements', get_string('requirements', 'block_coursefields'));
-        $mform->addElement('text', 'external_url', get_string('external_url', 'block_coursefields', $attr))->freeze();
+        $mform->addElement('text', 'external_url', get_string('external_url', 'block_coursefields', $attr));
         $mform->addElement('text', 'direction', get_string('direction', 'block_coursefields'), $attr);
         $mform->addRule('direction', null, 'required');
         $mform->addElement('text', 'duration', get_string('duration', 'block_coursefields'), $attr);
