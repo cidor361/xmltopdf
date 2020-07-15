@@ -37,35 +37,32 @@ function get_course_info($course, $USER, $info=null) {
     $toform->external_url = $info['courselink'] . $course->id;
     $toform->institution = $info['institution'];
     $toform->language = 'ru';
+    $toform->business_version = 1;
     $toform->teachers = array();
     $toform->teachers[0]->display_name = $USER->firstname . ' ' . $USER->lastname;
     return $toform;
 }
 
-function strip_html_tags($string)
-{
+function strip_html_tags($string) {
     $string = strip_tags($string, '');
     $string = str_replace("\n", ' ', $string);
     $string = str_replace("\r", '', $string);
     return $string;
 }
 
-function add_tags_competences($string)
-{
+function add_tags_competences($string) {
     $string = str_replace('\n', '</p><p>', $string);
     $string = '<p>' . $string . '</p>';
     return $string;
 }
 
-function strip_tags_competences($string)
-{
+function strip_tags_competences($string) {
     $string = str_replace('</p><p>', '\n', $string);
     $string = strip_tags($string, '');
     return $string;
 }
 
-function add_data_for_db($Object, $internal_courseid, $external_courseid, $id = null)
-{
+function add_data_for_db($Object, $internal_courseid, $external_courseid, $id = null) {
     $Object_for_db = new stdClass();
     $Object_for_db->id = $id;
     $Object_for_db->json = json_encode($Object, JSON_UNESCAPED_UNICODE);
@@ -77,21 +74,56 @@ function add_data_for_db($Object, $internal_courseid, $external_courseid, $id = 
     return $Object_for_db;
 }
 
-function get_json_for_sending($toform, $info)
-{
+function get_json_for_sending($toform, $info, $external_courseid = null) {
     $duration = $toform->duration;
     $toform->duration = new stdClass();
     $toform->duration->code = "week";
     $toform->duration->value = $duration;
-    $toform->direction = array($toform->direction->text);
+    $toform->direction = array($toform->direction);
+    $toform->institution = $info['institution'];
     $toform->cert = filter_var($toform->cert, FILTER_VALIDATE_BOOLEAN);
+    unset($toform->submitbutton);
     $json = new stdClass();
     $json->partnerId = $info['partnerid'];
     $json->package = new stdClass();
     $json->package->items = array();
-    $json->package->items[0] = $toform;
+    $teachers = new stdClass();
+    $teachers->t_title = $toform->t_title;
+    $teachers->t_image = $toform->t_title;
+    $teachers->t_description = $toform->t_description;
+    unset($toform->t_title);
+    unset($toform->t_image);
+    unset($toform->t_description);
+    if ($toform->image == '') {
+        unset($toform->image);
+    }
+    if ($toform->lectures == '') {
+        unset($toform->lectures);
+    }
+    if ($toform->results == '') {
+        unset($toform->results);
+    }
+    if ($toform->hours == '') {
+        unset($toform->hours);
+    }
+    if ($toform->hours_per_week == '') {
+        unset($toform->hours_per_week);
+    }
+    if ($toform->business_version == '') {
+        $toform->business_version = 1;
+    }
+    $toform->sessionid = '';
     if ($external_courseid != null) {
-        $json->package->items->id = $external_courseid;
+        $toform->id = $external_courseid;
+    }
+    $json->package->items[0] = $toform;
+    $json->package->items[0]->teachers = array();
+    $json->package->items[0]->teachers[0]->display_name = $teachers->t_title;
+    if($teachers->t_image != '') {
+        $json->package->items[0]->teachers[0]->image = $teachers->t_image;
+    }
+    if($teachers->t_description != '') {
+        $json->package->items[0]->teachers[0]->description = $teachers->t_description;
     }
     $json = json_encode($json, JSON_UNESCAPED_UNICODE);
     $json = str_replace('\\', '', $json);
@@ -99,8 +131,7 @@ function get_json_for_sending($toform, $info)
     return $json;
 }
 
-function add_course($url, $jsonString, $login_password)
-{
+function add_course($url, $json, $login_password) {
     $login_password = base64_encode($login_password);
     $curl = curl_init();
     curl_setopt_array($curl, array(
@@ -112,7 +143,7 @@ function add_course($url, $jsonString, $login_password)
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => "POST",
-        CURLOPT_POSTFIELDS => "$jsonString",
+        CURLOPT_POSTFIELDS => "$json",
         CURLOPT_HTTPHEADER => array(
             "Content-Type: application/json",
             "Authorization: Basic $login_password"
@@ -123,10 +154,9 @@ function add_course($url, $jsonString, $login_password)
     return $response;
 }
 
-function update_ext_course($url, $jsonString, $login_password)
-{
+function update_ext_course($url, $jsonString, $login_password) {
     $login_password = base64_encode($login_password);
-    $curl = curl_init($url);
+    $curl = curl_init();
     curl_setopt_array($curl, array(
         CURLOPT_URL => $url,
         CURLOPT_RETURNTRANSFER => true,
@@ -138,22 +168,21 @@ function update_ext_course($url, $jsonString, $login_password)
         CURLOPT_CUSTOMREQUEST => "PUT",
         CURLOPT_POSTFIELDS => $jsonString,
         CURLOPT_HTTPHEADER => array(
-            "Referer: https://mooc.vsu.ru/",
             "Content-Type: application/json",
             "Authorization: Basic $login_password"
         ),
     ));
     $response = curl_exec($curl);
     $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-    if ($status != 200) {
-        die("Error: call to URL $url failed with status $status, response $resp, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
-    }
     curl_close($curl);
-    return $response;
+    if ($status == 200) {
+        return get_string('seccess_update', 'block_coursefields'); //TODO: make string!
+    } else {
+        die("Error: call to URL $url failed with status $status, response $response, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
+    }
 }
 
-function get_grade_status_course($url, $external_courseid, $login_password)
-{
+function get_grade_status_course($url, $external_courseid, $login_password) {
     $login_password = base64_encode($login_password);
     $curl = curl_init();
     curl_setopt_array($curl, array(
@@ -172,5 +201,8 @@ function get_grade_status_course($url, $external_courseid, $login_password)
     $response = curl_exec($curl);
     $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     curl_close($curl);
+    if ($status == 200) {
+        die("Error: call to URL $url failed with status $status, response $response, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
+    }
     return $response;
 }

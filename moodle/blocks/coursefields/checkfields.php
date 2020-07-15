@@ -28,6 +28,7 @@
 
 require_once('../../config.php');
 require_once('checkfields_form.php');
+require('info.php');
 require('lib.php');
 require_login();
 
@@ -43,6 +44,7 @@ $mform = new checkfields_form();
 $exist = $DB->record_exists('block_coursefields', array('internal_courseid' => $internal_courseid));
 if ($exist) {
     $fromdb = $DB->get_record('block_coursefields', array('internal_courseid' => $internal_courseid));
+    $external_courseid = $fromdb->external_courseid;  //TODO: make course status!
     $toform = json_decode($fromdb->json);
 }
 
@@ -50,12 +52,35 @@ if($mform->is_cancelled()) {
     $url = new moodle_url('/blocks/coursefields/editfields.php');
     redirect($url);
 } else if ($formdata = $mform->get_data()) {
-
+    $url = $info['address'];
+    $login_password = $info['loginpassword'];
+    $json = get_json_for_sending($toform, $info, $external_courseid);
+    if ($external_courseid == null) {
+        $answer = add_course($url, $json, $login_password);
+        $result = json_decode($answer);
+        if ($result->course_id != null) {
+            $todb = new stdClass();
+            $todb->id = $fromdb->id;
+            $todb->external_courseid = $result;
+            $DB->update_record('block_coursefields', $todb);
+            $result = get_string('success_upload_course', 'block_coursefields').' '.$result->course_id;
+        } else {
+            $result = get_string('error_upload_course', 'block_coursefields');
+        }
+    } else {
+        $result = update_ext_course($url.'?course_id='.$external_courseid, $json, $info['loginpassword']); //TODO: make $url in info file!
+    }
+    $mform->set_data($toform);
+    $mform->display();
 } else {
     $mform->set_data($toform);
     $mform->display();
 }
 
 echo $OUTPUT->header();
-echo var_dump(get_json_for_sending($toform, $info));
+echo $result.'</br>';
+echo var_dump($answer);
+echo var_dump($login_password);
+//$json = get_json_for_sending($toform, $info, $external_courseid);  //for debugging
+//echo var_dump(get_grade_status_course($info['get_status_url'].$response, $response, $info['loginpassword'])).'<b>Оценка</b></br>'; //for tests
 echo $OUTPUT->footer();

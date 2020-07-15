@@ -40,3 +40,6 @@ $string['t_description'] = 'Описание';
 $string['institution_id'] = 'Идентификатор учебного заведения';
 $string['direction_id'] = 'Идентификатор направления';
 $string['teachers'] = 'Преподаватели';
+$string['success_upload_course'] = 'Загрузка курса произведена успешно';
+$string['error_upload_course'] = 'Ошибка загрузки курса, проверте введённую информацию';
+$string['seccess_update'] = 'Курс успешно обновлён';

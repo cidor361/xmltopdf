@@ -27,13 +27,22 @@
  */
 
 function get_config($url) {
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $data = curl_exec($ch);
-    curl_close($ch);
-    $data = json_decode($data);
-    return $data;
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => 'auth.online.edu.ru/realms/portfolio/.well-known/openid-configuration',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "GET",
+    ));
+
+    $response = curl_exec($curl);
+    curl_close($curl);
+//    $response = json_decode($response);
+    return $response;
 }
 
 function get_token_password($url, $client_id, $client_secret, $username, $password) {
@@ -45,7 +54,7 @@ function get_token_password($url, $client_id, $client_secret, $username, $passwo
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $data = curl_exec($ch);
     curl_close($ch);
-    $data = json_decode($data);
+//    $data = json_decode($data);
     return $data;
 }
 
@@ -62,3 +71,12 @@ function point_of_auth($url, $client_id, $response_type, $redirect_url) {
 
     echo $data;
 }
+
+//echo get_config('online.edu.ru/.well-known/openid-configuration');
+
+//echo get_token_password('auth.online.edu.ru/realms/portfolio/protocol/openid-connect/auth',
+//    'mooc_vsu_ru', '7b9ff246-d7d9-48e9-83c6-4e51d985838d', 'riapolov@vsu.ru',
+//'vsu_2018');
+
+//echo var_dump(get_token_password('https://sso.online.edu.ru/realms/portfolio/protocol/openid-connect/token',
+//    'mooc_vsu_ru', '7b9ff246-d7d9-48e9-83c6-4e51d985838d', 'riapolov@vsu.ru', 'vsu_2018'));
