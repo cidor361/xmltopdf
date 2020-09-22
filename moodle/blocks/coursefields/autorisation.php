@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+require_once('info.php');
+
 /**
  * This is a one-line short description of the file.
  *
@@ -72,11 +74,38 @@ function point_of_auth($url, $client_id, $response_type, $redirect_url) {
     echo $data;
 }
 
+function upload_course($url, $certfile, $keyfile, $data, $login_password) {
+
+    $curl = curl_init();
+
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => $data,
+        CURLOPT_SSLCERT => $certfile,
+        CURLOPT_SSLKEY => $keyfile,
+        CURLOPT_HTTPHEADER => array(
+            "Referer: https://mooc.vsu.ru/",
+            "Content-Type: application/json",
+            "Authorization: Basic "
+        ),
+    ));
+
+
+    $response = curl_exec($curl);
+
+    curl_close($curl);
+    echo $response;
+
+}
+
 //echo get_config('online.edu.ru/.well-known/openid-configuration');
 
-//echo get_token_password('auth.online.edu.ru/realms/portfolio/protocol/openid-connect/auth',
-//    'mooc_vsu_ru', '7b9ff246-d7d9-48e9-83c6-4e51d985838d', 'riapolov@vsu.ru',
-//'vsu_2018');
-
-//echo var_dump(get_token_password('https://sso.online.edu.ru/realms/portfolio/protocol/openid-connect/token',
-//    'mooc_vsu_ru', '7b9ff246-d7d9-48e9-83c6-4e51d985838d', 'riapolov@vsu.ru', 'vsu_2018'));
+upload_course($info['address'], $info['certfile'], $info['keyfile'],
+                );
