@@ -28,7 +28,7 @@
 
 require_once('../../config.php');
 require_once('checkfields_form.php');
-require('info.php');
+require('info_test.php');
 require('lib.php');
 require_login();
 
@@ -52,11 +52,10 @@ if($mform->is_cancelled()) {
     $url = new moodle_url('/blocks/coursefields/editfields.php');
     redirect($url);
 } else if ($formdata = $mform->get_data()) {
-    $url = $info['address'];
     $login_password = $info['loginpassword'];
     $json = get_json_for_sending($toform, $info, $external_courseid);
     if ($external_courseid == null) {
-        $answer = add_course($url, $json, $login_password);
+        $answer = add_course($json, $login_password, $info);
         $result = json_decode($answer);
         if ($result->course_id != null) {
             $todb = new stdClass();
@@ -78,9 +77,8 @@ if($mform->is_cancelled()) {
 }
 
 echo $OUTPUT->header();
-echo $result.'</br>';
-echo var_dump($answer);
-echo var_dump($login_password);
+echo var_dump($json).'</br>';
+echo $answer;
 //$json = get_json_for_sending($toform, $info, $external_courseid);  //for debugging
 //echo var_dump(get_grade_status_course($info['get_status_url'].$response, $response, $info['loginpassword'])).'<b>Оценка</b></br>'; //for tests
 echo $OUTPUT->footer();

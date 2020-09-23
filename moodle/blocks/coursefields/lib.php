@@ -89,7 +89,7 @@ function get_json_for_sending($toform, $info, $external_courseid = null) {
     $json->package->items = array();
     $teachers = new stdClass();
     $teachers->t_title = $toform->t_title;
-    $teachers->t_image = $toform->t_title;
+    $teachers->t_image = $toform->t_image;
     $teachers->t_description = $toform->t_description;
     unset($toform->t_title);
     unset($toform->t_image);
@@ -131,11 +131,12 @@ function get_json_for_sending($toform, $info, $external_courseid = null) {
     return $json;
 }
 
-function add_course($url, $json, $login_password) {
+function add_course($json, $login_password, $info) {
     $login_password = base64_encode($login_password);
     $curl = curl_init();
+
     curl_setopt_array($curl, array(
-        CURLOPT_URL => $url,
+        CURLOPT_URL => $info['address'],
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => "",
         CURLOPT_MAXREDIRS => 10,
@@ -143,13 +144,19 @@ function add_course($url, $json, $login_password) {
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => "POST",
-        CURLOPT_POSTFIELDS => "$json",
+        CURLOPT_POSTFIELDS => $json,
+        CURLOPT_SSLCERT => $info['certfile'],
+        CURLOPT_SSLKEY => $info['keyfile'],
         CURLOPT_HTTPHEADER => array(
+            "Referer: https://mooc.vsu.ru/",
             "Content-Type: application/json",
             "Authorization: Basic $login_password"
         ),
     ));
+
+
     $response = curl_exec($curl);
+
     curl_close($curl);
     return $response;
 }
