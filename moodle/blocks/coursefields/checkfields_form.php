@@ -38,9 +38,12 @@ class checkfields_form extends moodleform {
         $context = null;
         $attr = array('size' => '100', 'maxlength' => '200');
 
-
         $mform = $this->_form;
-
+        $mform->addElement('header', 'auth_heade', 'Авторизация');
+        $mform->addElement('static', 'attention', 'Предупреждение:', 'Проверте правильность данных и введите логин/пароль');
+        $mform->addElement('text', 'login', get_string('login', 'block_coursefields'), $attr);
+        $mform->setType('login', PARAM_TEXT);
+        $mform->addElement('password', 'password', get_string('password', 'block_coursefields'), $attr);
         $mform->addElement('header', 'course_header', 'Свойства курса');
         $mform->addElement('text', 'title', get_string('title', 'block_coursefields'), $attr)->freeze();
         $mform->addElement('text', 'image', get_string('image', 'block_coursefields'), $attr)->freeze();

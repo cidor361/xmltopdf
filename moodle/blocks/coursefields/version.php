@@ -29,5 +29,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_coursefields';
-$plugin->version = 2020051800;
+$plugin->version = 2020051802;
 $plugin->requires = 2011062400;

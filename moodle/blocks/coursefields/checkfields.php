@@ -52,7 +52,8 @@ if($mform->is_cancelled()) {
     $url = new moodle_url('/blocks/coursefields/editfields.php');
     redirect($url);
 } else if ($formdata = $mform->get_data()) {
-    $login_password = $info['loginpassword'];
+    $login_password = $formdata->login.'@'.$formdata->password;
+    //$login_password = $info['loginpassword'];
     $json = get_json_for_sending($toform, $info, $external_courseid);
     if ($external_courseid == null) {
         $answer = add_course($json, $login_password, $info);
@@ -67,7 +68,7 @@ if($mform->is_cancelled()) {
             $result = get_string('error_upload_course', 'block_coursefields');
         }
     } else {
-        $result = update_ext_course($url.'?course_id='.$external_courseid, $json, $info['loginpassword']); //TODO: make $url in info file!
+        $result = update_ext_course($url.'?course_id='.$external_courseid, $json, $login_password); //TODO: make $url in info file!
     }
     $mform->set_data($toform);
     $mform->display();
