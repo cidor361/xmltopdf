@@ -52,15 +52,10 @@ class block_coursefields extends block_base {
         $url = new moodle_url('/blocks/coursefields/editfields.php');
         $this->content->footer = html_writer::link($url, 'Редактирование/Просмотр');
         $SESSION->courseid = $COURSE->id;
-        //TODO: сделать условие "если студент"
-        $url = new moodle_url('/blocks/coursefields/comment.php');
-        $this->content->footer .= html_writer::link($url, 'Оставить отзыв к курсу');
         /*if (is_primary_admin($USER->id)) {
-            $url = new moodle_url('/blocks/coursefields/portfolio.php');
-            $this->content->footer .= html_writer::link($url, 'Портфолио');
             $url = new moodle_url('blocks/coursefields/admin_page.php');
             $this->content->footer .= html_writer::link($url, 'Администрирование');
-        }*/ //TODO: made access for admin!
+        }*/ //TODO: made statistic for admin
 
     }
 }

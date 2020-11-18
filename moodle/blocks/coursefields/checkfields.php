@@ -68,7 +68,7 @@ if($mform->is_cancelled()) {
             $result = get_string('error_upload_course', 'block_coursefields');
         }
     } else {
-        $result = update_ext_course($url.'?course_id='.$external_courseid, $json, $login_password); //TODO: make $url in info file!
+        //$result = update_ext_course($url.'?course_id='.$external_courseid, $json, $login_password); //TODO: check function!
     }
     $mform->set_data($toform);
     $mform->display();
@@ -80,6 +80,5 @@ if($mform->is_cancelled()) {
 echo $OUTPUT->header();
 echo var_dump($json).'</br>';
 echo $answer;
-//$json = get_json_for_sending($toform, $info, $external_courseid);  //for debugging
 //echo var_dump(get_grade_status_course($info['get_status_url'].$response, $response, $info['loginpassword'])).'<b>Оценка</b></br>'; //for tests
 echo $OUTPUT->footer();
