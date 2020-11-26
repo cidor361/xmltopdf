@@ -77,8 +77,11 @@ if($mform->is_cancelled()) {
     $mform->display();
 }
 
+$course = get_course('2');
+
 echo $OUTPUT->header();
-echo var_dump($json).'</br>';
-echo $answer;
+echo cancel_registration('eef7eb52-14d4-4c4d-8b8e-bf21859a8d57', 1045224720, $info);
+//echo var_dump($json).'</br>';
+//echo $answer;
 //echo var_dump(get_grade_status_course($info['get_status_url'].$response, $response, $info['loginpassword'])).'<b>Оценка</b></br>'; //for tests
 echo $OUTPUT->footer();

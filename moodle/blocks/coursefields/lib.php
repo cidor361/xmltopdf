@@ -190,58 +190,143 @@ function get_grade_status_course($url, $external_courseid, $login_password) {
     return $response;
 }
 
-function create_registration_on_course_object($ext_courseid, $usiaid, $course) {
-    $registration_object = new stdClass();
-    $registration_object->courseId = $ext_courseid;
-    $registration_object->sessionId = '';
-    $registration_object->usiaId = $usiaid;
-    $registration_object->enrollDateenrollDate = '';
-    $registration_object->sessionStart = date("YYYY-MMDDThh:mm:ssZ", $course->startdate);
-    $registration_object->sessionEnd = date("YYYY-MMDDThh:mm:ssZ", $course->enddate);
-    return $registration_object;
+
+
+function create_enrol_object($ext_courseid, $usiaid, $course) {
+    $enroll_on_course = new stdClass();
+    $enroll_on_course->courseId = $ext_courseid;
+    $enroll_on_course->sessionId = '1';
+    $enroll_on_course->usiaId = $usiaid;
+    $enroll_on_course->enrollDate = date("Y-m-d", $course->startdate)."T".date("H:i:sO", $course->startdate);  //TODO: сделать дату зачисления на курс
+    $enroll_on_course->sessionStart = date("Y-m-d", $course->startdate)."T".date("H:i:sO", $course->startdate);
+    $enroll_on_course->sessionEnd = date("Y-m-d", $course->enddate)."T".date("H:i:sO", $course->enddate);
+    return $enroll_on_course;
 }
 
-function registration_on_course($ext_courseid, $course, $usiaid,    //TODO: проверка работы!
+function enrol_on_course($ext_courseid, $course, $usiaid,
                                 $info) {  //TODO: получение ЕСИА id
-
+    $curl = curl_init();
     if (is_array($usiaid)){
-        $curl = curl_init($info['group_registration_on_course']);
+        curl_setopt($curl, CURLOPT_URL, $info['group_enroll_on_course']);
         $list = array();
         $i = 0;
         foreach ($usiaid as $user) {
-            $list[$i] = create_registration_on_course_object($ext_courseid, $user, $course);
+            $list[$i] = create_enrol_object($ext_courseid, $user, $course);
             $i = $i + 1;
         }
 
         $json = json_encode($list, JSON_UNESCAPED_UNICODE);
 
     } else {
-        $registration_object = create_registration_on_course_object($ext_courseid, $usiaid, $course);
+        curl_setopt($curl, CURLOPT_URL, $info['enroll_on_course']);
+        $registration_object = create_enrol_object($ext_courseid, $usiaid, $course);
         $json = json_encode($registration_object, JSON_UNESCAPED_UNICODE);
     }
 
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
     curl_setopt($curl, CURLOPT_TIMEOUT, 0);
-    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
-    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
+    curl_setopt($curl, CURLOPT_POST, 1);
     curl_setopt($curl, CURLOPT_POSTFIELDS, $json);
     curl_setopt($curl, CURLOPT_SSLCERT, $info['certfile']);
     curl_setopt($curl, CURLOPT_SSLKEY, $info['keyfile']);
     curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-        "Referer: https://mooc.vsu.ru/",
         "Content-Type: application/json",
     ));
 
     $response = curl_exec($curl);
     $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     curl_close($curl);
-    return $response;
+    return var_dump($status).'</br>'.var_dump($response).'</br>'.var_dump($json);
 
 }
 
-function send_progress($ext_courseid, $usiaid, , $progress, $module) {
+function create_unenroll_checkenroll_object($ext_courseid, $usiaid) {
+    $cancel_registration_object = new stdClass();
+    $cancel_registration_object->courseId = $ext_courseid;
+    $cancel_registration_object->sessionId = '1';
+    $cancel_registration_object->usiaId = $usiaid;
+    return $cancel_registration_object;
+}
+
+function unenroll_on_course($ext_courseid, $usiaid, $info) {
+    $curl = curl_init();
+    if (is_array($usiaid)){
+        curl_setopt($curl, CURLOPT_URL, $info['group_unenroll_on_course']);
+        $list = array();
+        $i = 0;
+        foreach ($usiaid as $user) {
+            $list[$i] = create_unenroll_checkenroll_object($ext_courseid, $user);
+            $i = $i + 1;
+        }
+
+        $json = json_encode($list, JSON_UNESCAPED_UNICODE);
+
+    } else {
+        curl_setopt($curl, CURLOPT_URL, $info['unenroll_on_course']);
+        $registration_object = create_unenroll_checkenroll_object($ext_courseid, $usiaid, $course);
+        $json = json_encode($registration_object, JSON_UNESCAPED_UNICODE);
+    }
+
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
+    curl_setopt($curl, CURLOPT_TIMEOUT, 0);
+    curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+    curl_setopt($curl, CURLOPT_POST, 1);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $json);
+    curl_setopt($curl, CURLOPT_SSLCERT, $info['certfile']);
+    curl_setopt($curl, CURLOPT_SSLKEY, $info['keyfile']);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+        "Content-Type: application/json",
+    ));
+
+    $response = curl_exec($curl);
+    $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    curl_close($curl);
+    return var_dump($status).'</br>'.var_dump($response).'</br>'.var_dump($json);
+}
+
+function checkenroll_on_course($ext_courseid, $usiaid, $info) {
+    $curl = curl_init();
+
+    curl_setopt($curl, CURLOPT_URL, $info['checkenroll_on_course']);
+    $registration_object = create_unenroll_checkenroll_object($ext_courseid, $usiaid, $course);
+    $json = json_encode($registration_object, JSON_UNESCAPED_UNICODE);
+
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
+    curl_setopt($curl, CURLOPT_TIMEOUT, 0);
+    curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+    curl_setopt($curl, CURLOPT_POST, 1);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $json);
+    curl_setopt($curl, CURLOPT_SSLCERT, $info['certfile']);
+    curl_setopt($curl, CURLOPT_SSLKEY, $info['keyfile']);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+        "Content-Type: application/json",
+    ));
+
+    $response = curl_exec($curl);
+    $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    curl_close($curl);
+    return var_dump($status).'</br>'.var_dump($response).'</br>'.var_dump($json);
+}
+
+function create_result_object($ext_courseid, $usiaid) {
+    $result_object = new stdClass();
+    $result_object->courseId = $ext_courseid;
+    $result_object->sessionId = '1';
+    $result_object->usiaId = $usiaid;
+    $result_object->date = '';      //TODO: информация по модулю
+    $result_object->rating = '';        //TODO if (exist(result)) {result} else {null}
+    $result_object->progress = '';      //TODO: прогресс курса
+    //$result_object->proctored = '';       //there is no proctoring system
+    $result_object->checkpointName = '';        //TODO: modulname
+    $result_object->checkpointId = '';          //TODO: moduleid
+    return $result_object;
+}
+
+/*function send_progress($ext_courseid, $usiaid, $progress, $module) {
     //mdl_course_modules
     $progress = new stdClass();
     $progress->courseId = $ext_courseid;
@@ -257,6 +342,6 @@ function send_progress($ext_courseid, $usiaid, , $progress, $module) {
     $progress->proctored = null;    //имя системы прокторинга в курсе
     $progress->checkpointName = ''; //имя модуля испытания из $module
     $progress->checkpointId = $module->id;
-}
+}*/
 
 function send_progress_multipy() {}
