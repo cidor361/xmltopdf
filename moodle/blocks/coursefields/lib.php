@@ -29,6 +29,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 function get_course_info($course, $USER, $info=null) {
+
+    // Get course info from standart table
     $toform = new stdClass();
     $toform->title = $course->fullname;
     $toform->started_at = gmdate("Y-m-d", (int)$course->startdate);
@@ -44,6 +46,8 @@ function get_course_info($course, $USER, $info=null) {
 }
 
 function strip_html_tags($string) {
+
+    // Old function for removing some char
     $string = strip_tags($string, '');
     $string = str_replace("\n", ' ', $string);
     $string = str_replace("\r", '', $string);
@@ -51,6 +55,8 @@ function strip_html_tags($string) {
 }
 
 function get_json_for_sending($toform, $info, $external_courseid = null) {
+
+    // Convert stdClass to json string and remove empty fields
     $duration = $toform->duration;
     $toform->duration = new stdClass();
     $toform->duration->code = "week";
@@ -108,6 +114,8 @@ function get_json_for_sending($toform, $info, $external_courseid = null) {
 }
 
 function add_course($json, $login_password, $info) {
+
+    // Upload course informations
     $login_password = base64_encode($login_password);
     $curl = curl_init();
 
@@ -138,6 +146,8 @@ function add_course($json, $login_password, $info) {
 }
 
 function update_ext_course($url, $jsonString, $login_password) {
+
+    // Upload updated course information
     $login_password = base64_encode($login_password);
     $curl = curl_init();
     curl_setopt_array($curl, array(
@@ -166,6 +176,8 @@ function update_ext_course($url, $jsonString, $login_password) {
 }
 
 function get_grade_status_course($url, $external_courseid, $login_password) {
+
+    // Get course grade status
     $login_password = base64_encode($login_password);
     $curl = curl_init();
     curl_setopt_array($curl, array(
@@ -193,6 +205,8 @@ function get_grade_status_course($url, $external_courseid, $login_password) {
 
 
 function create_enrol_object($ext_courseid, $usiaid, $course) {
+
+    // Create enroll object for enrol_on_course() function
     $enroll_on_course = new stdClass();
     $enroll_on_course->courseId = $ext_courseid;
     $enroll_on_course->sessionId = '1';
@@ -205,6 +219,8 @@ function create_enrol_object($ext_courseid, $usiaid, $course) {
 
 function enrol_on_course($ext_courseid, $course, $usiaid,
                                 $info) {  //TODO: получение ЕСИА id
+
+    //  Send enroll information
     $curl = curl_init();
     if (is_array($usiaid)){
         curl_setopt($curl, CURLOPT_URL, $info['group_enroll_on_course']);
@@ -312,7 +328,7 @@ function checkenroll_on_course($ext_courseid, $usiaid, $info) {
     return var_dump($status).'</br>'.var_dump($response).'</br>'.var_dump($json);
 }
 
-function create_result_object($ext_courseid, $usiaid) {
+function create_result_object($ext_courseid, $usiaid, $module) {
     $result_object = new stdClass();
     $result_object->courseId = $ext_courseid;
     $result_object->sessionId = '1';
@@ -326,22 +342,102 @@ function create_result_object($ext_courseid, $usiaid) {
     return $result_object;
 }
 
-/*function send_progress($ext_courseid, $usiaid, $progress, $module) {
-    //mdl_course_modules
-    $progress = new stdClass();
-    $progress->courseId = $ext_courseid;
-    $progress->sessionId = '';
-    $progress->usiaId = $usiaid;
-    $progress->date = date("YYYY-MMDDThh:mm:ssZ", $module->timemodified);   //mdl_course_modules_completion дата прорхождение испытания из $module
-    if($module-> <> null) { //TODO: завершение
-        $progress->rating = $module->;
-    } else {
-        $progress->rating = 0;
-    }
-    $progress->progress = $progress;
-    $progress->proctored = null;    //имя системы прокторинга в курсе
-    $progress->checkpointName = ''; //имя модуля испытания из $module
-    $progress->checkpointId = $module->id;
-}*/
+function send_result($ext_courseid, $usiaid, $module, $info) {
+    $curl = curl_init();
+    if (is_array($usiaid)){
+        curl_setopt($curl, CURLOPT_URL, $info['send_results']);
+        $list = array();
+        $i = 0;
+        foreach ($usiaid as $user) {
+            $list[$i] = create_result_object($ext_courseid, $user, $module);
+            $i = $i + 1;
+        }
 
-function send_progress_multipy() {}
+        $json = json_encode($list, JSON_UNESCAPED_UNICODE);
+
+    } else {
+        curl_setopt($curl, CURLOPT_URL, $info['unenroll_on_course']);
+        $result_object = create_result_object($ext_courseid, $usiaid, $module);
+        $json = json_encode($result_object, JSON_UNESCAPED_UNICODE);
+    }
+
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
+    curl_setopt($curl, CURLOPT_TIMEOUT, 0);
+    curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+    curl_setopt($curl, CURLOPT_POST, 1);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $json);
+    curl_setopt($curl, CURLOPT_SSLCERT, $info['certfile']);
+    curl_setopt($curl, CURLOPT_SSLKEY, $info['keyfile']);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+        "Content-Type: application/json",
+    ));
+
+    $response = curl_exec($curl);
+    $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    curl_close($curl);
+    return var_dump($status).'</br>'.var_dump($response).'</br>'.var_dump($json);
+}
+
+function create_progress_object($ext_courseid, $usiaid, $progress, $info) {
+    $progress_object = new stdClass();
+    $progress_object->courseId = $ext_courseid;
+    $progress_object->sessionId = '1';
+    $progress_object->usiaId = $usiaid;
+    $progress_object->progress = $progress;    //TODO: make progress
+    return $progress_object;
+}
+
+function send_progress($ext_courseid, $usiaid, $progress, $info) {
+    $curl = curl_init();
+    if (is_array($usiaid)){
+        curl_setopt($curl, CURLOPT_URL, $info['send_progresses']);
+        $list = array();
+        $i = 0;
+        foreach ($usiaid as $user) {
+            $list[$i] = create_progress_object($ext_courseid, $user, $module);
+            $i = $i + 1;
+        }
+
+        $json = json_encode($list, JSON_UNESCAPED_UNICODE);
+
+    } else {
+        curl_setopt($curl, CURLOPT_URL, $info['send_progress']);
+        $progress_object = create_progress_object($ext_courseid, $usiaid, $module);
+        $json = json_encode($progress_object, JSON_UNESCAPED_UNICODE);
+    }
+
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
+    curl_setopt($curl, CURLOPT_TIMEOUT, 0);
+    curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+    curl_setopt($curl, CURLOPT_POST, 1);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $json);
+    curl_setopt($curl, CURLOPT_SSLCERT, $info['certfile']);
+    curl_setopt($curl, CURLOPT_SSLKEY, $info['keyfile']);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+        "Content-Type: application/json",
+    ));
+
+    $response = curl_exec($curl);
+    $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    curl_close($curl);
+    return var_dump($status).'</br>'.var_dump($response).'</br>'.var_dump($json);
+}
+
+function create_mark_object($ext_courseid, $userid) {
+    $mark_object = new stdClass();
+
+    $user_data = '"user_ids":[';         //TODO: need optimisation
+    foreach ($userid as $user) {
+        $user_data = $user_data.'"'.$user.'",';
+    }
+    $user_data = substr($user_data,0,-1);
+    $user_data = $user_data.']';
+
+    $mark_object->user_ids = $user_data;
+    $mark_object->course_id = $ext_courseid;
+    $mark_object->session_id = '1';
+    return $mark_object;
+}
+
