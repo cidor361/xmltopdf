@@ -22,7 +22,7 @@
  *
  * @package    block_coursefields
  * @category   block
- * @copyright  2008 Kim Bloggs
+ * @copyright  2020 Igor Grebennikov
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -45,6 +45,7 @@ function get_course_info($course, $USER, $info=null) {
     return $toform;
 }
 
+
 function strip_html_tags($string) {
 
     // Old function for removing some char
@@ -53,6 +54,7 @@ function strip_html_tags($string) {
     $string = str_replace("\r", '', $string);
     return $string;
 }
+
 
 function get_json_for_sending($toform, $info, $external_courseid = null) {
 
@@ -113,6 +115,7 @@ function get_json_for_sending($toform, $info, $external_courseid = null) {
     return $json;
 }
 
+
 function add_course($json, $login_password, $info) {
 
     // Upload course informations
@@ -145,6 +148,7 @@ function add_course($json, $login_password, $info) {
     return $response;
 }
 
+
 function update_ext_course($url, $jsonString, $login_password) {
 
     // Upload updated course information
@@ -175,6 +179,7 @@ function update_ext_course($url, $jsonString, $login_password) {
     }
 }
 
+
 function get_grade_status_course($url, $external_courseid, $login_password) {
 
     // Get course grade status
@@ -203,7 +208,6 @@ function get_grade_status_course($url, $external_courseid, $login_password) {
 }
 
 
-
 function create_enrol_object($ext_courseid, $usiaid, $course) {
 
     // Create enroll object for enrol_on_course() function
@@ -216,6 +220,7 @@ function create_enrol_object($ext_courseid, $usiaid, $course) {
     $enroll_on_course->sessionEnd = date("Y-m-d", $course->enddate)."T".date("H:i:sO", $course->enddate);
     return $enroll_on_course;
 }
+
 
 function enrol_on_course($ext_courseid, $course, $usiaid,
                                 $info) {  //TODO: получение ЕСИА id
@@ -258,7 +263,10 @@ function enrol_on_course($ext_courseid, $course, $usiaid,
 
 }
 
+
 function create_unenroll_checkenroll_object($ext_courseid, $usiaid) {
+
+    // Create object for unenroll_on_course() and checkenroll_on_course() functions
     $cancel_registration_object = new stdClass();
     $cancel_registration_object->courseId = $ext_courseid;
     $cancel_registration_object->sessionId = '1';
@@ -266,7 +274,10 @@ function create_unenroll_checkenroll_object($ext_courseid, $usiaid) {
     return $cancel_registration_object;
 }
 
+
 function unenroll_on_course($ext_courseid, $usiaid, $info) {
+
+    // Send unenroll information
     $curl = curl_init();
     if (is_array($usiaid)){
         curl_setopt($curl, CURLOPT_URL, $info['group_unenroll_on_course']);
@@ -303,7 +314,10 @@ function unenroll_on_course($ext_courseid, $usiaid, $info) {
     return var_dump($status).'</br>'.var_dump($response).'</br>'.var_dump($json);
 }
 
+
 function checkenroll_on_course($ext_courseid, $usiaid, $info) {
+
+    // Check if user has enrolled to course
     $curl = curl_init();
 
     curl_setopt($curl, CURLOPT_URL, $info['checkenroll_on_course']);
@@ -328,7 +342,10 @@ function checkenroll_on_course($ext_courseid, $usiaid, $info) {
     return var_dump($status).'</br>'.var_dump($response).'</br>'.var_dump($json);
 }
 
+
 function create_result_object($ext_courseid, $usiaid, $module) {
+
+    // Create object for send_result() function
     $result_object = new stdClass();
     $result_object->courseId = $ext_courseid;
     $result_object->sessionId = '1';
@@ -342,7 +359,10 @@ function create_result_object($ext_courseid, $usiaid, $module) {
     return $result_object;
 }
 
+
 function send_result($ext_courseid, $usiaid, $module, $info) {
+
+    // Send result from course module
     $curl = curl_init();
     if (is_array($usiaid)){
         curl_setopt($curl, CURLOPT_URL, $info['send_results']);
@@ -379,7 +399,10 @@ function send_result($ext_courseid, $usiaid, $module, $info) {
     return var_dump($status).'</br>'.var_dump($response).'</br>'.var_dump($json);
 }
 
+
 function create_progress_object($ext_courseid, $usiaid, $progress, $info) {
+
+    //Create object for send_progress() function
     $progress_object = new stdClass();
     $progress_object->courseId = $ext_courseid;
     $progress_object->sessionId = '1';
@@ -388,7 +411,10 @@ function create_progress_object($ext_courseid, $usiaid, $progress, $info) {
     return $progress_object;
 }
 
+
 function send_progress($ext_courseid, $usiaid, $progress, $info) {
+
+    // Send course progress
     $curl = curl_init();
     if (is_array($usiaid)){
         curl_setopt($curl, CURLOPT_URL, $info['send_progresses']);
@@ -425,7 +451,10 @@ function send_progress($ext_courseid, $usiaid, $progress, $info) {
     return var_dump($status).'</br>'.var_dump($response).'</br>'.var_dump($json);
 }
 
+
 function create_mark_object($ext_courseid, $userid) {
+
+    // Create object for send_mark() function
     $mark_object = new stdClass();
 
     $user_data = '"user_ids":[';         //TODO: need optimisation
@@ -440,4 +469,3 @@ function create_mark_object($ext_courseid, $userid) {
     $mark_object->session_id = '1';
     return $mark_object;
 }
-
