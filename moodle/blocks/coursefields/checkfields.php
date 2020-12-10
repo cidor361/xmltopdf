@@ -33,10 +33,11 @@ require('lib.php');
 require_login();
 
 $PAGE->set_url('/blocks/coursefields/checkfields.php');
-//$PAGE->set_pagelayout('standart');
-$PAGE->set_title('Поля курса');
-//$PAGE->set_heading('Поля курса');
-//$PAGE->set_context(context_course:instance($SESSION->courseid));
+$PAGE->set_pagelayout('standart');
+$PAGE->set_title('Свойства курса');
+$PAGE->set_heading('Свойства курса');
+echo $OUTPUT->header();
+//$PAGE->set_context(context_course::instance($SESSION->courseid));
 $internal_courseid = $SESSION->courseid;
 
 $mform = new checkfields_form();
@@ -61,14 +62,15 @@ if($mform->is_cancelled()) {
         if ($result->course_id != null) {
             $todb = new stdClass();
             $todb->id = $fromdb->id;
-            $todb->external_courseid = $result;
+            $todb->external_courseid = $result->course_id;
             $DB->update_record('block_coursefields', $todb);
-            $result = get_string('success_upload_course', 'block_coursefields').' '.$result->course_id;
+            //$result = get_string('success_upload_course', 'block_coursefields').' '.$result->course_id;
+
         } else {
-            $result = get_string('error_upload_course', 'block_coursefields');
+            //$result = get_string('error_upload_course', 'block_coursefields');
         }
     } else {
-        //$result = update_ext_course($url.'?course_id='.$external_courseid, $json, $login_password); //TODO: check function!
+        $result = update_ext_course($json, $login_password, $info); //TODO: check function!
     }
     $mform->set_data($toform);
     $mform->display();
@@ -77,11 +79,7 @@ if($mform->is_cancelled()) {
     $mform->display();
 }
 
-$course = get_course('2');
-
-echo $OUTPUT->header();
-echo cancel_registration('eef7eb52-14d4-4c4d-8b8e-bf21859a8d57', 1045224720, $info);
-//echo var_dump($json).'</br>';
-//echo $answer;
-//echo var_dump(get_grade_status_course($info['get_status_url'].$response, $response, $info['loginpassword'])).'<b>Оценка</b></br>'; //for tests
+echo var_dump($result);
+//echo cancel_registration('eef7eb52-14d4-4c4d-8b8e-bf21859a8d57', 1045224720, $info);
+//echo var_dump(get_grade_status_course($info['get_grade_status'].$response, $response, $info['loginpassword'])).'<b>Оценка</b></br>'; //for tests
 echo $OUTPUT->footer();

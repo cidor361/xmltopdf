@@ -52,17 +52,30 @@ $capabilities = array(
 //        ),
 //    ),
 
-        'block/coursefield:viewblock' => array(
-            'captype' => 'read',
-            'contextlevel' => CONTEXT_BLOCK,
-            'archetypes' => array(
-                //'guest'          => CAP_PROHIBIT,
-                //'student'        => CAP_PROHIBIT,
-                'teacher'        => CAP_ALLOW,
-                'editingteacher' => CAP_ALLOW,
-                'coursecreator'  => CAP_ALLOW,
-                'manager'        => CAP_ALLOW
-            ),
+    'block/coursefield:viewblock' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            //'guest'          => CAP_PROHIBIT,
+            //'student'        => CAP_PROHIBIT,
+            'teacher'        => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator'  => CAP_ALLOW,
+            'manager'        => CAP_ALLOW
         ),
+    ),
+
+    'block/coursefield:manage_data' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            //'guest'          => CAP_PROHIBIT,
+            //'student'        => CAP_PROHIBIT,
+            'teacher'        => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator'  => CAP_ALLOW,
+            'manager'        => CAP_ALLOW
+        ),
+    ),
 
 );

@@ -33,10 +33,11 @@ require_login();
 
 
 $PAGE->set_url('/blocks/coursefields/editfields.php');
-//$PAGE->set_pagelayout('standart');
-$PAGE->set_title('Поля курса');
-//$PAGE->set_heading('Поля курса');
-//$PAGE->set_context(context_course:instance($SESSION->courseid));
+$PAGE->set_pagelayout('standart');
+$PAGE->set_title('Свойства курса');
+$PAGE->set_heading('Свойства курса');
+//$PAGE->set_context(context_course::instance($SESSION->courseid));
+echo $OUTPUT->header();
 $internal_courseid = $SESSION->courseid;
 
 $exist = $DB->record_exists('block_coursefields', array('internal_courseid' => $internal_courseid));
@@ -74,5 +75,4 @@ if ($mform->is_cancelled()) {
     $mform->display();
 }
 
-echo $OUTPUT->header();
 echo $OUTPUT->footer();

@@ -22,28 +22,27 @@
  *
  * @package    block_coursefields
  * @category   block
- * @copyright  2008 Kim Bloggs
+ * @copyright  2020 Igor Grebennikov
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require(__DIR__.'../../config.php');
-require_once(__DIR__.'lib.php');
-require_once(__DIR__.'info.php');
-require_login($internal_courseid);
+defined('MOODLE_INTERNAL') || die();
+require_once("$CFG->libdir/formslib.php");
 
-$internal_courseid = $SESSION->internal_courseid;
-$context = get_context_instance(CONTEXT_COURSE, $internal_courseid);
-$PAGE->set_url('/blocks/coursefields/list.php');
-$PAGE->set_pagelayout('standart');
-$PAGE->set_title('Мониторинг');
-$PAGE->set_heading('Мониторинг');
-$PAGE->set_context(context_course::instance($internal_courseid));
+class admin_form extends moodleform
+{
 
-$number_of_records = $DB->count_records('block_coursefields');
+    public function definition()
+    {
 
-$mform = $this->_form;
-$mform->addElement('static', 'number_of_records', 'Количество записей в БД', $number_of_records);
+        $context = null;
+        $attr = array('size' => '100', 'maxlength' => '200');
 
-echo $OUTPUT->header();
-$mform->display();
-echo $OUTPUT->footer();
+        $mform = $this->_form;
+
+        $mform->addElement('header', 'info_head', 'Общая информация');
+        $mform->addElement('static', 'number_of_records', 'Количество записей в БД');
+        $mform->addElement('static', 'num_of_uploaded_course', 'Количество загруженных курсов');
+    }
+
+}

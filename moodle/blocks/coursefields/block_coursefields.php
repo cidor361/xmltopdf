@@ -37,7 +37,11 @@ class block_coursefields extends block_base {
     }
 
     public function get_content() {
-        global $COURSE, $SESSION;
+        global $COURSE, $SESSION, $USER;
+
+        //$context = context_course::instance($COURSE->id);
+        $SESSION->courseid = $COURSE->id;
+        $SESSION->context = $this->context;
 
         if ($this->content != null) {
             return $this->content;
@@ -50,12 +54,15 @@ class block_coursefields extends block_base {
         $this->content = new stdClass;
         $this->content->text = get_string('Description_plugin', 'block_coursefields');
         $url = new moodle_url('/blocks/coursefields/editfields.php');
-        $this->content->footer = html_writer::link($url, 'Редактирование/Просмотр');
-        $SESSION->courseid = $COURSE->id;
-        /*if (is_primary_admin($USER->id)) {
-            $url = new moodle_url('blocks/coursefields/admin_page.php');
+        $this->content->footer = html_writer::link($url, 'Редактирование/Просмотр полей').'</br>';
+        if (has_capability('block/coursefield:manage_data', $this->context)) {
+            $url = new moodle_url('/blocks/coursefields/manage.php');
+            $this->content->footer .= html_writer::link($url, 'Уравление отправкой').'</br>';
+        }
+        if (is_primary_admin($USER->id)) {
+            $url = new moodle_url('/blocks/coursefields/admin.php');
             $this->content->footer .= html_writer::link($url, 'Администрирование');
-        }*/ //TODO: made statistic for admin
+        }
 
     }
 }

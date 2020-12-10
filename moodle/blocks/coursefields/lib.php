@@ -148,12 +148,51 @@ function add_course($json, $login_password, $info) {
     return $response;
 }
 
-
-function update_ext_course($url, $jsonString, $login_password) {
+/*function update_ext_course($url, $jsonString, $login_password) {
 
     // Upload updated course information
     $login_password = base64_encode($login_password);
     $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $info['get_grade_status'].$external_courseid);
+
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
+    curl_setopt($curl, CURLOPT_TIMEOUT, 0);
+    curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'GET');
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $json);
+    curl_setopt($curl, CURLOPT_SSLCERT, $info['certfile']);
+    curl_setopt($curl, CURLOPT_SSLKEY, $info['keyfile']);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+        "Authorization: Basic $login_password"
+    ));
+
+
+    $response = curl_exec($curl);
+    $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    curl_close($curl);
+
+    return var_dump($status).'</br>'.var_dump($response);
+    curl_setopt($curl, CURLOPT_URL, $info['get_grade_status'].$external_courseid);
+
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
+    curl_setopt($curl, CURLOPT_TIMEOUT, 0);
+    curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'GET');
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $json);
+    curl_setopt($curl, CURLOPT_SSLCERT, $info['certfile']);
+    curl_setopt($curl, CURLOPT_SSLKEY, $info['keyfile']);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+        "Authorization: Basic $login_password"
+    ));
+
+
+    $response = curl_exec($curl);
+    $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    curl_close($curl);
+
+    return var_dump($status).'</br>'.var_dump($response);
     curl_setopt_array($curl, array(
         CURLOPT_URL => $url,
         CURLOPT_RETURNTRANSFER => true,
@@ -177,34 +216,67 @@ function update_ext_course($url, $jsonString, $login_password) {
     } else {
         die("Error: call to URL $url failed with status $status, response $response, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
     }
-}
+}*/
 
+function update_ext_course($json, $login_password, $info) {
 
-function get_grade_status_course($url, $external_courseid, $login_password) {
-
-    // Get course grade status
+    // Upload updated course information
     $login_password = base64_encode($login_password);
     $curl = curl_init();
+
     curl_setopt_array($curl, array(
-        CURLOPT_URL => $url . $external_courseid,
+        CURLOPT_URL => $info['address'],
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => "",
         CURLOPT_MAXREDIRS => 10,
         CURLOPT_TIMEOUT => 0,
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => "GET",
+        CURLOPT_CUSTOMREQUEST => "PUT",
+        CURLOPT_POSTFIELDS => $json,
+        CURLOPT_SSLCERT => $info['certfile'],
+        CURLOPT_SSLKEY => $info['keyfile'],
         CURLOPT_HTTPHEADER => array(
+            "Referer: https://mooc.vsu.ru/",
+            "Content-Type: application/json",
             "Authorization: Basic $login_password"
         ),
     ));
+
+
     $response = curl_exec($curl);
     $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     curl_close($curl);
-    if ($status == 200) {
-        die("Error: call to URL $url failed with status $status, response $response, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
-    }
-    return $response;
+    return var_dump($status).'</br>'.var_dump($response);
+
+}
+
+function get_grade_status_course($external_courseid, $login_password, $info) {
+
+    // Get course grade status
+    $login_password = base64_encode($login_password);
+
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $info['get_grade_status'].$external_courseid);
+
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
+    curl_setopt($curl, CURLOPT_TIMEOUT, 0);
+    curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'GET');
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $json);
+    curl_setopt($curl, CURLOPT_SSLCERT, $info['certfile']);
+    curl_setopt($curl, CURLOPT_SSLKEY, $info['keyfile']);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+        "Authorization: Basic $login_password"
+    ));
+
+
+    $response = curl_exec($curl);
+    $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    curl_close($curl);
+
+    return var_dump($status).'</br>'.var_dump($response);
 }
 
 
