@@ -45,7 +45,7 @@ class manage_form extends moodleform
         $mform->addElement('static', 'get_grade_status_course', 'Статус оценки курса');
 
         $mform->addElement('header', 'in_progress', 'В разработке');
-        $mform->addElement('static', 'num_of_users', 'Количество студентов курса');
+        $mform->addElement('static', 'num_of_users', 'Количество студентов, подписанных на курс');
 
 /*
         $this->add_action_buttons($cancel = true, $submitlabel='Submittion button');

@@ -28,6 +28,7 @@
 
 require_once('../../config.php');
 require_once('editfields_form.php');
+require_once('info_test.php');
 require('lib.php');
 require_login();
 
@@ -46,7 +47,7 @@ if ($exist) {
     $toform = json_decode($fromdb->json);
 } else {
     $course = $DB->get_record('course', array('id' => $internal_courseid), '*', MUST_EXIST);
-    $toform = get_course_info($course, $USER);
+    $toform = get_course_info($course, $USER, $info);
 }
 
 $mform = new editfields_form();

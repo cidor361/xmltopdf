@@ -51,12 +51,11 @@ if ($exist) {
         'external_courseid');
 }
 
-$course_status = get_grade_status_course($toform->external_courseid,
-    'riapolov@vsu.ru:vsu_2018', $info);
-$course_status = json_decode($course_status);
-$toform->get_grade_status_course = $course_status->status;
-
 $mform = new manage_form();
+
+$course_statusee = get_grade_status_course($toform->external_courseid, $info['loginpassword'], $info);
+$course_status = json_decode($course_statusee);
+$toform->get_grade_status_course = $course_status->status;
 
 /*
 if ($mform->is_cancelled()) {
@@ -78,6 +77,4 @@ if ($mform->is_cancelled()) {
 
 $mform->set_data($toform);
 $mform->display();
-echo var_dump($course_status);
 echo $OUTPUT->footer();
-

@@ -271,12 +271,11 @@ function get_grade_status_course($external_courseid, $login_password, $info) {
         "Authorization: Basic $login_password"
     ));
 
-
     $response = curl_exec($curl);
     $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     curl_close($curl);
 
-    return var_dump($status).'</br>'.var_dump($response);
+    return var_dump($response);
 }
 
 
