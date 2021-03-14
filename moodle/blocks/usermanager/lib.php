@@ -1,6 +1,5 @@
 <?php
-
-function get_extra_field_ids() {
+function get_user_field_ids() {
     global $DB;
     
     $sql = "SELECT id, shortname 
@@ -21,7 +20,7 @@ function get_extra_field_ids() {
     return $ids;
 }
 
-function get_facultets($ids) {
+function get_facultet_names($ids) {
     global $DB;
     
     $field_id = $ids['fac'];
@@ -33,18 +32,18 @@ function get_facultets($ids) {
     $i = 0;
     $facultets = array();
     foreach ($results as $result) {
-        if ($result->data != '') {
+        if (($result->data != '') && ($result->data != null)) {
             $facultets[$i] = $result->data;
             $i++;
         }
     }
 
-    //$facultets = sort_array($facultets);
+    $facultets = sort_array($facultets);
     
     return $facultets;
 }
 
-function get_num_course($ids) {
+function get_num_course_name($ids) {
     global $DB;
 
     $field_id = $ids['year'];
@@ -57,18 +56,18 @@ function get_num_course($ids) {
     $i = 0;
     $nums_course = array();
     foreach ($results as $result) {
-        if ($result->data != '') {
+        if (($result->data != '') && ($result->data != null)) {
             $nums_course[$i] = $result->data;
             $i++;
         }
     }
 
-    //$nums_course = sort_array($nums_course);
+    $nums_course = sort_array($nums_course);
 
     return $nums_course;
 }
 
-function get_edu_forms($ids) {
+function get_edu_forms_name($ids) {
     global $DB;
 
     $field_id = $ids['stform'];
@@ -81,18 +80,18 @@ function get_edu_forms($ids) {
     $i = 0;
     $edu_forms = array();
     foreach ($results as $result) {
-        if ($result->data != '') {
+        if (($result->data != '') && ($result->data != null)) {
             $edu_forms[$i] = $result->data;
+            $i++;
         }
-        $i++;
     }
 
-    //$edu_forms = sort_array($edu_forms);
+    $edu_forms = sort_array($edu_forms);
 
     return $edu_forms;
 }
 
-function get_edu_level($ids) {
+function get_edu_level_name($ids) {
     global $DB;
 
     $field_id = $ids['level'];
@@ -105,18 +104,18 @@ function get_edu_level($ids) {
     $i = 0;
     $edu_levels = array();
     foreach ($results as $result) {
-        if ($result->data != '') {
+        if (($result->data != '') && ($result->data != null)) {
             $edu_levels[$i] = $result->data;
+            $i++;
         }
-        $i++;
     }
 
-    //$edu_levels = sort_array($edu_levels);
+    $edu_levels = sort_array($edu_levels);
 
     return $edu_levels;
 }
 
-function get_edu_specialites($ids) {
+function get_edu_specialites_name($ids) {
     global $DB;
 
     $field_id = $ids['naprspec'];
@@ -129,84 +128,62 @@ function get_edu_specialites($ids) {
     $i = 0;
     $edu_specialites = array();
     foreach ($results as $result) {
-        if ($result->data != '') {
+        if (($result->data != '') && ($result->data != null)) {
+            $edu_specialites[$i] = $result->data;
+            $i++;
+        }
+    }
+
+    $edu_specialites = sort_array($edu_specialites);
+
+    return $edu_specialites;
+}
+
+function get_edu_specialites_fac($ids) {
+    global $DB;
+    
+    $sql = "SELECT DISTINCT data
+            FROM mdl_user_info_data
+            WHERE fieldid = '".$ids['fac']."';";
+    $results = $DB->get_records_sql($sql);
+
+    $i = 0;
+    $edu_specialites = array();
+    foreach ($results as $result) {
+        if ($result->data != '' and $result->data != null) {
             $edu_specialites[$i] = $result->data;
         }
         $i++;
     }
 
-    //$edu_specialites = sort_array($edu_specialites);
+    $edu_specialites = sort_array($edu_specialites);
 
-    return $edu_specialites ;
+    return $edu_specialites;
 }
 
-function get_edu_specialites_with_fac($field_ids) {
-    global $DB;
-    
-    $sql = "SELECT DISTINCT data
-            FROM mdl_user_info_data
-            WHERE fieldid = '".$field_id."';";
-    $result = $DB->get_records_sql($sql);
-    
-    return (array)$result;
-}
-
-function search_vsu_users($field_ids, $fields) {    //TODO: поправить в соответствии с формами
+function search_vsu_fields_users($ids, $fields) {    //TODO: поправить в соответствии с формами
     global $DB;
     
     //Get list of user
     //$field_ids - field ids (example 1 - facultet or 2 - year)
     //$fields - field value (example 1 - Физический факультет or 2 - 2020)
-        
-    $sql = "select userid from mdl_user_info_data where fieldid = ".$field_ids[0]." and data = ".$fields[0]." and userid in
-                (select userid from mdl_user_info_data where fieldid = ".$field_ids[1]." and data = ".$fields[1]." and userid in 
-                    (select userid from mdl_user_info_data where fieldid = ".$field_ids[2]." and data = ".$fields[2]." and userid in
-                        (select userid from mdl_user_info_data where fieldid = ".$field_ids[3]." and data = ".$fields[3]." and userid in
-                            (select userid from mdl_user_info_data where fieldid = ".$field_ids[4]." and data = ".$fields[4]."))));";
+
+    $sql = "select userid from mdl_user_info_data where fieldid = '".$ids['fac']."' and data = '".$fields->fac."' and userid in
+                (select userid from mdl_user_info_data where fieldid = '".$ids['naprspec']."' and data = '".$fields->naprspec."' and userid in 
+                    (select userid from mdl_user_info_data where fieldid = '".$ids['year']."' and data = '".$fields->year."' and userid in
+                        (select userid from mdl_user_info_data where fieldid = '".$ids['stform']."' and data = '".$fields->stform."' and userid in
+                            (select userid from mdl_user_info_data where fieldid = '".$ids['level']."' and data = '".$fields->level."'))));";
     $user_ids = $DB->get_records_sql($sql);
     
-    $users = new sdtClass();
+    $users = new stdClass();
     $i = 0;
     foreach ($user_ids as $user_id) {
-        $users[$i] = $DB->get_record('user', array('id'=>$user_id->id), $sort='', 
-                                    $fields='id,firstname,lastname');
+        $id = $user_id->userid;
+        $users->$i = $DB->get_record('user', array('id' => $id), $fields = 'id,firstname,lastname');
         $i++;
     }
     
     return $users;
-}
-
-
-function check_enrolment($courseid, $userid, $roleid = '5', $enrolmethod = 'manual'){
-   
-       global $DB;
-       
-       $user = $DB->get_record('user', array('id' => $userid, 'deleted' => 0), '*', MUST_EXIST);
-       $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
-       $context = context_course::instance($course->id);
-       if (!is_enrolled($context, $user)) {
-         $enrol = enrol_get_plugin($enrolmethod);
-         if ($enrol === null) {
-            return false;
-         }
-        $instances = enrol_get_instances($course->id, true);
-        $manualinstance = null;
-        foreach ($instances as $instance) {
-            if ($instance->name == $enrolmethod) {
-                $manualinstance = $instance;
-                break;
-            }
-        }
-        if ($manualinstance !== null) {
-            $instanceid = $enrol->add_default_instance($course);
-            if ($instanceid === null) {
-                $instanceid = $enrol->add_instance($course);
-            }
-            $instance = $DB->get_record('enrol', array('id' => $instanceid));
-        }
-        $enrol->enrol_user($instance, $userid, $roleid);
-    }
-    return true;
 }
 
 function sort_array($array) {
@@ -214,9 +191,66 @@ function sort_array($array) {
         $sortkey[$i]=$array[$i]['price'];
     }
 
-    asort($sortkey);//по возрастанию, arsort($sortkey) - по убыванию
+    asort($sortkey); //по возрастанию,
+    //arsort($sortkey); //по убыванию
 
     foreach ($sortkey as $key => $key) {
         $sorted[]=$array[$key];
+    }
+
+    return $sorted;
+}
+
+function prepare_data_one($fromform, $firstdata) {
+    $data = new stdClass();
+    $data->fac = $firstdata->facultets[$fromform->fac];
+    $data->naprspec = $firstdata->edu_specialites[$fromform->naprspec];
+    $data->year = $firstdata->num_course[$fromform->year];
+    $data->stform = $firstdata->edu_forms[$fromform->stform];
+    $data->level = $firstdata->edu_level[$fromform->level];
+
+    return $data;
+}
+
+function enrol_user_manual($courseid, $id) {
+
+    global $DB;
+    ///I need now the "enrol" id, so I do this:
+    $sql = "SELECT id FROM mdl_enrol WHERE courseid='".$courseid."' AND enrol='manual';";
+    $result = $DB->get_records_sql($sql);
+    if(!$result){
+        ///Not enrol associated (this shouldn't happen and means you have an error in your moodle database)
+    }
+    foreach ($result as $unit){
+        $idenrol = $unit->id;
+    }
+
+///Lastly I need the context
+    $sql = "SELECT id FROM mdl_context WHERE contextlevel='50' AND instanceid='".$courseid."';"; ///contextlevel = 50 means course in moodle
+    $result = $DB->get_records_sql($sql);
+    if(!$result){
+        ///Again, weird error, shouldnt happen to you
+    }
+    foreach ($result as $unit){
+        $idcontext = $unit->id;
+    }
+
+
+///We were just getting variables from moodle. Here is were the enrolment begins:
+
+    $time = time();
+    $ntime = $time + 60*60*24*$duration; //How long will it last enroled $duration = days, this can be 0 for unlimited.
+    $sql = "INSERT INTO mdl_user_enrolments (status, enrolid, userid, timestart, timeend, timecreated, timemodified)
+VALUES (0, $idenrol, $id, '$time', '$ntime', '$time', '$time')";
+    if ($DB->execute($sql) === TRUE) {
+    } else {
+        ///Manage your sql error
+    }
+
+    $sql = "INSERT INTO mdl_role_assignments (roleid, contextid, userid, timemodified)
+VALUES (5, $idcontext, '$id', '$time')"; //Roleid = 5, means student.
+    if ($DB->execute($sql) === TRUE) {
+    } else {
+        //manage your errors
     }
 }

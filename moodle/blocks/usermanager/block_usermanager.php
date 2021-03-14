@@ -8,14 +8,17 @@ class block_usermanager extends block_base {
 
     public function get_content()
     {
+        global $SESSION, $COURSE;
         if ($this->content != null) {
             return $this->content;
         }
 
         $this->content = new stdClass;
-        $url = new moodle_url('/blocks/usermanager/global_students.php');
+        $url = new moodle_url('/blocks/usermanager/search_users.php');
 
-        $this->content->text = 'The content of our SimpleHTML block!';
+        $SESSION->courseid = $COURSE->id;
+
+        $this->content->text = 'Подписка студентов вручную';
         $this->content->footer = html_writer::link($url, 'Подписка по группам');
 
         return $this->content;

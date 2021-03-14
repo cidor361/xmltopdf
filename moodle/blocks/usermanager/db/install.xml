@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="blocks/usermanager/db" VERSION="20200219" COMMENT="XMLDB file for Moodle blocks/usermanager"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+    <TABLES>
+        <TABLE NAME="block_usermanager_applications" COMMENT="Table for enrol log">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="created" TYPE="datetime" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="modified" TYPE="datetime" NOTNULL="true" SEQUENCE="false" />
+                <FIELD NAME="required_user" TYPE="int" LENGTH="8" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="status" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="id" FIELDS="id" TYPE="primary"/>
+                <KEY NAME="required_user" FIELDS="required_user" TYPE="primary"/>
+                <KEY NAME="status" FIELDS="status" TYPE="primary"/>
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="block_usermanager_users" COMMENT="Table for logging users in applications">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="application_id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="user_id" TYPE="int" LENGTH="8" NOTNULL="true" SEQUENCE=""
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="id" FIELDS="id" TYPE="primary"/>
+                <KEY NAME="application_id" FIELDS="application_id" TYPE="primary"/>
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="block_usermanager_error_log" COMMENT="If enrol action return error, debug data will be here">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="application_id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="error_message" TYPE="text" LENGTH="1000" NOTNULL="false" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="id" FIELDS="id" TYPE="primary"/>
+                <KEY NAME="application_id" FIELDS="application_id" TYPE="primary"/>
+            </KEYS>
+        </TABLE>
+    </TABLES>
+</XMLDB>

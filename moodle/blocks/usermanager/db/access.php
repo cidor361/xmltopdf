@@ -8,7 +8,6 @@
             'user' => CAP_ALLOW
         ),
  
-        'clonepermissionsfrom' => 'moodle/my:manageblocks'
     ),
  
     'block/usermanager:addinstance' => array(
@@ -21,6 +20,5 @@
             'manager' => CAP_ALLOW
         ),
  
-        'clonepermissionsfrom' => 'moodle/site:manageblocks'
     ),
 );
