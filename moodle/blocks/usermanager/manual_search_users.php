@@ -10,7 +10,7 @@ require_login($course, true);
 
 $PAGE->set_context(context_course::instance($course->id));
 $PAGE->set_pagelayout('standard');
-$PAGE->set_url('/blocks/vsucourse/manual_search_users.php', array('id' => $course->id));
+$PAGE->set_url('/blocks/usermanager/manual_search_users.php', array('id' => $course->id));
 $PAGE->navbar->add(get_string('pluginname', 'block_usermanager'));
 
 $PAGE->set_title(get_string('pluginname', 'block_usermanager'));
