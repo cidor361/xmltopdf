@@ -28,6 +28,7 @@
                 <KEY NAME="application_id" FIELDS="application_id" TYPE="primary"/>
             </KEYS>
         </TABLE>
+
         <TABLE NAME="block_usermanager_error_log" COMMENT="If enrol action return error, debug data will be here">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true"/>
@@ -38,6 +39,42 @@
                 <KEY NAME="id" FIELDS="id" TYPE="primary"/>
                 <KEY NAME="application_id" FIELDS="application_id" TYPE="primary"/>
             </KEYS>
+        </TABLE>
+
+        <TABLE NAME="block_usermanager_facultets" COMMENT="list of facultets">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="name" TYPE="text" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+            </FIELDS>
+        </TABLE>
+
+        <TABLE NAME="block_usermanager_specialities" COMMENT="list of specialities">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="name" TYPE="text" LENGTH="200" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="faculty" TYPE="text" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+            </FIELDS>
+        </TABLE>
+
+        <TABLE NAME="block_usermanager_years" COMMENT="list of courses (years)">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="name" TYPE="text" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+            </FIELDS>
+        </TABLE>
+
+        <TABLE NAME="block_usermanager_eduforms" COMMENT="list of edu forms">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="name" TYPE="text" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+            </FIELDS>
+        </TABLE>
+
+        <TABLE NAME="block_usermanager_edutype" COMMENT="list of edu types">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="name" TYPE="int" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+            </FIELDS>
         </TABLE>
     </TABLES>
 </XMLDB>

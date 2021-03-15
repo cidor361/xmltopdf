@@ -14,7 +14,7 @@ class block_usermanager extends block_base {
         }
 
         $this->content = new stdClass;
-        $url = new moodle_url('/blocks/usermanager/search_users.php');
+        $url = new moodle_url('/blocks/usermanager/manual_search_users.php');
 
         $SESSION->courseid = $COURSE->id;
 

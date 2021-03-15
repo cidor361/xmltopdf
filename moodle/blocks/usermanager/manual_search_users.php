@@ -5,15 +5,12 @@ require_once('manual_search_users_form.php');
 
 global $DB, $SESSION;
 
-//$course = $DB->get_record('course',array('id'=>$SESSION->courseid));
-$course = $DB->get_record('course',array('id'=>3777));
+$course = $DB->get_record('course',array('id'=>$SESSION->courseid));
 require_login($course, true);
 
-//$PAGE->set_context(context_course::instance($course->id));
-$PAGE->set_context(context_course::instance(3777));
+$PAGE->set_context(context_course::instance($course->id));
 $PAGE->set_pagelayout('standard');
-$PAGE->set_url('/blocks/usermanager/manual_search_users.php', array('id' => 3777));
-//$PAGE->set_url('/blocks/vsucourse/manual_search_users.php', array('id' => $course->id));
+$PAGE->set_url('/blocks/vsucourse/manual_search_users.php', array('id' => $course->id));
 $PAGE->navbar->add(get_string('pluginname', 'block_usermanager'));
 
 $PAGE->set_title(get_string('pluginname', 'block_usermanager'));
@@ -47,8 +44,6 @@ if ($mform->is_cancelled()) {
     $mform->display();
 }
 
-//echo var_dump($first_data);
-//echo var_dump($users);
 echo $OUTPUT->footer();
 
 //TODO: создать списки по полям

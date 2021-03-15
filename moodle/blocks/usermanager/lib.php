@@ -212,11 +212,11 @@ function prepare_data_one($fromform, $firstdata) {
     return $data;
 }
 
-function enrol_user_manual($courseid, $id) {
+function enrol_user_manual($courseid, $id, $roleid=5, $duration=0, $method='manual') {
 
     global $DB;
-    ///I need now the "enrol" id, so I do this:
-    $sql = "SELECT id FROM mdl_enrol WHERE courseid='".$courseid."' AND enrol='manual';";
+    //Get enroll instance:
+    $sql = "SELECT id FROM mdl_enrol WHERE courseid='".$courseid."' AND enrol='".$method."';";
     $result = $DB->get_records_sql($sql);
     if(!$result){
         ///Not enrol associated (this shouldn't happen and means you have an error in your moodle database)
@@ -225,7 +225,7 @@ function enrol_user_manual($courseid, $id) {
         $idenrol = $unit->id;
     }
 
-///Lastly I need the context
+    //Get the context
     $sql = "SELECT id FROM mdl_context WHERE contextlevel='50' AND instanceid='".$courseid."';"; ///contextlevel = 50 means course in moodle
     $result = $DB->get_records_sql($sql);
     if(!$result){
@@ -236,21 +236,21 @@ function enrol_user_manual($courseid, $id) {
     }
 
 
-///We were just getting variables from moodle. Here is were the enrolment begins:
-
+    //Get variables from moodle. Here is were the enrolment begins:
     $time = time();
     $ntime = $time + 60*60*24*$duration; //How long will it last enroled $duration = days, this can be 0 for unlimited.
     $sql = "INSERT INTO mdl_user_enrolments (status, enrolid, userid, timestart, timeend, timecreated, timemodified)
 VALUES (0, $idenrol, $id, '$time', '$ntime', '$time', '$time')";
     if ($DB->execute($sql) === TRUE) {
     } else {
-        ///Manage your sql error
+        ///Manage sql error
     }
 
     $sql = "INSERT INTO mdl_role_assignments (roleid, contextid, userid, timemodified)
-VALUES (5, $idcontext, '$id', '$time')"; //Roleid = 5, means student.
+VALUES ($roleid, $idcontext, '$id', '$time')";
     if ($DB->execute($sql) === TRUE) {
+        return true;
     } else {
-        //manage your errors
+        //Manage errors
     }
 }
