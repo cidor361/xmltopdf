@@ -1,5 +1,16 @@
 <?php
 function get_user_field_ids() {
+    /*
+     * fac - Факультет //Физический факультет
+     * year - Курс //4
+     * stform - Форма обучения //Очная
+     * level - Ступень //Бакалавр
+     * naprspec - Код и наименование направления (специальности) //09.03.01 Информатика и вычислительная техника
+     * naprspec2 - Наименование направления (специальности) //Информатика и вычислительная техника
+     * specialityCode - Код направления (специальности) //09.03.01
+     * profile - Профиль (специализация) //Вычислительные машины, комплексы, системы и сети (ФГОС3+)
+    */
+
     global $DB;
     
     $sql = "SELECT id, shortname 
@@ -8,7 +19,10 @@ function get_user_field_ids() {
                   (shortname = 'year') OR
                   (shortname = 'stform') OR
                   (shortname = 'level') OR
-                  (shortname = 'naprspec');";
+                  (shortname = 'naprspec') OR
+                  (shortname = 'specialityCode') OR
+                  (shortname = 'profile') OR
+                  (shortname = 'naprspec2');";
     $results = $DB->get_records_sql($sql);
 
     $ids = array();
@@ -161,22 +175,32 @@ function get_edu_specialites_fac($ids) {
     return $edu_specialites;
 }
 
-function search_vsu_fields_users($ids, $fields) {    //TODO: поправить в соответствии с формами
+function search_vsu_fields_users($ids, $fields) {
     global $DB;
     
     //Get list of user
     //$field_ids - field ids (example 1 - facultet or 2 - year)
     //$fields - field value (example 1 - Физический факультет or 2 - 2020)
+    /*
+     * 7 -
+     * 11 -
+     * 12 -
+     * 16 - fac (facultet; example 'Физический факультет')
+     * 19 - stat (edu status; example эучится')
+     * 21 -
+     */
 
-    $sql = "select userid from mdl_user_info_data where fieldid = '".$ids['fac']."' and data = '".$fields->fac."' and userid in
-                (select userid from mdl_user_info_data where fieldid = '".$ids['naprspec']."' and data = '".$fields->naprspec."' and userid in 
-                    (select userid from mdl_user_info_data where fieldid = '".$ids['year']."' and data = '".$fields->year."' and userid in
-                        (select userid from mdl_user_info_data where fieldid = '".$ids['stform']."' and data = '".$fields->stform."' and userid in
-                            (select userid from mdl_user_info_data where fieldid = '".$ids['level']."' and data = '".$fields->level."'))));";
+    $sql = "select userid from mdl_user_info_data where fieldid='19' and data='учится' and userid in
+                (select userid from mdl_user_info_data where fieldid = '".$ids['fac']."' and data = '".$fields->fac."' and userid in
+                    (select userid from mdl_user_info_data where fieldid = '".$ids['naprspec']."' and data = '".$fields->naprspec."' and userid in 
+                        (select userid from mdl_user_info_data where fieldid = '".$ids['year']."' and data = '".$fields->year."' and userid in
+                            (select userid from mdl_user_info_data where fieldid = '".$ids['stform']."' and data = '".$fields->stform."' and userid in
+                                (select userid from mdl_user_info_data where fieldid = '".$ids['level']."' and data = '".$fields->level."')))));";
     $user_ids = $DB->get_records_sql($sql);
-    
-    $users = new stdClass();
-    $i = 0;
+
+        $users = new stdClass();
+        $i = 0;
+
     foreach ($user_ids as $user_id) {
         $id = $user_id->userid;
         $users->$i = $DB->get_record('user', array('id' => $id), $fields = 'id,firstname,lastname');
@@ -253,4 +277,37 @@ VALUES ($roleid, $idcontext, '$id', '$time')";
     } else {
         //Manage errors
     }
+}
+
+function search_vsu_fields_users_per_disciplin($ids, $disciplin) {
+    global $DB;
+
+    //Get list of user
+    //$field_ids - field ids (example 1 - facultet or 2 - year)
+    //$fields - field value (example 1 - Физический факультет or 2 - 2020)
+    /*
+     * 7 -
+     * 11 -
+     * 12 -
+     * 16 - fac (facultet; example 'Физический факультет')
+     * 19 - stat (edu status; example эучится')
+     * 21 -
+     */
+
+    $sql = "select userid from mdl_user_info_data where fieldid='19' and data='учится' and userid in
+                (select userid from mdl_user_info_data where fieldid = '".$ids['level']."' and data = '".$disciplin->step."' and userid in
+                    (select userid from mdl_user_info_data where fieldid = '".$ids['specialityCode']."' and data = '".$disciplin->speciality_code."' and userid in 
+                        (select userid from mdl_user_info_data where fieldid = '".$ids['naprspec2']."' and data = '".$disciplin->speciality."' and userid in
+                            (select userid from mdl_user_info_data where fieldid = '".$ids['stform']."' and data = '".$disciplin->st_form."' and userid in
+                                (select userid from mdl_user_info_data where fieldid = '".$ids['profile']."' and data = '".$disciplin->specialisation."')))));";
+    $user_ids = $DB->get_records_sql($sql);
+
+    $users = new stdClass();
+
+    foreach ($user_ids as $user_id) {
+        $id = $user_id->userid;
+        $users->{$id} = $DB->get_record('user', array('id' => $id), $disciplin = 'id,firstname,lastname');
+    }
+
+    return $users;
 }

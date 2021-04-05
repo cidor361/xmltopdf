@@ -1,9 +1,9 @@
 <?php
 require_once('../../config.php');
 require_once('lib.php');
-//require_once('enrol_users_form.php');
+require_once('group_autosearch_users_form.php');
 
-global $DB, $USER, $COURSE, $SESSION;
+global $DB, $SESSION;
 
 $course = $DB->get_record('course',array('id'=>$SESSION->courseid));
 require_login($course, true);
@@ -17,9 +17,11 @@ $PAGE->set_title(get_string('pluginname', 'block_usermanager'));
 $PAGE->set_heading(get_string('pluginname', 'block_usermanager'));
 
 echo $OUTPUT->header();
-print(var_dump($COURSE));
-/*
-$mform = new group_autoserach_users();
+$sql = "SELECT * FROM mdl_block_vsucourse_new WHERE cid='".$course->id."' AND status='0';";
+$disciplins = $DB->get_records_sql($sql);
+$SESSION->disciplins = $disciplins;
+
+$mform = new group_autosearch_users_form();
 
 if ($mform->is_cancelled()) {
     $url = new moodle_url('/course/view.php?id='.$course->id);
@@ -27,12 +29,20 @@ if ($mform->is_cancelled()) {
 
 } else if ($fromform = $mform->get_data()) {
     $mform->display();
+    $groups = array();
+    foreach ($fromform as $key=>$group) {
+        if ($group == 1) {
+            array_push($groups, $key);
+        }
+    }
+    $SESSION->groups = $groups;
+    $url = new moodle_url('/blocks/usermanager/group_autoenrol.php');
+    redirect($url);
 
 }else {
     $mform->display();
 
 }
-*/
+
 echo $OUTPUT->footer();
-//TODO: создать списки по полям
 //TODO: создание группы в процессе подписки

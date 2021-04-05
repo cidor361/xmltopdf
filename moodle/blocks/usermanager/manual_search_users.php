@@ -29,14 +29,15 @@ $first_data->edu_level = get_edu_level_name($ids);
 $first_data->edu_specialites = get_edu_specialites_name($ids);
 $SESSION->first_data = $first_data;
 
+$data = prepare_data_one($fromform, $first_data);
+$users = search_vsu_fields_users($ids, $data);
+$SESSION->users = $users;
+
 if ($mform->is_cancelled()) {
     $url = new moodle_url('/course/view.php?id='.$course->id);
     redirect($url);
 
 } else if ($fromform = $mform->get_data()) {
-    $data = prepare_data_one($fromform, $first_data);
-    $users = search_vsu_fields_users($ids, $data);
-    $SESSION->second_data = $users;
     $url = new moodle_url('/blocks/usermanager/enrol_users.php');
     redirect($url);
 
