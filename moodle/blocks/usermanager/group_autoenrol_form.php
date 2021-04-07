@@ -24,8 +24,12 @@ class group_autoenrol_form extends moodleform
                     $mform->addElement('header', $key, 'Группа №'.$key);
                     $mform->setExpanded($key, true);
                     foreach ($group as $user){
-                        //TODO: enrolled flag!
-                        $mform->addElement('static', $user->id, '', $user->firstname .' '. $user->lastname);
+                        if ($user->enrolled) {
+                            $enrolled = 'Зачислен';
+                        } else {
+                            $enrolled = '';
+                        }
+                        $mform->addElement('static', $user->id, $enrolled, $user->firstname .' '. $user->lastname);
                     }
                 }
             }

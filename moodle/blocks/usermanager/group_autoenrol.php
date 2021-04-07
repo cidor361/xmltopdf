@@ -46,27 +46,31 @@ if ($mform->is_cancelled()) {
     $application_report->modified = 0;
     $application_report->required_user = $USER->id;
     $application_report->status = 0001;
-    $application_id = $DB->insert_record('block_usermanager_applications', $application_report);
+    //$application_id = $DB->insert_record('block_usermanager_applications', $application_report);
 
-    foreach ($groups_of_users as $group) {
-        foreach ($group as $user){
+    foreach ($groups_of_users as $group_key=>$group) {
+        foreach ($group as $user_key=>$user){
             $user_report = new stdClass();
             $user_report->application_id = $application_id;
             $user_report->user_id = $user;
-            if (enrol_user_manual($course->id, $user, 5)) {
+            if (enrol_user_manual($course->id, $user->id)) {
                 $users_report->status = 01;
+                $groups_of_users->{$group_key}->{$user_key}->enrolled = true;
             } else {
                 $users_report->status = 00;
             }
-            $DB->insert_record('block_usermanager_users', $user_report);
+            //$DB->insert_record('block_usermanager_users', $user_report);
+            //TODO: тестированеи логгирования
+            //TODO: Создание группы пользователей
         }
     }
-
+    $SESSION->groups_of_users = $groups_of_users;
     $mform->display();
 
 }else {
     $mform->display();
 
 }
+
 echo $OUTPUT->footer();
 //TODO: создание группы в процессе подписки

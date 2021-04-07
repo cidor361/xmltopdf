@@ -42,7 +42,7 @@ if ($mform->is_cancelled()) {
 
     $user_report = new stdClass();
     foreach ($users as $user) {
-        if (enrol_user_manual($course->id, $user, 5) == true) {
+        if (enrol_user_manual($course->id, $user) == true) {
             $user_report->application_id = $application_id;
             $user_report->user_id = $user;
             $DB->insert_record('block_usermanager_users', $user_report);

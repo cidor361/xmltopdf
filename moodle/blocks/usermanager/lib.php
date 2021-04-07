@@ -236,7 +236,8 @@ function prepare_data_one($fromform, $firstdata) {
     return $data;
 }
 
-function enrol_user_manual($courseid, $id, $roleid=5, $duration=0, $method='manual') {
+
+function enrol_user_manual($courseid, $id, $group_id, $roleid=5, $duration=0, $method='manual') {
 
     global $DB;
     //Get enroll instance:
@@ -244,6 +245,7 @@ function enrol_user_manual($courseid, $id, $roleid=5, $duration=0, $method='manu
     $result = $DB->get_records_sql($sql);
     if(!$result){
         ///Not enrol associated (this shouldn't happen and means you have an error in your moodle database)
+        return false;
     }
     foreach ($result as $unit){
         $idenrol = $unit->id;
@@ -259,7 +261,6 @@ function enrol_user_manual($courseid, $id, $roleid=5, $duration=0, $method='manu
         $idcontext = $unit->id;
     }
 
-
     //Get variables from moodle. Here is were the enrolment begins:
     $time = time();
     $ntime = $time + 60*60*24*$duration; //How long will it last enroled $duration = days, this can be 0 for unlimited.
@@ -268,6 +269,7 @@ VALUES (0, $idenrol, $id, '$time', '$ntime', '$time', '$time')";
     if ($DB->execute($sql) === TRUE) {
     } else {
         ///Manage sql error
+        return false;
     }
 
     $sql = "INSERT INTO mdl_role_assignments (roleid, contextid, userid, timemodified)
@@ -276,7 +278,12 @@ VALUES ($roleid, $idcontext, '$id', '$time')";
         return true;
     } else {
         //Manage errors
+        return false;
     }
+
+    //add users into group
+    return groups_add_member($groupid, $userid);
+    //TODO: сделать условие и возвращение true!
 }
 
 function search_vsu_fields_users_per_disciplin($ids, $disciplin) {
