@@ -237,9 +237,16 @@ function prepare_data_one($fromform, $firstdata) {
 }
 
 
-function enrol_user_manual($courseid, $id, $group_id, $roleid=5, $duration=0, $method='manual') {
+function enrol_user_manual($courseid, $userid, $group_id, $roleid=5, $duration=0, $method='manual') {
 
     global $DB;
+
+    //Check if user already enrolled
+    $context = context_course::instance($courseid);
+    if (is_enrolled($context, $userid, '', true)) {
+        return true;
+    }
+
     //Get enroll instance:
     $sql = "SELECT id FROM mdl_enrol WHERE courseid='".$courseid."' AND enrol='".$method."';";
     $result = $DB->get_records_sql($sql);
@@ -263,9 +270,10 @@ function enrol_user_manual($courseid, $id, $group_id, $roleid=5, $duration=0, $m
 
     //Get variables from moodle. Here is were the enrolment begins:
     $time = time();
-    $ntime = $time + 60*60*24*$duration; //How long will it last enroled $duration = days, this can be 0 for unlimited.
+    //$ntime = $time + 60*60*24*$duration; //How long will it last enroled $duration = days, this can be 0 for unlimited.
+    $ntime = 0;
     $sql = "INSERT INTO mdl_user_enrolments (status, enrolid, userid, timestart, timeend, timecreated, timemodified)
-VALUES (0, $idenrol, $id, '$time', '$ntime', '$time', '$time')";
+VALUES (0, $idenrol, $userid, '$time', '$ntime', '$time', '$time')";
     if ($DB->execute($sql) === TRUE) {
     } else {
         ///Manage sql error
@@ -273,17 +281,20 @@ VALUES (0, $idenrol, $id, '$time', '$ntime', '$time', '$time')";
     }
 
     $sql = "INSERT INTO mdl_role_assignments (roleid, contextid, userid, timemodified)
-VALUES ($roleid, $idcontext, '$id', '$time')";
+VALUES ($roleid, $idcontext, '$userid', '$time')";
     if ($DB->execute($sql) === TRUE) {
-        return true;
+        //return true;
     } else {
         //Manage errors
         return false;
     }
 
     //add users into group
-    return groups_add_member($groupid, $userid);
-    //TODO: сделать условие и возвращение true!
+    if (groups_add_member($group_id, $userid)) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 function search_vsu_fields_users_per_disciplin($ids, $disciplin) {
@@ -307,6 +318,26 @@ function search_vsu_fields_users_per_disciplin($ids, $disciplin) {
                         (select userid from mdl_user_info_data where fieldid = '".$ids['naprspec2']."' and data = '".$disciplin->speciality."' and userid in
                             (select userid from mdl_user_info_data where fieldid = '".$ids['stform']."' and data = '".$disciplin->st_form."' and userid in
                                 (select userid from mdl_user_info_data where fieldid = '".$ids['profile']."' and data = '".$disciplin->specialisation."')))));";
+    $user_ids = $DB->get_records_sql($sql);
+
+    $users = new stdClass();
+
+    foreach ($user_ids as $user_id) {
+        $id = $user_id->userid;
+        $users->{$id} = $DB->get_record('user', array('id' => $id), $disciplin = 'id,firstname,lastname');
+    }
+
+    return $users;
+}
+
+function search_vsu_fields_users_per_disciplin_without_specialisation($ids, $disciplin) {
+    global $DB;
+
+    $sql = "select userid from mdl_user_info_data where fieldid='19' and data='учится' and userid in
+                (select userid from mdl_user_info_data where fieldid = '".$ids['level']."' and data = '".$disciplin->step."' and userid in
+                    (select userid from mdl_user_info_data where fieldid = '".$ids['specialityCode']."' and data = '".$disciplin->speciality_code."' and userid in 
+                            (select userid from mdl_user_info_data where fieldid = '".$ids['stform']."' and data = '".$disciplin->st_form."' and userid in
+                                (select userid from mdl_user_info_data where fieldid = '".$ids['profile']."' and data = '".$disciplin->specialisation."'))));";
     $user_ids = $DB->get_records_sql($sql);
 
     $users = new stdClass();
