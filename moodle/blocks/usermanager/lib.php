@@ -349,3 +349,68 @@ function search_vsu_fields_users_per_disciplin_without_specialisation($ids, $dis
 
     return $users;
 }
+
+function get_semestr_of_subject_oci_old($conn, $course) {
+    global $DB;
+
+    $rows = $DB->get_records_sql("SELECT * FROM {block_vsucourse_new} WHERE cid = '".$course->id."' and status = '0'");
+
+    $result = new stdClass();
+
+    foreach($rows as $row) {
+        if ($row->specialisation == ""){
+            $row->specialisation = '-';
+        }
+        $sql = '';
+        if ($row->specialisation == "-") {
+            $sql = "select * from contingent.moodle_subject_view WHERE 
+							SUBJ_CODE = '" . $row->subj_code . "' and 
+							SUBJ_NAME = '" . $row->subj_name . "' and
+							ST_FORM = '" . $row->st_form . "' and
+							faculty = '" . $row->faculty . "' 
+							
+							and STUDY_YEAR = (select max(STUDY_YEAR) from contingent.moodle_subject_view WHERE 
+												SUBJ_CODE = '" . $row->subj_code . "' and 
+												SUBJ_NAME = '" . $row->subj_name . "' and
+												ST_FORM = '" . $row->st_form . "' and
+												faculty = '" . $row->faculty . "' 
+												
+							)
+							";
+        } else {
+            $sql = "select * from contingent.moodle_subject_view WHERE 
+							SUBJ_CODE = '" . $row->subj_code . "' and 
+							SUBJ_NAME = '" . $row->subj_name . "' and
+							ST_FORM = '" . $row->st_form . "' and
+							faculty = '" . $row->faculty . "' and
+							SPECIALISATION = '" . $row->specialisation . "'
+							and STUDY_YEAR = (select max(STUDY_YEAR) from contingent.moodle_subject_view WHERE 
+												SUBJ_CODE = '" . $row->subj_code . "' and 
+												SUBJ_NAME = '" . $row->subj_name . "' and
+												ST_FORM = '" . $row->st_form . "' and
+												faculty = '" . $row->faculty . "' and
+												SPECIALISATION = '" . $row->specialisation . "'
+							)
+							";
+
+        }
+
+        $stid = oci_parse($conn, $sql);
+        $r = oci_execute($stid);
+        while ($row_out = oci_fetch_array($stid, OCI_ASSOC + OCI_RETURN_NULLS)) {
+            $subj_id = $row_out['SUBJ_ID'];
+            $sql_s = "select * from contingent.moodle_study_work_view WHERE subj_id = '" . $subj_id . "' ORDER BY SEMESTER,HOURS_COUNT ";
+            $stid_s = oci_parse($conn, $sql_s);
+            $r_s = oci_execute($stid_s);
+            while($row_study = oci_fetch_array($stid_s, OCI_ASSOC+OCI_RETURN_NULLS)){
+                $result->{$subj_id} = $row;
+                $year = (int)$row_study['SEMESTER'];
+                $year = $year / 2;
+                $year = ceil($year);
+                $year = date('Y') - $year;
+                $result->{$subj_id}->year = $year;
+            }
+        }
+    }
+    return $result;
+}

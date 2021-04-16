@@ -17,7 +17,8 @@ class group_autosearch_users_form extends moodleform {
         $mform->addElement('header', 'header_search', 'Найденные группы по вашему курсу');
         foreach ($disciplins as $disciplin) {
             $mform->addElement('advcheckbox', $disciplin->id, '',
-                                $disciplin->speciality.' ('.$disciplin->step. ' '.$disciplin->st_form.')');
+                                $disciplin->speciality.' ('.$disciplin->step. ' '.$disciplin->st_form.') '.
+                                $disciplin->year.' Год потока');
         }
         $this->add_checkbox_controller(1, null, null, 0);
 
