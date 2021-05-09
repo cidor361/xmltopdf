@@ -4,6 +4,8 @@ require_once('lib.php');
 require_once('group_autoenrol_form.php');
 require_once($CFG->dirroot.'/group/lib.php');
 
+require_once('connect.php');
+
 global $DB, $USER, $SESSION;
 
 $course = $DB->get_record('course',array('id'=>$SESSION->courseid));
@@ -25,18 +27,21 @@ $ids = get_user_field_ids();
 $groups_of_users = new stdClass();
 $moodle_group_name = new stdClass();
 $moodle_group_description = new stdClass();
-foreach ($groups as $group){
-    $sql = "SELECT * FROM mdl_block_vsucourse_new WHERE id='".$group."';";
-    $disciplin_with_number = $DB->get_records_sql($sql);
+
+//foreach ($groups as $group){
+    //$sql = "SELECT * FROM mdl_block_vsucourse_new WHERE id='".$group."';";
+    $disciplin_with_number = get_semestr_of_subject_oci_old($conn, $course);
+    ////Should be uncomment when oracle integration will be removed
+    //$disciplin_with_number = $DB->get_records_sql($sql);
     foreach ($disciplin_with_number as $key=>$disciplin) {
-        if($disciplin->specialisation != null) {
-            $groups_of_users->{$key} = search_vsu_fields_users_per_disciplin($ids, $disciplin);
-        } else {
+        if($disciplin->specialisation == '-') {
             $groups_of_users->{$key} = search_vsu_fields_users_per_disciplin_without_specialisation($ids, $disciplin);
+        } else {
+            $groups_of_users->{$key} = search_vsu_fields_users_per_disciplin($ids, $disciplin);
         }
         $moodle_group_name->{$key} = '';
         $moodle_group_name->{$key} .= $disciplin->speciality.' ('.$disciplin->step. ', '.$disciplin->st_form.')';
-        //$moodle_group_name->{$key} .= $year;
+        $moodle_group_name->{$key} .= $disciplin->year;
 
         $moodle_group_description->{$key} = '';
         $moodle_group_description->{$key} .= $disciplin->faculty.'</br>';
@@ -44,14 +49,21 @@ foreach ($groups as $group){
         $moodle_group_description->{$key} .= $disciplin->speciality.'</br>';
         $moodle_group_description->{$key} .= $disciplin->specialisation.'</br>';
         $moodle_group_description->{$key} .= $disciplin->step.'</br>';
-        //$moodle_group_description->{$key} .= $year.'</br>';
-
+        $moodle_group_description->{$key} .= $disciplin->year.'</br>';
 
     }
+    //echo var_dump($groups_of_users);
+//}
+//Reformat students plan groups to academic groups
+$groups_of_users_new = new stdClass();
+foreach ($groups_of_users as $group) {
+    $groups_of_users_new = format_users_to_groups($ids, $groups_of_users_new, $group);
 }
 
 //Send group information to group_autoenrol_form.php and create form
-$SESSION->groups_of_users = $groups_of_users;
+$SESSION->groups_of_users = $groups_of_users_new;
+//$SESSION->groups_of_users = $groups_of_users;
+echo var_dump($groups_of_users);
 
 $mform = new group_autoenrol_form();
 
@@ -125,7 +137,6 @@ if ($mform->is_cancelled()) {
     echo html_writer::link($url,'Вернуться на главную страницу курса');
 }else {
     $mform->display();
-
 }
 
 echo $OUTPUT->footer();

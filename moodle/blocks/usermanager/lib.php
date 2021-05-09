@@ -9,6 +9,8 @@ function get_user_field_ids() {
      * naprspec2 - Наименование направления (специальности) //Информатика и вычислительная техника
      * specialityCode - Код направления (специальности) //09.03.01
      * profile - Профиль (специализация) //Вычислительные машины, комплексы, системы и сети (ФГОС3+)
+     * streamyear - Год потока //2017
+     * groupname - Номер группы //4
     */
 
     global $DB;
@@ -22,7 +24,9 @@ function get_user_field_ids() {
                   (shortname = 'naprspec') OR
                   (shortname = 'specialityCode') OR
                   (shortname = 'profile') OR
-                  (shortname = 'naprspec2');";
+                  (shortname = 'naprspec2') OR
+                  (shortname = 'streamyear') OR
+                  (shortname = 'groupname');";
     $results = $DB->get_records_sql($sql);
 
     $ids = array();
@@ -35,8 +39,8 @@ function get_user_field_ids() {
 }
 
 function get_facultet_names($ids) {
+    //Getting facultet names from DB
     global $DB;
-    
     $field_id = $ids['fac'];
     
     $sql = "SELECT DISTINCT data
@@ -51,15 +55,13 @@ function get_facultet_names($ids) {
             $i++;
         }
     }
-
-    $facultets = sort_array($facultets);
+    $facultets = reformat_array($facultets);
     
     return $facultets;
 }
 
 function get_num_course_name($ids) {
     global $DB;
-
     $field_id = $ids['year'];
 
     $sql = "SELECT DISTINCT data
@@ -76,14 +78,13 @@ function get_num_course_name($ids) {
         }
     }
 
-    $nums_course = sort_array($nums_course);
+    $nums_course = reformat_array($nums_course);
 
     return $nums_course;
 }
 
 function get_edu_forms_name($ids) {
     global $DB;
-
     $field_id = $ids['stform'];
 
     $sql = "SELECT DISTINCT data
@@ -100,14 +101,13 @@ function get_edu_forms_name($ids) {
         }
     }
 
-    $edu_forms = sort_array($edu_forms);
+    $edu_forms = reformat_array($edu_forms);
 
     return $edu_forms;
 }
 
 function get_edu_level_name($ids) {
     global $DB;
-
     $field_id = $ids['level'];
 
     $sql = "SELECT DISTINCT data
@@ -124,14 +124,13 @@ function get_edu_level_name($ids) {
         }
     }
 
-    $edu_levels = sort_array($edu_levels);
+    $edu_levels = reformat_array($edu_levels);
 
     return $edu_levels;
 }
 
 function get_edu_specialites_name($ids) {
     global $DB;
-
     $field_id = $ids['naprspec'];
 
     $sql = "SELECT DISTINCT data
@@ -148,7 +147,7 @@ function get_edu_specialites_name($ids) {
         }
     }
 
-    $edu_specialites = sort_array($edu_specialites);
+    $edu_specialites = reformat_array($edu_specialites);
 
     return $edu_specialites;
 }
@@ -170,16 +169,30 @@ function get_edu_specialites_fac($ids) {
         $i++;
     }
 
-    $edu_specialites = sort_array($edu_specialites);
+    $edu_specialites = reformat_array($edu_specialites);
 
     return $edu_specialites;
+}
+
+function format_users_to_groups($ids, $users, $new_users) {
+    //Reformat group from student plan to academic format
+    global $DB;
+
+    foreach ($new_users as $user) {
+        $userid = $user->id;
+        $sql = 'select data from mdl_user_info_data where fieldid='.$ids['groupname'].' and userid='.$userid.';';
+        $group = $DB->get_record_sql($sql)->data;
+        $users->{$group}->{$userid} = $user;
+    }
+    return $users;
+
 }
 
 function search_vsu_fields_users($ids, $fields) {
     global $DB;
     
     //Get list of user
-    //$field_ids - field ids (example 1 - facultet or 2 - year)
+    //$ids - data from get_user_field_ids()
     //$fields - field value (example 1 - Физический факультет or 2 - 2020)
     /*
      * 7 -
@@ -210,7 +223,7 @@ function search_vsu_fields_users($ids, $fields) {
     return $users;
 }
 
-function sort_array($array) {
+function reformat_array($array) {
     for ($i=0; $i < count($array); $i++) {
         $sortkey[$i]=$array[$i]['price'];
     }
@@ -317,14 +330,15 @@ function search_vsu_fields_users_per_disciplin($ids, $disciplin) {
                     (select userid from mdl_user_info_data where fieldid = '".$ids['specialityCode']."' and data = '".$disciplin->speciality_code."' and userid in 
                         (select userid from mdl_user_info_data where fieldid = '".$ids['naprspec2']."' and data = '".$disciplin->speciality."' and userid in
                             (select userid from mdl_user_info_data where fieldid = '".$ids['stform']."' and data = '".$disciplin->st_form."' and userid in
-                                (select userid from mdl_user_info_data where fieldid = '".$ids['profile']."' and data = '".$disciplin->specialisation."')))));";
+                                (select userid from mdl_user_info_data where fieldid = '".$ids['profile']."' and data = '".$disciplin->specialisation."' and userid in
+                                    (select userid from mdl_user_info_data where fieldid = '".$ids['streamyear']."' and data = '".$disciplin->year."'))))));";
     $user_ids = $DB->get_records_sql($sql);
 
     $users = new stdClass();
 
     foreach ($user_ids as $user_id) {
         $id = $user_id->userid;
-        $users->{$id} = $DB->get_record('user', array('id' => $id), $disciplin = 'id,firstname,lastname');
+        $users->{$id} = $DB->get_record('user', array('id' => $id), 'id,firstname,lastname');
     }
 
     return $users;
@@ -337,20 +351,27 @@ function search_vsu_fields_users_per_disciplin_without_specialisation($ids, $dis
                 (select userid from mdl_user_info_data where fieldid = '".$ids['level']."' and data = '".$disciplin->step."' and userid in
                     (select userid from mdl_user_info_data where fieldid = '".$ids['specialityCode']."' and data = '".$disciplin->speciality_code."' and userid in 
                             (select userid from mdl_user_info_data where fieldid = '".$ids['stform']."' and data = '".$disciplin->st_form."' and userid in
-                                (select userid from mdl_user_info_data where fieldid = '".$ids['profile']."' and data = '".$disciplin->specialisation."'))));";
+                                (select userid from mdl_user_info_data where fieldid = '".$ids['profile']."' and data = '".$disciplin->specialisation."' and userid in
+                                    (select userid from mdl_user_info_data where fieldid = '".$ids['streamyear']."' and data = '".$disciplin->year."')))));";
     $user_ids = $DB->get_records_sql($sql);
 
     $users = new stdClass();
 
     foreach ($user_ids as $user_id) {
         $id = $user_id->userid;
-        $users->{$id} = $DB->get_record('user', array('id' => $id), $disciplin = 'id,firstname,lastname');
+        $users->{$id} = $DB->get_record('user', array('id' => $id),  'id,firstname,lastname');
     }
 
     return $users;
 }
 
 function get_semestr_of_subject_oci_old($conn, $course) {
+    /*
+     * Geting semestr information from oracle DB
+     * Used code from vsucourse plugin!
+     * File connect.php was created locally for usermanager plugin
+     * When this data will store in moodle, get_semestr_of_subject_oci_old() must be deleted
+     */
     global $DB;
 
     $rows = $DB->get_records_sql("SELECT * FROM {block_vsucourse_new} WHERE cid = '".$course->id."' and status = '0'");
@@ -404,13 +425,39 @@ function get_semestr_of_subject_oci_old($conn, $course) {
             $r_s = oci_execute($stid_s);
             while($row_study = oci_fetch_array($stid_s, OCI_ASSOC+OCI_RETURN_NULLS)){
                 $result->{$subj_id} = $row;
-                $year = (int)$row_study['SEMESTER'];
-                $year = $year / 2;
-                $year = ceil($year);
-                $year = date('Y') - $year;
-                $result->{$subj_id}->year = $year;
+                $year = (int)date('Y');
+                $year_per_semestr = $year - intdiv((int)$row_study['SEMESTER'], 2);
+                if ((int)date('m') < 8) {
+                    $year_per_semestr -= 1;
+                }
+                $result->{$subj_id}->semestr = (int)$row_study['SEMESTER'];
+                $result->{$subj_id}->year = $year_per_semestr;
             }
         }
     }
     return $result;
+}
+
+function get_info_oci($row) {
+    /*
+     * Geting semestr information from oracle DB
+     * Used code from vsucourse plugin!
+     * File connect.php was created locally for usermanager plugin
+     * When this data will store in moodle, get_semestr_of_subject_oci_old() must be deleted
+     */
+    global $DB;
+    global $conn;
+
+    $sql = "select * from contingent.moodle_subject_view WHERE 
+							SUBJ_CODE = '".$row->subj_code."' and 
+							SUBJ_NAME = '".$row->subj_name."' and
+							ST_FORM = '".$row->st_form."' and
+							
+							faculty = '".$row->faculty."' 
+							
+							order by STUDY_YEAR DESC";
+    $stid = oci_parse($conn, $sql);
+    $r = oci_execute($stid);
+    $row_out = oci_fetch_array($stid, OCI_ASSOC+OCI_RETURN_NULLS);
+    return $row_out;
 }

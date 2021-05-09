@@ -14,7 +14,7 @@ class group_autosearch_users_form extends moodleform {
 
         $mform =& $this->_form;
 
-        $mform->addElement('header', 'header_search', 'Найденные группы по вашему курсу');
+        $mform->addElement('header', 'header_search', 'Найденные привязки по вашему курсу');
         foreach ($disciplins as $disciplin) {
             $mform->addElement('advcheckbox', $disciplin->id, '',
                                 $disciplin->speciality.' ('.$disciplin->step. ' '.$disciplin->st_form.') '.
