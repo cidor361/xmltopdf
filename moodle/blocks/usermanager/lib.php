@@ -174,17 +174,22 @@ function get_edu_specialites_fac($ids) {
     return $edu_specialites;
 }
 
-function format_users_to_groups($ids, $users, $new_users) {
+function format_users_to_groups($ids, $users_from_disciplin) {
     //Reformat group from student plan to academic format
     global $DB;
 
-    foreach ($new_users as $user) {
-        $userid = $user->id;
-        $sql = 'select data from mdl_user_info_data where fieldid='.$ids['groupname'].' and userid='.$userid.';';
-        $group = $DB->get_record_sql($sql)->data;
-        $users->{$group}->{$userid} = $user;
+    foreach ($users_from_disciplin as $disciplin_id=>$disciplin) {
+        foreach ($disciplin as $user) {
+            if (is_string($user->id)) {
+                $userid = $user->id;
+                $sql = 'select data from mdl_user_info_data where fieldid=' . $ids['groupname'] . ' and userid=' . $userid . ';';
+                $academic_group = $DB->get_record_sql($sql)->data;
+                $users_from_disciplin->{$disciplin_id}->{$academic_group}->{$userid} = $user;
+                unset($users_from_disciplin->{$disciplin_id}->{$userid});
+            }
+        }
     }
-    return $users;
+    return $users_from_disciplin;
 
 }
 
@@ -249,6 +254,13 @@ function prepare_data_one($fromform, $firstdata) {
     return $data;
 }
 
+function group_selected($selected_groups, $check_group_number) {
+    foreach ($selected_groups as $selected=>$group_number) {
+        if ($group_number == $check_group_number) {
+            return true;
+        }
+    }
+}
 
 function enrol_user_manual($courseid, $userid, $group_id, $roleid=5, $duration=0, $method='manual') {
 
@@ -288,6 +300,7 @@ function enrol_user_manual($courseid, $userid, $group_id, $roleid=5, $duration=0
     $sql = "INSERT INTO mdl_user_enrolments (status, enrolid, userid, timestart, timeend, timecreated, timemodified)
 VALUES (0, $idenrol, $userid, '$time', '$ntime', '$time', '$time')";
     if ($DB->execute($sql) === TRUE) {
+        //return true;
     } else {
         ///Manage sql error
         return false;
@@ -365,7 +378,7 @@ function search_vsu_fields_users_per_disciplin_without_specialisation($ids, $dis
     return $users;
 }
 
-function get_semestr_of_subject_oci_old($conn, $course) {
+function get_semestr_of_subject_oci_old($conn, $courseid) {
     /*
      * Geting semestr information from oracle DB
      * Used code from vsucourse plugin!
@@ -374,7 +387,7 @@ function get_semestr_of_subject_oci_old($conn, $course) {
      */
     global $DB;
 
-    $rows = $DB->get_records_sql("SELECT * FROM {block_vsucourse_new} WHERE cid = '".$course->id."' and status = '0'");
+    $rows = $DB->get_records_sql("SELECT * FROM {block_vsucourse_new} WHERE cid = '".$courseid."' and status = '0'");
 
     $result = new stdClass();
 
