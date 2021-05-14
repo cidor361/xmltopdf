@@ -6,26 +6,27 @@ Script create csv file with "antiplagiasm_report current time .csv*/
 define('CLI_SCRIPT', true);
 require('/var/www/moodle-3.9.1+/config.php');
 
-$time_from = 1598918400; // 1 september 2020
+$time_from = '14-05-2021';    //DD-MM-YYYY
+$time_from = strtotime($time_from);
 
-//get_all_instance_of_antiplagiasm_from_date
+//get all instance of antiplagiasm from date
 $sql = 'SELECT id, cm, userid, similarityscore, lastmodified, reporturl 
         FROM mdl_plagiarism_apru_files 
         WHERE lastmodified>'. $time_from .';';
 $modules = $DB->get_records_sql($sql);
 
-$csv_file = fopen('antiplagiasm_report ' . date("H:m") . '.csv', "w");
+$csv_file = fopen('antiplagiasm_report ' . date('H:m') . '.csv', 'w');
 
 foreach ($modules as $module) {
-    //get_courseid_from_courseelement_info
+    //get courseid from courseelement info
     $sql = 'SELECT * FROM mdl_course_modules WHERE id='.$module->cm.';';
     $module_info = $DB->get_record_sql($sql);
     $course = $DB->get_record('course', array('id' => $module_info->course));
 
-    //get_user_info
+    //get user info
     $user = $DB->get_record('user', array('id'=>$module->userid));
 
-    //get_cafedra_and_faculty_info
+    //get cafedra and faculty info
     $cafedra_info = $DB->get_record('course_categories', array('id' => $course->category), 'name,parent');
     $cafedra = $cafedra_info->name;
     $parent = $cafedra_info->parent;
@@ -33,7 +34,8 @@ foreach ($modules as $module) {
     $faculty = $faculty->name;
 
     fputcsv($csv_file, array($module->id, $user->firstname, $user->lastname,
-                             date('Y-m-d', $module->lastmodified), w,
+                             date('Y-m-d', $module->lastmodified), 'w',
                              $course->fullname, $faculty, $cafedra, $module->reporturl));
 }
+
 fclose($csv_file);
