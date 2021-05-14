@@ -33,7 +33,7 @@ foreach ($modules as $module) {
     $faculty = $faculty->name;
 
     fputcsv($csv_file, array($module->id, $user->firstname, $user->lastname,
-                             date('Y-m-d', $module->lastmodified), ц,
+                             date('Y-m-d', $module->lastmodified), w,
                              $course->fullname, $faculty, $cafedra, $module->reporturl));
 }
 fclose($csv_file);
