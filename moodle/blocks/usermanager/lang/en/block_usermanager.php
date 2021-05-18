@@ -20,3 +20,4 @@ $string['enroll_group'] = 'Подписать выбранные группы';
 $string['return_to_coursepage'] = 'Вернуться на главную страницу курса';
 $string['unsuccess_enrol'] = 'Подписка прошла с ошибками';
 $string['success_enrol'] = 'Все студенты успешно подписаны';
+$string['access_error'] = 'Вы не имеете доступа к этой странице';

@@ -44,6 +44,11 @@ class block_usermanager extends block_base {
 
         $SESSION->courseid = $COURSE->id;
 
+        $coursecontext = context_course::instance($COURSE->id);
+        if (!has_capability('block/usermanager:manageuser', $coursecontext)) {
+            return null;
+        }
+
         $this->content->text = get_string('type_of_enrol', 'block_usermanager');
         $url = new moodle_url('/blocks/usermanager/manual_search_users.php');
         $this->content->footer = html_writer::link($url, get_string('manual_enrol_link', 'block_usermanager'));

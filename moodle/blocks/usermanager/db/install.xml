@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" ?>
 <XMLDB PATH="blocks/usermanager/db" VERSION="20200219" COMMENT="XMLDB file for Moodle blocks/usermanager"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
     <TABLES>
-        <TABLE NAME="block_usermanager_applications" COMMENT="Table for enrol log">
+        <TABLE NAME="block_usermanager_applies" COMMENT="Table for enrol log">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="group_id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
@@ -14,8 +13,8 @@
             </FIELDS>
             <KEYS>
                 <KEY NAME="id" FIELDS="id" TYPE="primary"/>
-                <KEY NAME="required_user" FIELDS="required_user" TYPE="primary"/>
-                <KEY NAME="status" FIELDS="status" TYPE="primary"/>
+                <KEY NAME="required_user" FIELDS="required_user" TYPE="unique"/>
+                <KEY NAME="status" FIELDS="status" TYPE="unique"/>
             </KEYS>
         </TABLE>
         <TABLE NAME="block_usermanager_users" COMMENT="Table for logging users in applications">
@@ -27,7 +26,7 @@
             </FIELDS>
             <KEYS>
                 <KEY NAME="id" FIELDS="id" TYPE="primary"/>
-                <KEY NAME="application_id" FIELDS="application_id" TYPE="primary"/>
+                <KEY NAME="application_id" FIELDS="application_id" TYPE="unique"/>
             </KEYS>
         </TABLE>
 
@@ -39,7 +38,7 @@
             </FIELDS>
             <KEYS>
                 <KEY NAME="id" FIELDS="id" TYPE="primary"/>
-                <KEY NAME="application_id" FIELDS="application_id" TYPE="primary"/>
+                <KEY NAME="application_id" FIELDS="application_id" TYPE="unique"/>
             </KEYS>
         </TABLE>
 
@@ -50,14 +49,20 @@
                 <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="name" TYPE="text" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
             </FIELDS>
+            <KEYS>
+                <KEY NAME="id" FIELDS="id" TYPE="primary"/>
+            </KEYS>
         </TABLE>
 
-        <TABLE NAME="block_usermanager_specialities" COMMENT="list of specialities">
+        <TABLE NAME="block_usermanager_specs" COMMENT="list of specialities">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true"/>
-                <FIELD NAME="name" TYPE="text" LENGTH="200" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="name" TYPE="text" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
                 <FIELD NAME="faculty" TYPE="text" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
             </FIELDS>
+            <KEYS>
+                <KEY NAME="id" FIELDS="id" TYPE="primary"/>
+            </KEYS>
         </TABLE>
 
         <TABLE NAME="block_usermanager_years" COMMENT="list of courses (years)">
@@ -65,6 +70,9 @@
                 <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="name" TYPE="text" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
             </FIELDS>
+            <KEYS>
+                <KEY NAME="id" FIELDS="id" TYPE="primary"/>
+            </KEYS>
         </TABLE>
 
         <TABLE NAME="block_usermanager_eduforms" COMMENT="list of edu forms">
@@ -72,13 +80,19 @@
                 <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="name" TYPE="text" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
             </FIELDS>
+            <KEYS>
+                <KEY NAME="id" FIELDS="id" TYPE="primary"/>
+            </KEYS>
         </TABLE>
 
         <TABLE NAME="block_usermanager_edutype" COMMENT="list of edu types">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true"/>
-                <FIELD NAME="name" TYPE="int" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="name" TYPE="text" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
             </FIELDS>
+            <KEYS>
+                <KEY NAME="id" FIELDS="id" TYPE="primary"/>
+            </KEYS>
         </TABLE>
     </TABLES>
 </XMLDB>

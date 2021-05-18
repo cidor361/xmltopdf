@@ -39,7 +39,12 @@ $course = $DB->get_record('course',array('id'=>$SESSION->courseid));
 $courseid = $course->id;
 require_login($course, true);
 
-$PAGE->set_context(context_course::instance($courseid));
+$coursecontext = context_course::instance($courseid);
+if (!has_capability('block/usermanager:manageuser', $coursecontext)) {
+    die(get_string('access_error', 'block_usermanager'));
+}
+
+$PAGE->set_context($coursecontext);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_url('/blocks/usermanager/group_autoenrol.php', array('id' => $courseid));
 $PAGE->navbar->add(get_string('pluginname', 'block_usermanager'));
@@ -58,24 +63,24 @@ $moodle_group_description = new stdClass();
 
 ////Should be uncomment when oracle integration will be removed
 //foreach ($groups as $group){
-    //$sql = "SELECT * FROM mdl_block_vsucourse_new WHERE id='".$group."';";
-    //$disciplin_with_number = $DB->get_records_sql($sql);
-    $disciplins_with_number = get_semestr_of_subject_oci_old($conn, $courseid);
+//$sql = "SELECT * FROM mdl_block_vsucourse_new WHERE id='".$group."';";
+//$disciplin_with_number = $DB->get_records_sql($sql);
+$disciplins_with_number = get_semestr_of_subject_oci_old($conn, $courseid);
 
-    foreach ($disciplins_with_number as $disciplin_id => $disciplin) {
+foreach ($disciplins_with_number as $disciplin_id => $disciplin) {
 
-        if (group_selected($groups, $disciplin->id)) {
+    if (group_selected($groups, $disciplin->id)) {
 
-            if ($disciplin->specialisation == '-') {
-                $groups_of_users_per_disciplin->{$disciplin_id} = search_vsu_fields_users_per_disciplin_without_specialisation($ids, $disciplin);
-            } else {
-                $groups_of_users_per_disciplin->{$disciplin_id} = search_vsu_fields_users_per_disciplin($ids, $disciplin);
-            }
-            //Reformat students plan groups to academic groups
-            $groups_of_users_per_disciplin = format_users_to_groups($ids, $groups_of_users_per_disciplin);
-
+        if ($disciplin->specialisation == '-') {
+            $groups_of_users_per_disciplin->{$disciplin_id} = search_vsu_fields_users_per_disciplin_without_specialisation($ids, $disciplin);
+        } else {
+            $groups_of_users_per_disciplin->{$disciplin_id} = search_vsu_fields_users_per_disciplin($ids, $disciplin);
         }
+        //Reformat students plan groups to academic groups
+        $groups_of_users_per_disciplin = format_users_to_groups($ids, $groups_of_users_per_disciplin);
+
     }
+}
 //}
 
 //Send group information to group_autoenrol_form.php and create form
@@ -96,7 +101,7 @@ if ($mform->is_cancelled()) {
 
     foreach ($groups_of_users_per_disciplin as $disciplin_id=>$groups_of_users) {
         foreach ($groups_of_users as $group_id => $group_of_user) {
-            //Create application report for logging in db (block_usermanager_applications)
+            //Create application report for logging in db (block_usermanager_applies)
             $moodle_group_id = $disciplin_id . '_' . $group_id;
             $application_report = new stdClass();
             //$application_report->group_id = $group_num;
@@ -105,7 +110,7 @@ if ($mform->is_cancelled()) {
             $application_report->modified = 0;
             $application_report->required_user = $USER->id;
             $application_report->status = 0001;
-            //$application_id = $DB->insert_record('block_usermanager_applications', $application_report);
+            //$application_id = $DB->insert_record('block_usermanager_applies', $application_report);
 
             //Create group in moodle course
             $moodle_group_info = groups_get_group_by_idnumber($courseid, $moodle_group_id);

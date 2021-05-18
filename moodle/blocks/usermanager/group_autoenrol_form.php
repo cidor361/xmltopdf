@@ -63,9 +63,9 @@ class group_autoenrol_form extends moodleform
                     }
                 }
 
-                $this->add_action_buttons($cancel = true, $submitlabel = get_string('enroll_group', 'block_usermanager'));
             }
         }
+        $this->add_action_buttons($cancel = true, $submitlabel = get_string('enroll_group', 'block_usermanager'));
     }
 
 }

@@ -35,7 +35,12 @@ $course = $DB->get_record('course',array('id'=>$SESSION->courseid));
 $courseid = $course->id;
 require_login($course, true);
 
-$PAGE->set_context(context_course::instance($courseid));
+$coursecontext = context_course::instance($courseid);
+if (!has_capability('block/usermanager:manageuser', $coursecontext)) {
+    die(get_string('access_error', 'block_usermanager'));
+}
+
+$PAGE->set_context($coursecontext);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_url('/blocks/usermanager/manual_search_users.php', array('id' => $courseid));
 $PAGE->navbar->add(get_string('pluginname', 'block_usermanager'));

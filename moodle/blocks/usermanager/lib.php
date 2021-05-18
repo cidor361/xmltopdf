@@ -445,6 +445,7 @@ function get_semestr_of_subject_oci_old($conn, $courseid) {
                 }
                 $result->{$subj_id}->semestr = (int)$row_study['SEMESTER'];
                 $result->{$subj_id}->year = $year_per_semestr;
+                //$result->{$subj_id}->year = (int)$row_study['STUDY_YEAR'];
             }
         }
     }
