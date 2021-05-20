@@ -3,10 +3,26 @@
 of anti-plagiarism from a certain date.
 Script create csv file with "antiplagiasm_report current time .csv*/
 
+require('../../config.php');
+require_once($CFG->libdir . '/clilib.php');
 define('CLI_SCRIPT', true);
-require('/var/www/moodle-3.9.1+/config.php');
 
-$time_from = '14-05-2021';    //DD-MM-YYYY
+list($options, $unrecognised) = cli_get_params([
+    'help' => false,
+    'time' => null,
+    'force' => false,
+], [
+    'h' => 'help',
+    't' => 'time',
+    'f' => 'force'
+]);
+
+//if (!$unrecognised) {
+//    cli_error(get_string('cliunknowoption', 'core_admin', $unrecognised));
+//}
+
+$time_from = $unrecognised[0];
+//$time_from = '14-05-2021';    //DD-MM-YYYY
 $time_from = strtotime($time_from);
 
 //get all instance of antiplagiasm from date
@@ -19,7 +35,7 @@ $csv_file = fopen('antiplagiasm_report ' . date('H:m') . '.csv', 'w');
 
 foreach ($modules as $module) {
     //get courseid from courseelement info
-    $sql = 'SELECT * FROM mdl_course_modules WHERE id='.$module->cm.';';
+    $sql = 'SELECT * FROM mdl_course_modules WHERE id='.$module->cm;
     $module_info = $DB->get_record_sql($sql);
     $course = $DB->get_record('course', array('id' => $module_info->course));
 
@@ -34,7 +50,7 @@ foreach ($modules as $module) {
     $faculty = $faculty->name;
 
     fputcsv($csv_file, array($module->id, $user->firstname, $user->lastname,
-                             date('Y-m-d', $module->lastmodified), 'w',
+                             date('Y-m-d', $module->lastmodified), 'цk',
                              $course->fullname, $faculty, $cafedra, $module->reporturl));
 }
 
