@@ -13,8 +13,6 @@
             </FIELDS>
             <KEYS>
                 <KEY NAME="id" FIELDS="id" TYPE="primary"/>
-                <KEY NAME="required_user" FIELDS="required_user" TYPE="unique"/>
-                <KEY NAME="status" FIELDS="status" TYPE="unique"/>
             </KEYS>
         </TABLE>
         <TABLE NAME="block_usermanager_users" COMMENT="Table for logging users in applications">
@@ -26,7 +24,6 @@
             </FIELDS>
             <KEYS>
                 <KEY NAME="id" FIELDS="id" TYPE="primary"/>
-                <KEY NAME="application_id" FIELDS="application_id" TYPE="unique"/>
             </KEYS>
         </TABLE>
 
@@ -38,10 +35,8 @@
             </FIELDS>
             <KEYS>
                 <KEY NAME="id" FIELDS="id" TYPE="primary"/>
-                <KEY NAME="application_id" FIELDS="application_id" TYPE="unique"/>
             </KEYS>
         </TABLE>
-
 
 
         <TABLE NAME="block_usermanager_facultets" COMMENT="list of facultets">

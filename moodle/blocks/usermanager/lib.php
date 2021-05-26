@@ -445,9 +445,9 @@ function get_semestr_of_subject_oci_old($conn, $courseid) {
                 $years = array();
 
                 if (date('n') < 7){
-                    array_push($years, (date('Y') - floor(($row_study['SEMESTER']) / 2)));
+                    array_push($years, (date('Y') - floor(($row_study['SEMESTER'] + 1) / 2)));
                 } else {
-                    array_push($years, (date('Y') - floor(($row_study['SEMESTER'] - 1) / 2)));
+                    array_push($years, (date('Y') - floor(($row_study['SEMESTER']) / 2)));
                 }
 /*
                     if ((int)date('m') < 8) {
@@ -457,6 +457,7 @@ function get_semestr_of_subject_oci_old($conn, $courseid) {
                 //$result->{$subj_id}->year = $year_per_semestr;
                 $result->{$subj_id}->year = (int)$row_study['STUDY_YEAR'];
 */
+                $result->{$subj_id}->semestr = (int)$row_study['SEMESTER'];
             }
 
             $NeedYears = array();
