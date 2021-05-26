@@ -438,15 +438,39 @@ function get_semestr_of_subject_oci_old($conn, $courseid) {
             $r_s = oci_execute($stid_s);
             while($row_study = oci_fetch_array($stid_s, OCI_ASSOC+OCI_RETURN_NULLS)){
                 $result->{$subj_id} = $row;
+                /*
                 $year = (int)date('Y');
                 $year_per_semestr = $year - intdiv((int)$row_study['SEMESTER'], 2);
-                if ((int)date('m') < 8) {
+*/
+                $years = array();
+
+                if (date('n') < 7){
+                    array_push($years, (date('Y') - floor(($row_study['SEMESTER']) / 2)));
+                } else {
+                    array_push($years, (date('Y') - floor(($row_study['SEMESTER'] - 1) / 2)));
+                }
+/*
+                    if ((int)date('m') < 8) {
                     $year_per_semestr -= 1;
                 }
                 $result->{$subj_id}->semestr = (int)$row_study['SEMESTER'];
-                $result->{$subj_id}->year = $year_per_semestr;
-                //$result->{$subj_id}->year = (int)$row_study['STUDY_YEAR'];
+                //$result->{$subj_id}->year = $year_per_semestr;
+                $result->{$subj_id}->year = (int)$row_study['STUDY_YEAR'];
+*/
             }
+
+            $NeedYears = array();
+            $NeedYears = array_unique($years);
+
+            foreach ($NeedYears as $need_yaer){
+
+                if (date('n') < 7){
+                    if (date('Y') == $need_yaer) {
+                        //$result->{$subj_id}->year = $need_yaer;
+                    }
+                }
+            }
+            $result->{$subj_id}->year = $need_yaer;
         }
     }
     return $result;
