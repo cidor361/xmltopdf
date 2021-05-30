@@ -39,7 +39,11 @@ class manage_form extends moodleform
         $attr = array('size' => '100', 'maxlength' => '200');
 
         $mform = $this->_form;
-
+/*
+        $mform->addElement('text', 'login', get_string('login', 'block_coursefields'), $attr);
+        $mform->setType('login', PARAM_TEXT);
+        $mform->addElement('password', 'password', get_string('password', 'block_coursefields'), $attr);
+*/
         $mform->addElement('header', 'information_header', 'Информация курса');
         $mform->addElement('static', 'external_courseid', 'Внешний ID курса');
         $mform->addElement('static', 'get_grade_status_course', 'Статус оценки курса');
