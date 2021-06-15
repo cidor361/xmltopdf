@@ -364,7 +364,7 @@ function search_vsu_fields_users_per_disciplin_without_specialisation($ids, $dis
                 (select userid from mdl_user_info_data where fieldid = '".$ids['level']."' and data = '".$disciplin->step."' and userid in
                     (select userid from mdl_user_info_data where fieldid = '".$ids['specialityCode']."' and data = '".$disciplin->speciality_code."' and userid in 
                             (select userid from mdl_user_info_data where fieldid = '".$ids['stform']."' and data = '".$disciplin->st_form."' and userid in
-                                (select userid from mdl_user_info_data where fieldid = '".$ids['profile']."' and data = '".$disciplin->specialisation."' and userid in
+                                (select userid from mdl_user_info_data where fieldid = '".$ids['naprspec2']."' and data = '".$disciplin->speciality."' and userid in
                                     (select userid from mdl_user_info_data where fieldid = '".$ids['streamyear']."' and data = '".$disciplin->year."')))));";
     $user_ids = $DB->get_records_sql($sql);
 

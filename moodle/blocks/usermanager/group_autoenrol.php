@@ -58,6 +58,7 @@ echo $OUTPUT->header();
 $groups = $SESSION->groups;
 $ids = get_user_field_ids();
 $groups_of_users_per_disciplin = new stdClass();
+$extra_groups_of_users_per_disciplin = new stdClass();
 $moodle_group_name = new stdClass();
 $moodle_group_description = new stdClass();
 
@@ -66,18 +67,24 @@ $moodle_group_description = new stdClass();
 //$sql = "SELECT * FROM mdl_block_vsucourse_new WHERE id='".$group."';";
 //$disciplin_with_number = $DB->get_records_sql($sql);
 $disciplins_with_number = get_semestr_of_subject_oci_old($conn, $courseid);
+//echo var_dump($disciplins_with_number);
 
 foreach ($disciplins_with_number as $disciplin_id => $disciplin) {
 
     if (group_selected($groups, $disciplin->id)) {
 
         if ($disciplin->specialisation == '-') {
+            //echo var_dump(search_vsu_fields_users_per_disciplin_without_specialisation($ids, $disciplin));
             $groups_of_users_per_disciplin->{$disciplin_id} = search_vsu_fields_users_per_disciplin_without_specialisation($ids, $disciplin);
         } else {
-            $groups_of_users_per_disciplin->{$disciplin_id} = search_vsu_fields_users_per_disciplin($ids, $disciplin);
+            //echo var_dump(search_vsu_fields_users_per_disciplin($ids, $disciplin));
+            $groups_of_users_per_disciplin->{$disciplin_id} =
+                search_vsu_fields_users_per_disciplin($ids, $disciplin);
         }
+        $extra_groups_of_users_per_disciplin->{$disciplin_id} = search_vsu_fields_users_per_disciplin_without_specialisation($ids, $disciplin);
         //Reformat students plan groups to academic groups
         $groups_of_users_per_disciplin = format_users_to_groups($ids, $groups_of_users_per_disciplin);
+        $extra_groups_of_users_per_disciplin = format_users_to_groups($ids, $extra_groups_of_users_per_disciplin);
 
     }
 }
@@ -85,6 +92,8 @@ foreach ($disciplins_with_number as $disciplin_id => $disciplin) {
 
 //Send group information to group_autoenrol_form.php and create form
 $SESSION->groups_of_users = $groups_of_users_per_disciplin;
+$SESSION->extra_groups_of_users_per_disciplin = $extra_groups_of_users_per_disciplin;
+//echo var_dump($extra_groups_of_users_per_disciplin);
 
 $mform = new group_autoenrol_form();
 

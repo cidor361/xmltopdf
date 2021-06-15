@@ -43,6 +43,7 @@ class group_autoenrol_form extends moodleform
         $mform =& $this->_form;
 
         $groups_of_users_disciplin = $SESSION->groups_of_users;
+        $extra_groups_of_users_per_disciplin = $SESSION->extra_groups_of_users_per_disciplin;
         foreach ($groups_of_users_disciplin as $disciplin_num=>$groups_of_users) {
             if ($groups_of_users != null) {
                 foreach ($groups_of_users as $group_num => $group) {
@@ -52,19 +53,50 @@ class group_autoenrol_form extends moodleform
                         $mform->addElement('advcheckbox', $id,
                                             '', get_string('select_group', 'block_usermanager') . $group_num);
                         $mform->setExpanded($id.'-header', false);
+                        $i = 1;
                         foreach ($group as $user) {
                             if ($user->enrolled) {
                                 $enrolled = get_string('enrolled', 'block_usermanager');
                             } else {
                                 $enrolled = '';
                             }
-                            $mform->addElement('static', $user->id, $enrolled, $user->firstname . ' ' . $user->lastname);
+                            $mform->addElement('static', $user->id, $enrolled, $i.'. '.$user->lastname . ' ' . $user->firstname);
+                            $i++;
                         }
                     }
                 }
 
             }
         }
+
+        if ($groups_of_users_disciplin == null) {
+            $mform->addElement('header', 'extra_groups', get_string('extra_groups', 'block_usermanager'));
+            $mform->addElement('static', 'extra_groups_notify', get_string('extra_groups_notify', 'block_usermanager'));
+            foreach ($extra_groups_of_users_per_disciplin as $disciplin_num => $groups_of_users) {
+                if ($groups_of_users != null) {
+                    foreach ($groups_of_users as $group_num => $group) {
+                        if ($group != null) {
+                            $id = $disciplin_num . '_' . $group_num;
+                            $mform->addElement('advcheckbox', $id,
+                                get_string('select_group', 'block_usermanager') . $group_num);
+                            $mform->setExpanded($id, true);
+                            $i = 1;
+                            foreach ($group as $user) {
+                                if ($user->enrolled) {
+                                    $enrolled = get_string('enrolled', 'block_usermanager');
+                                } else {
+                                    $enrolled = '';
+                                }
+                                $mform->addElement('static', 'extra_' . $user->id, $enrolled, $i . '. ' . $user->lastname . ' ' . $user->firstname);
+                                $i++;
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+        //$extra_groups_of_users_per_disciplin
         $this->add_action_buttons($cancel = true, $submitlabel = get_string('enroll_group', 'block_usermanager'));
     }
 

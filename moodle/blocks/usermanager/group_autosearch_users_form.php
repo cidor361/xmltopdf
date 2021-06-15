@@ -46,9 +46,9 @@ class group_autosearch_users_form extends moodleform {
             $mform->addElement('advcheckbox', $disciplin->id, '',
                                 $disciplin->speciality_code.' '.$disciplin->speciality.' ('.
                                 $disciplin->step. ' '.$disciplin->st_form.') '. $disciplin->year.' '.
-                                get_string('course_year', 'block_usermanager'));
+                                get_string('course_year', 'block_usermanager', null, array('group' => 1)));
         }
-        $this->add_checkbox_controller(1, null, null, 0);
+        $this->add_checkbox_controller(1, get_string("checkallornone"), array('style' => 'font-weight: bold;'), 1);
 
         $this->add_action_buttons($cancel = true, $submitlabel = get_string('select_groups', 'block_usermanager'));
 
