@@ -27,10 +27,10 @@
  */
 
 if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+    die('Direct access to this script is forbidden.');
 }
 require_once('lib.php');
-require_once($CFG->libdir . '/formslib.php');
+require_once($CFG->libdir.'/formslib.php');
 
 class group_autoenrol_form extends moodleform
 {
@@ -51,7 +51,8 @@ class group_autoenrol_form extends moodleform
                         $id = $disciplin_num.'_'.$group_num;
                         $mform->addElement('header', $id.'-header', 'Группа №' . $group_num);
                         $mform->addElement('advcheckbox', $id,
-                                            '', get_string('select_group', 'block_usermanager') . $group_num);
+                                            '', get_string('select_group', 'block_usermanager') . $group_num,
+                                            array('group' => 1));
                         $mform->setExpanded($id.'-header', false);
                         $i = 1;
                         foreach ($group as $user) {
@@ -62,6 +63,7 @@ class group_autoenrol_form extends moodleform
                             }
                             $mform->addElement('static', $user->id, $enrolled, $i.'. '.$user->lastname . ' ' . $user->firstname);
                             $i++;
+
                         }
                     }
                 }
@@ -69,7 +71,7 @@ class group_autoenrol_form extends moodleform
             }
         }
 
-        if ($groups_of_users_disciplin == null) {
+        if ($groups_of_users_disciplin != null) {
             $mform->addElement('header', 'extra_groups', get_string('extra_groups', 'block_usermanager'));
             $mform->addElement('static', 'extra_groups_notify', get_string('extra_groups_notify', 'block_usermanager'));
             foreach ($extra_groups_of_users_per_disciplin as $disciplin_num => $groups_of_users) {
@@ -96,7 +98,6 @@ class group_autoenrol_form extends moodleform
                 }
             }
         }
-        //$extra_groups_of_users_per_disciplin
         $this->add_action_buttons($cancel = true, $submitlabel = get_string('enroll_group', 'block_usermanager'));
     }
 

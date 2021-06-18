@@ -35,8 +35,8 @@ require_once('connect.php');
 
 global $DB, $USER, $SESSION;
 
-$course = $DB->get_record('course',array('id'=>$SESSION->courseid));
-$courseid = $course->id;
+$courseid = $SESSION->courseid;
+$course = $DB->get_record('course',array('id' => $courseid));
 require_login($course, true);
 
 $coursecontext = context_course::instance($courseid);
@@ -48,7 +48,6 @@ $PAGE->set_context($coursecontext);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_url('/blocks/usermanager/group_autoenrol.php', array('id' => $courseid));
 $PAGE->navbar->add(get_string('pluginname', 'block_usermanager'));
-
 $PAGE->set_title(get_string('pluginname', 'block_usermanager'));
 $PAGE->set_heading(get_string('pluginname', 'block_usermanager'));
 
@@ -57,31 +56,31 @@ echo $OUTPUT->header();
 //Get and parse group information from group_autosearch_users.php
 $groups = $SESSION->groups;
 $ids = get_user_field_ids();
+
 $groups_of_users_per_disciplin = new stdClass();
 $extra_groups_of_users_per_disciplin = new stdClass();
 $moodle_group_name = new stdClass();
 $moodle_group_description = new stdClass();
 
-////Should be uncomment when oracle integration will be removed
+////Should be uncomment when contingent integration will be removed
 //foreach ($groups as $group){
 //$sql = "SELECT * FROM mdl_block_vsucourse_new WHERE id='".$group."';";
 //$disciplin_with_number = $DB->get_records_sql($sql);
 $disciplins_with_number = get_semestr_of_subject_oci_old($conn, $courseid);
-//echo var_dump($disciplins_with_number);
 
 foreach ($disciplins_with_number as $disciplin_id => $disciplin) {
 
     if (group_selected($groups, $disciplin->id)) {
 
         if ($disciplin->specialisation == '-') {
-            //echo var_dump(search_vsu_fields_users_per_disciplin_without_specialisation($ids, $disciplin));
-            $groups_of_users_per_disciplin->{$disciplin_id} = search_vsu_fields_users_per_disciplin_without_specialisation($ids, $disciplin);
+            $groups_of_users_per_disciplin->{$disciplin_id} =
+                search_vsu_fields_users_per_disciplin_without_specialisation($ids, $disciplin);
         } else {
-            //echo var_dump(search_vsu_fields_users_per_disciplin($ids, $disciplin));
             $groups_of_users_per_disciplin->{$disciplin_id} =
                 search_vsu_fields_users_per_disciplin($ids, $disciplin);
         }
-        $extra_groups_of_users_per_disciplin->{$disciplin_id} = search_vsu_fields_users_per_disciplin_without_specialisation($ids, $disciplin);
+        $extra_groups_of_users_per_disciplin->{$disciplin_id} =
+            search_vsu_fields_users_per_disciplin_without_specialisation($ids, $disciplin);
         //Reformat students plan groups to academic groups
         $groups_of_users_per_disciplin = format_users_to_groups($ids, $groups_of_users_per_disciplin);
         $extra_groups_of_users_per_disciplin = format_users_to_groups($ids, $extra_groups_of_users_per_disciplin);
@@ -98,7 +97,6 @@ $SESSION->extra_groups_of_users_per_disciplin = $extra_groups_of_users_per_disci
 $mform = new group_autoenrol_form();
 
 if ($mform->is_cancelled()) {
-    //If user press "cancel", he will be redirected to another page
     $url = new moodle_url('/blocks/usermanager/group_autosearch_users.php');
     redirect($url);
 
@@ -113,7 +111,7 @@ if ($mform->is_cancelled()) {
             //Create application report for logging in db (block_usermanager_applies)
             $moodle_group_id = $disciplin_id . '_' . $group_id;
             $application_report = new stdClass();
-            //$application_report->group_id = $group_num;
+            //$application_report->group_id = $group_num;  //add getting academic group number or other
             $application_report_group_id = $moodle_group_id;
             $application_report->created = time();
             $application_report->modified = 0;
@@ -159,7 +157,7 @@ if ($mform->is_cancelled()) {
                 $user_report->application_id = $application_id;
                 $user_report->user_id = $userid;
                 if (!groups_is_member($moodle_group_id, $userid)) {
-                    if (enrol_user_manual($courseid, $userid, $moodle_group_id)) {
+                    if (enrol_user_custom($courseid, $userid, $moodle_group_id)) {
                         //Status 01 - success
                         $user_report->status = 01;
                         $groups_of_users_per_disciplin->{$disciplin_id}->{$group_id}->{$userid}->enrolled = true;

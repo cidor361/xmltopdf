@@ -27,31 +27,30 @@
  */
 
 if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
+require_once('lib.php');
 require_once($CFG->libdir.'/formslib.php');
 
-class group_autosearch_users_form extends moodleform {
+class students_form extends moodleform {
     public $id;
 
     function definition() {
         global $SESSION;
 
-        $disciplins = $SESSION->disciplins;
-
         $mform =& $this->_form;
 
-        $mform->addElement('header', 'header_search', get_string('finded_connects_on_course', 'block_usermanager'));
-        foreach ($disciplins as $disciplin) {
-            $mform->addElement('advcheckbox', $disciplin->id, '',
-                                $disciplin->speciality_code.' '.$disciplin->speciality.' ('.
-                                $disciplin->step. ' '.$disciplin->st_form.') '. $disciplin->year.' '.
-                                get_string('course_year', 'block_usermanager'), array('group' => 1));
+        $users = $SESSION->users;
+        $students = array();
+        if ($users != null) {
+            foreach ($users as $user) {
+                if ($user != null) {
+                    $mform->addElement('advcheckbox', $user->id, $user->firstname . ' ' . $user->lastname, '', array('group' => 1), array(0, $user->id));
+                }
+            }
+            $this->add_checkbox_controller(1, null, null, 0);
+            $this->add_action_buttons($cancel = true, $submitlabel = get_string('enrol_chose_students', 'block_usermanager'));
         }
-        $this->add_checkbox_controller(1, get_string('checkallornone', 'block_usermanager'),
-                                       array('style' => 'font-weight: bold;'), 0);
-        $this->add_action_buttons($cancel = true, $submitlabel = get_string('select_groups', 'block_usermanager'));
-
     }
 
 }

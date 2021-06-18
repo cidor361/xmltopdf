@@ -262,7 +262,7 @@ function group_selected($selected_groups, $check_group_number) {
     }
 }
 
-function enrol_user_manual($courseid, $userid, $group_id, $roleid=5, $duration=0, $method='manual') {
+function enrol_user_custom($courseid, $userid, $group_id, $roleid=5, $duration=0, $method='manual') {
 
     global $DB;
 
@@ -475,28 +475,4 @@ function get_semestr_of_subject_oci_old($conn, $courseid) {
         }
     }
     return $result;
-}
-
-function get_info_oci($row) {
-    /*
-     * Geting semestr information from oracle DB
-     * Used code from vsucourse plugin!
-     * File connect.php was created locally for usermanager plugin
-     * When this data will store in moodle, get_semestr_of_subject_oci_old() must be deleted
-     */
-    global $DB;
-    global $conn;
-
-    $sql = "select * from contingent.moodle_subject_view WHERE 
-							SUBJ_CODE = '".$row->subj_code."' and 
-							SUBJ_NAME = '".$row->subj_name."' and
-							ST_FORM = '".$row->st_form."' and
-							
-							faculty = '".$row->faculty."' 
-							
-							order by STUDY_YEAR DESC";
-    $stid = oci_parse($conn, $sql);
-    $r = oci_execute($stid);
-    $row_out = oci_fetch_array($stid, OCI_ASSOC+OCI_RETURN_NULLS);
-    return $row_out;
 }

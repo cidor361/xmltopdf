@@ -31,8 +31,8 @@ require_once('manual_search_users_form.php');
 
 global $DB, $SESSION;
 
-$course = $DB->get_record('course',array('id'=>$SESSION->courseid));
-$courseid = $course->id;
+$courseid = $SESSION->courseid;
+$course = $DB->get_record('course',array('id' => $courseid));
 require_login($course, true);
 
 $coursecontext = context_course::instance($courseid);
@@ -46,17 +46,17 @@ $PAGE->set_url('/blocks/usermanager/manual_search_users.php', array('id' => $cou
 $PAGE->navbar->add(get_string('pluginname', 'block_usermanager'));
 $PAGE->set_title(get_string('pluginname', 'block_usermanager'));
 $PAGE->set_heading(get_string('pluginname', 'block_usermanager'));
+
 echo $OUTPUT->header();
 
 $mform = new students_form();
-
-
 
 if ($mform->is_cancelled()) {
     $url = new moodle_url('/course/view.php', array('id' => $courseid));
     redirect($url);
 
 } else if ($fromform = $mform->get_data()) {
+    //Get and prepare user data for search (in next page)
     $ids = get_user_field_ids();
     $data = new stdClass();
     $data->facultets = get_facultet_names($ids);
@@ -68,7 +68,7 @@ if ($mform->is_cancelled()) {
     $data = prepare_data_one($fromform, $data);
     $users = search_vsu_fields_users($ids, $data);
     $SESSION->users = $users;
-    $url = new moodle_url('/blocks/usermanager/enrol_users.php');
+    $url = new moodle_url('/blocks/usermanager/manual_enrol_users.php', array('courseid' => $courseid));
     redirect($url);
 
 }else {

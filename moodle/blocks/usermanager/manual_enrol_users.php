@@ -23,16 +23,16 @@
  * @package    block_usermanager
  * @category   block
  * @copyright  2021 Igor Grebennikov
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    htt$courseidp://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once('../../config.php');
 require_once('lib.php');
-require_once('enrol_users_form.php');
+require_once('manual_enrol_users_form.php');
 
 global $DB, $USER, $SESSION;
 
-$course = $DB->get_record('course',array('id'=>$SESSION->courseid));
-$courseid = $course->id;
+$courseid = $SESSION->courseid;
+$course = $DB->get_record('course',array('id' => $courseid));
 require_login($course, true);
 
 $coursecontext = context_course::instance($courseid);
@@ -42,7 +42,7 @@ if (!has_capability('block/usermanager:manageuser', $coursecontext)) {
 
 $PAGE->set_context($coursecontext);
 $PAGE->set_pagelayout('standard');
-$PAGE->set_url('/blocks/usermanager/search_users.php', array('id' => $courseid));
+$PAGE->set_url('/blocks/usermanager/manual_search_users.php', array('id' => $courseid));
 $PAGE->navbar->add(get_string('pluginname', 'block_usermanager'));
 $PAGE->set_title(get_string('pluginname', 'block_usermanager'));
 $PAGE->set_heading(get_string('pluginname', 'block_usermanager'));
@@ -53,7 +53,9 @@ $mform = new students_form();
 if ($mform->is_cancelled()) {
     $url = new moodle_url('/blocks/usermanager/search_users.php');
     redirect($url);
+
 } else if ($fromform = $mform->get_data()) {
+    //Create list with selected users
     $users = array();
     foreach ($fromform as $user) {
         if ($user != 0) {
@@ -61,6 +63,7 @@ if ($mform->is_cancelled()) {
         }
     }
 
+    //Create and insert to db object for log application
     $users_report = new stdClass();
     $users_report->created = time();
     $users_report->modified = 0;
@@ -70,11 +73,11 @@ if ($mform->is_cancelled()) {
     $application = $DB->get_record('block_usermanager_applies', array("created" => $users_report->created));
     $application_id = $application->created;
 
-    //TODO: создание группы в процессе подписки
+    //Create and insert object for log enrol action (each user)
     $user_report = new stdClass();
     $error_counter = 0;
     foreach ($users as $user) {
-        if (enrol_user_manual($course->id, $user) == true) {
+        if (enrol_user_custom($courseid, $user) == true) {
             $user_report->application_id = $application_id;
             $user_report->user_id = $user;
             $DB->insert_record('block_usermanager_users', $user_report);

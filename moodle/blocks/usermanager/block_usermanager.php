@@ -50,10 +50,10 @@ class block_usermanager extends block_base {
         }
 
         $this->content->text = get_string('type_of_enrol', 'block_usermanager');
-        $url = new moodle_url('/blocks/usermanager/manual_search_users.php');
+        $url = new moodle_url('/blocks/usermanager/manual_search_users.php', array('courseid' => $COURSE->id));
         $this->content->footer = html_writer::link($url, get_string('manual_enrol_link', 'block_usermanager'));
         $this->content->footer .= '</br>';
-        $url = new moodle_url('/blocks/usermanager/group_autosearch_users.php');
+        $url = new moodle_url('/blocks/usermanager/group_autosearch_users.php', array('courseid' => $COURSE->id));
         $this->content->footer .= html_writer::link($url, get_string('auto_enrol_link', 'block_usermanager'));
 
         return $this->content;
