@@ -59,11 +59,17 @@ if ($mform->is_cancelled()) {
     //Get and prepare user data for search (in next page)
     $ids = get_user_field_ids();
     $data = new stdClass();
+    //$instance = new \local_addition_vsu_data\profile_field_vsu\profile_field_method_vsu();
     $data->facultets = get_facultet_names($ids);
+    //$data->facultets = $instance->get_facultet_names();
     $data->num_course = get_num_course_name($ids);
+    //$data->num_course = $instance->get_num_course_name();
     $data->edu_forms = get_edu_forms_name($ids);
+    //$data->edu_forms = $instance->get_edu_forms_name();
     $data->edu_level = get_edu_level_name($ids);
+    //$data->edu_level = $instance->get_edu_level_name();
     $data->edu_specialites = get_edu_specialites_name($ids);
+    //$data->edu_specialites = $instance->get_edu_specialites_name();
 
     $data = prepare_data_one($fromform, $data);
     $users = search_vsu_fields_users($ids, $data);
