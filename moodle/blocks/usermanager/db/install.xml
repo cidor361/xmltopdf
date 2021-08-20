@@ -6,10 +6,12 @@
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="group_id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
-                <FIELD NAME="created" TYPE="datetime" NOTNULL="true" SEQUENCE="false"/>
-                <FIELD NAME="modified" TYPE="datetime" NOTNULL="true" SEQUENCE="false" />
+                <FIELD NAME="courseid" TYPE="inst" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="created" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="modified" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" />
                 <FIELD NAME="required_user" TYPE="int" LENGTH="8" NOTNULL="true" SEQUENCE="false"/>
                 <FIELD NAME="status" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="num_of_users" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="id" FIELDS="id" TYPE="primary"/>
@@ -31,6 +33,8 @@
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="application_id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="userid" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="time" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
                 <FIELD NAME="error_message" TYPE="text" LENGTH="1000" NOTNULL="false" SEQUENCE="false"/>
             </FIELDS>
             <KEYS>

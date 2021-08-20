@@ -111,13 +111,15 @@ if ($mform->is_cancelled()) {
             //Create application report for logging in db (block_usermanager_applies)
             $moodle_group_id = $disciplin_id . '_' . $group_id;
             $application_report = new stdClass();
-            //$application_report->group_id = $group_num;  //add getting academic group number or other
+            $application_report->group_id = $group_id;  //add getting academic group number or other
             $application_report_group_id = $moodle_group_id;
+            $application_report->courseid = $courseid;
             $application_report->created = time();
             $application_report->modified = 0;
             $application_report->required_user = $USER->id;
             $application_report->status = 0001;
-            //$application_id = $DB->insert_record('block_usermanager_applies', $application_report);
+            $application_report->num_of_users = count($group_of_user);
+            $application_id = $DB->insert_record('block_usermanager_applies', $application_report);
 
             //Create group in moodle course
             $moodle_group_info = groups_get_group_by_idnumber($courseid, $moodle_group_id);
@@ -166,9 +168,15 @@ if ($mform->is_cancelled()) {
                         $user_report->status = 00;
                         $groups_of_users_per_disciplin->{$disciplin_id}->{$group_id}->{$userid}->enrolled = false;
                         $error_count += 1;
+                        $error_log = new stdClass();
+                        $error_log->application_id = $application_id;
+                        $error_log->userid = $userid;
+                        $error_log->time = time();
+                        $DB->insert_record('block_usermanager_error_log', $error_log, $returnid=false,
+                            $bulk=false);
                     }
                 }
-                //$DB->insert_record('block_usermanager_users', $user_report);
+                $DB->insert_record('block_usermanager_users', $user_report);
                 //TODO: тестированеи логгирования
             }
         }
