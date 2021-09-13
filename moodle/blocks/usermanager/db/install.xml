@@ -5,7 +5,7 @@
         <TABLE NAME="block_usermanager_applies" COMMENT="Table for enrol log">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true"/>
-                <FIELD NAME="group_id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="group_id" TYPE="text" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
                 <FIELD NAME="courseid" TYPE="inst" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
                 <FIELD NAME="created" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
                 <FIELD NAME="modified" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" />
