@@ -40,7 +40,7 @@ class students_form extends moodleform {
 
         $mform =& $this->_form;
 
-        $users = $SESSION->users;
+        $users = $SESSION->{$courseid}->users;
         $students = array();
         if ($users != null) {
             foreach ($users as $user) {

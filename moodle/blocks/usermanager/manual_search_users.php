@@ -73,7 +73,7 @@ if ($mform->is_cancelled()) {
 
     $data = prepare_data_one($fromform, $data);
     $users = search_vsu_fields_users($ids, $data);
-    $SESSION->users = $users;
+    $SESSION->{$courseid}->users = $users;
     $url = new moodle_url('/blocks/usermanager/manual_enrol_users.php', array('courseid' => $courseid));
     redirect($url);
 
