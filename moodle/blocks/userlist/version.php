@@ -30,6 +30,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_userlist';
 $plugin->release = '0.1.0';
-$plugin->version = 2020041408;
+$plugin->version = 2021092400;
 $plugin->requires = 2015111300;
-//$plugin->maturity = MATURITY_ALPHA;
+$plugin->maturity = MATURITY_STABLE;

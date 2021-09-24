@@ -36,7 +36,7 @@ class block_userlist extends block_base {
     
     public function get_content() {
         
-		global $COURSE, $SESSION;
+		global $COURSE;
 		
 		if ($this->content != null) {
 				return $this->content;
@@ -47,11 +47,9 @@ class block_userlist extends block_base {
 		}
 		
         $this->content = new stdClass;
- 		$this->content->text = '<a href="'.'/blocks/userlist/index.php'.'">Скачать список студентов</a>';
-		$SESSION->blockcontext = $this->page->context;
-		$SESSION->courseid = $COURSE->id;
-//		$context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
-				
+        $url = new moodle_url('/blocks/userlist/index.php',
+                              array('courseid' => $COURSE->id, 'blockcontextid' => $this->page->context->id));
+ 		$this->content->text = html_writer::link($url, get_string('download_userlist', 'block_usermanager'));
     }
     
     function instance_allow_config() {

@@ -26,7 +26,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['pluginname'] = 'User report';
 $string['userlist'] = 'User report block';
 $string['userlist:addinstance'] = 'Add a new user report block';
 $string['userlist:myaddinstance'] = 'Add a new user report block to course Page';
+$string['download_userlist'] = 'Download list of students';

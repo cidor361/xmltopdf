@@ -28,34 +28,35 @@
 
 require_once('../../config.php');
 require_once($CFG->dirroot.'/user/profile/lib.php');
-$context = $SESSION->blockcontext;
 
-if (!has_capability('block/userlist:view', $context)) {
+$courseid = required_param('courseid', PARAM_INT);
+$coursecontext = context_course::instance($courseid);
+
+if (!has_capability('block/userlist:view', $coursecontext)) {
   print_error('nopermissiontoviewforum');
 } else {
 
+    header('Content-Description: File Transfer');
+    header('Content-Type: application/csv');
+    header("Content-Disposition: attachment; filename=page-data-export.csv");
+    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 
-header('Content-Description: File Transfer');
-header('Content-Type: application/csv');
-header("Content-Disposition: attachment; filename=page-data-export.csv");
-header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-
-$handle = fopen('php://output', 'w');
-ob_clean();
-$users = get_role_users(5, context_course::instance($SESSION->courseid));
-$i = 1;
-foreach($users as $user) {
-	$myuser = new stdClass();
-	$myuser->id = $user->id;
-	profile_load_data($myuser);
-	$reportuser = $myuser->profile_field_naprspec.','.
-		$myuser->profile_field_idgroup.','.
-		$user->lastname.','.$user->firstname.','.
-		$user->middlename.','.$user->email;
-	$data = str_getcsv($reportuser);
-	fputcsv($handle, $data);
-	$i = $i + 1;
+    $handle = fopen('php://output', 'w');
+    ob_clean();
+    $users = get_role_users(5, $coursecontext);
+    $i = 1;
+    foreach($users as $user) {
+        $userdata = new stdClass();
+        $userdata->id = $user->id;
+        profile_load_data($userdata);
+        $reportuser = $userdata->profile_field_naprspec.','.  //Направление
+                      $userdata->profile_field_idgroup.','.   //Номер академической группы
+                      $user->lastname.','.$user->firstname.','.    //ФИО
+                      $user->middlename.','.$user->email;   //Почта
+        $data = str_getcsv($reportuser);
+        fputcsv($handle, $data);
+        $i = $i++;
 }
-ob_flush();
-fclose($handle);
+    ob_flush();
+    fclose($handle);
 }
