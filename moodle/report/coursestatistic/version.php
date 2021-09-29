@@ -15,21 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Enrol LTI tasks.
+ * This is a one-line short description of the file.
  *
- * @package    addition_vsu_data
- * @copyright  2021 Igor Grebennikov <cidor361@gmail.com>
+ * You can have a rather longer description of the file as well,
+ * if you like, and it can span multiple lines.
+ *
+ * @package    report_coursestatistic
+ * @category   report
+ * @copyright  2021 Igor Grebennikov
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$tasks = [
-    [
-        'classname' => 'local\task\sync_vsu_data',
-        'blocking' => 0,
-        'minute' => '0',
-        'hour' => '3',
-        'day' => '*',
-        'month' => '*',
-        'dayofweek' => '0',
-    ],
-];
+defined('MOODLE_INTERNAL') || die();
+
+$plugin->component = 'report_coursestatistic';
+$plugin->version = 2021092900;
+$plugin->requires = 2011062400;
+$plugin->maturity  = MATURITY_ALPHA;

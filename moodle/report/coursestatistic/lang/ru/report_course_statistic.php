@@ -1,7 +1,9 @@
 <?php
 $string['pluginname'] = 'Статистика курса';
+$string['coursestatistic'] = 'Статистика курса';
 $string['title'] = 'Статистика курса';
-$string['calculate_statistic'] = 'Расчитать курс';
+$string['set_up_weights'] = 'Настройка весов';
+$string['calculate_statistic'] = 'Расчитать статистику курсов';
 $string['description'] = 'Данный плагин предназначен для расчёта параметров курса';
 $string['courseID'] = 'ID курса';
 $string['short_course_name'] = 'Краткое название курса';
