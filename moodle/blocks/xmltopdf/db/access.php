@@ -1,20 +1,17 @@
 <?php
     $capabilities = array(
  
-    'block/simplehtml:myaddinstance' => array(
+    'block/xmltopdf:myaddinstance' => array(
         'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_BLOCK,
         'archetypes' => array(
-            'user' => CAP_ALLOW,
+            'student' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
-
         ),
- 
-        'clonepermissionsfrom' => 'moodle/my:manageblocks'
     ),
  
-    'block/simplehtml:addinstance' => array(
+    'block/xmltopdf:addinstance' => array(
         'riskbitmask' => RISK_SPAM | RISK_XSS,
  
         'captype' => 'write',
@@ -22,9 +19,7 @@
         'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
-            'user' => CAP_ALLOW
+            'student' => CAP_ALLOW
         ),
- 
-        'clonepermissionsfrom' => 'moodle/site:manageblocks'
     ),
 );
