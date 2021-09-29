@@ -25,12 +25,32 @@
  * @copyright  2021 Igor Grebennikov
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+require_once('../../config.php');
 
-defined('MOODLE_INTERNAL') || die();
+$id = required_param('id', PARAM_INT);           // Course ID
 
-$plugin->version   = 2020080402;
-$plugin->requires  = 2018051403;
-//$plugin->cron      = 0;
-$plugin->component = 'mod_terminal';
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.1.0';
+// Ensure that the course specified is valid
+if (!$course = $DB->get_record('course', array('id'=> $id))) {
+    print_error('Course ID is incorrect');
+}
+
+require_course_login($course);
+
+$PAGE->set_url('/mod/terminal/view.php', array('id' => $id));
+$PAGE->set_title($course->fullname);
+$PAGE->set_heading($course->shortname);
+
+echo $OUTPUT->header();
+
+if (! $newmodules = get_all_instances_in_course('terminal', $course)) {
+    echo $OUTPUT->heading(get_string('terminal', 'terminal'), 2);
+    echo $OUTPUT->continue_button("view.php?id=$course->id");
+    echo $OUTPUT->footer();
+    die();
+}
+
+echo $OUTPUT->heading(get_string('modulenameplural', 'newmodule'), 2);
+
+echo "It's works!";
+
+echo $OUTPUT->footer();

@@ -28,9 +28,24 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020080402;
-$plugin->requires  = 2018051403;
-//$plugin->cron      = 0;
-$plugin->component = 'mod_terminal';
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.1.0';
+require_once($CFG->dirroot.'/course/moodleform_mod.php');
+
+class mod_terminal_mod_form extends moodleform_mod {
+
+    function definition() {
+        global $COURSE;
+
+        $mform =& $this->_form;
+
+        $mform->addElement('text', 'name', get_string('pluginname', 'terminal'), array('size'=>'64'));
+        $mform->setType('name', PARAM_TEXT);
+        $mform->addRule('name', null, 'required', null, 'client');
+
+        $ynoptions = array(0 => get_string('no'),
+            1 => get_string('yes'));
+
+        $this->standard_coursemodule_elements();
+
+        $this->add_action_buttons();
+    }
+}

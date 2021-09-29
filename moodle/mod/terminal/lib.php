@@ -26,11 +26,38 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+function terminal_add_instance($terminal){
+    global $DB;
 
-$plugin->version   = 2020080402;
-$plugin->requires  = 2018051403;
-//$plugin->cron      = 0;
-$plugin->component = 'mod_terminal';
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.1.0';
+    $terminal->timecreated = time();
+
+    return $DB->insert_record('terminal', $terminal);
+};
+function terminal_update_instance($terminal){
+    global $DB;
+
+    $terminal->timemodified = time();
+    $terminal->id = $terminal->instance;
+
+    return $DB->update_record('terminal', $terminal);
+};
+function terminal_delete_instance($id){
+    global $DB;
+
+    if (! $terminal = $DB->get_record('terminal', array('id' => $id))) {
+        return false;
+    }
+
+    $DB->delete_records('terminal', array('id' => $terminal->id));
+
+    return true;
+};
+
+function create_main_VM($name) {
+
+};
+
+function create_clones($parent, $num_of) {
+
+    return 1;
+}
