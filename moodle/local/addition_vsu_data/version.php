@@ -29,6 +29,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_addition_vsu_data';
-$plugin->version = 2020062300;
+$plugin->version = 2021092902;
 $plugin->requires = 2011062400;
 $plugin->maturity  = MATURITY_ALPHA;
