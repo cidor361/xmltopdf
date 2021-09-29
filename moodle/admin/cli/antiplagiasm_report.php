@@ -1,10 +1,14 @@
 <?php
-/*This script allows you to get a report on all instances
-of anti-plagiarism from a certain date.
-Script create csv file with "antiplagiasm_report current time .csv*/
+/*
+ * !!НЕ ТЕСТИРОВАЛСЯ!!
+ * This script allows you to get a report on all instances
+ * of anti-plagiarism from a certain date.
+ * Script create csv file with "antiplagiasm_report current time .csv
+*/
 
 require('../../config.php');
 require_once($CFG->libdir . '/clilib.php');
+
 define('CLI_SCRIPT', true);
 
 list($options, $unrecognised) = cli_get_params([
@@ -22,7 +26,6 @@ list($options, $unrecognised) = cli_get_params([
 //}
 
 $time_from = $unrecognised[0];
-//$time_from = '14-05-2021';    //DD-MM-YYYY
 $time_from = strtotime($time_from);
 
 //get all instance of antiplagiasm from date

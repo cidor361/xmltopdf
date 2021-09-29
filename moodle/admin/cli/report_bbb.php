@@ -1,6 +1,11 @@
 <?php
+/*
+ * !!НЕ ТЕСТИРОВАЛСЯ!!
+ * Позволяет получить краткую информацию о всех экземплярах BBB с определённого момента
+ */
+
 define('CLI_SCRIPT', true);
-require('/var/www/moodle-3.9.1+/config.php');
+require('../../config.php');
 
 $time_from = 1593561600; // 1 august 2020
 

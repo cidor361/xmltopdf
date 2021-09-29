@@ -1,9 +1,30 @@
 <?php
-define('CLI_SCRIPT', true);
-require('/var/www/moodle-3.9.1+/config.php');
+/*
+ * !!НЕ ТЕСТИРОВАЛСЯ!!
+ * Позволяет получить информацию по выборке курсов (количество студентов, количество элементов в курсе,
+ * кафедра и факультет)
+ * Данные возвращаются в виде .csv файла
+ */
 
-$course_from = 2;
-$course_to = 5;
+define('CLI_SCRIPT', true);
+require('../../config.php');
+
+list($options, $unrecognised) = cli_get_params([
+    'help' => false,
+    'from_course' => null,
+    'to_course' =>null,
+    'force' => false,
+], [
+    'h' => 'help',
+    's' => 'from',
+    't' => 'to',
+    'f' => 'force'
+]);
+
+global $DB;
+
+$course_from = $unrecognised[0];
+$course_to = $unrecognised[1];
 
 //course_info
 $sql = "SELECT id, fullname, timecreated, category 
