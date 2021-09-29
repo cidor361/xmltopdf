@@ -26,3 +26,8 @@ $string['extra_groups'] = 'This option should be used in the case when students 
 $string['extra_groups_notify'] = 'There are groups and students of all profiles / specializations of the specified direction / specialty of the discipline will be loaded on the page';
 $string['checkallornone'] = 'Check all bindings';
 $string['error_course'] = 'Id course error';
+$string['list_of_students'] = 'List of students';
+$string['of_group'] = 'of group';
+$string['success_subscription'] = 'Subscription was success';
+$string['subscribe_students'] = 'Subscribe students';
+

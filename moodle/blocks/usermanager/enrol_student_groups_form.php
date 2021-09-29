@@ -27,6 +27,7 @@
  */
 
 require_once($CFG->libdir.'/formslib.php');
+require_once('lib.php');
 
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
@@ -42,48 +43,41 @@ class group_search_user_groups_form extends moodleform
 
         $courseid = $PAGE->course->id;
         $disciplins = $this->_customdata['disciplins'];
+        $context = context_course::instance($courseid);
 
         $mform =& $this->_form;
 
         $mform->addElement('hidden', 'courseid', $this->_customdata['courseid']);
-        $mform->addElement('html', '<h2>'.get_string('finded_connects_on_course', 'block_usermanager').'</h2>');
+        $mform->addElement('html', '<h3>'.get_string('finded_connects_on_course', 'block_usermanager').'</h3>');
         foreach ($disciplins as $disciplin) {
-            $mform->addElement('html', '<h4>'.$disciplin->speciality_code.' '.$disciplin->speciality.' (' .
+            $mform->addElement('html', '<h5>'.$disciplin->speciality_code.' '.$disciplin->speciality.' (' .
                 $disciplin->step.' '.$disciplin->st_form.') '.$disciplin->year.' ' .
-                get_string('course_year', 'block_usermanager').'</h4>');
+                get_string('course_year', 'block_usermanager').' ('.$disciplin->faculty.')</h5>');
         }
 
-        $mform->addElement('html', '<br><h2>'.get_string('finded_academic_group_on_course', 'block_usermanager').'</h2>');
+        $mform->addElement('html', '<br><h3>'.get_string('finded_academic_group_on_course', 'block_usermanager').'</h3>');
         $this->add_checkbox_controller(1, null, null, 0);
         $groups_of_users_per_disciplin = $this->_customdata['groups_of_users_per_disciplin'];
         $extra_groups_of_users_per_disciplin = $this->_customdata['extra_groups_of_users_per_disciplin'];
         foreach ($groups_of_users_per_disciplin as $disciplin_num=>$groups_of_users) {
             if ($groups_of_users != null) {
                 foreach ($groups_of_users as $group_num => $group) {
-                    $moodle_group_name = '';
-                    $faculty = explode(' ', $disciplins->{$disciplin_num}->faculty);
-                    $moodle_group_name .= $faculty[0].' ';
-                    $moodle_group_name .= $disciplins->{$disciplin_num}->speciality.' ';
-                    $moodle_group_name .= $disciplins->{$disciplin_num}->step;
-                    $moodle_group_name .= ' '.$group_num.' группа ';
-                    $moodle_group_name .= $disciplins->{$disciplin_num}->year.'г. ';
-                    $moodle_group_name .= $disciplins->{$disciplin_num}->st_form;
-
+                    [$moodle_group_name, $moodle_group_description] = create_student_moodlegroup_vars($disciplins->{$disciplin_num}, $group_num);
                     if ($group != null) {
                         $id = $disciplin_num.'_'.$group_num;
                         $mform->addElement('advcheckbox', $id, $moodle_group_name, ' ', array('group' => 1));
                         $i = 1;
                         $list_of_user = '';
                         foreach ($group as $user) {
-                            if ($user->enrolled) {
+                            if (is_enrolled($context, $user->id, '', true)) {
                                 $enrolled = get_string('enrolled', 'block_usermanager');
                             } else {
                                 $enrolled = '';
                             }
-                            $list_of_user .= $i.'. '.$user->lastname.' '.$user->firstname.' '.$enrolled.'</br>';
+                            $list_of_user .= $i.'. '.$user->lastname.' '.$user->firstname.' <b>'.$enrolled.'</b></br>';
                             $i++;
                         }
-                        $mform->addElement('html', '<details><summary>Список студентов '.$group_num.' группы</summary>'.$list_of_user.'</details></br>');
+                        $mform->addElement('html', '<details><summary>'.get_string('list_of_students', 'block_usermanager').' '.$group_num.' '.get_string('of_group', 'block_usermanager').'</summary>'.$list_of_user.'</details></br>');
                     }
                 }
 
@@ -94,19 +88,15 @@ class group_search_user_groups_form extends moodleform
         if ($groups_of_users_disciplin != null) {
             $mform->addElement('header', 'extra_groups', get_string('extra_groups', 'block_usermanager'));
             $mform->addElement('static', 'extra_groups_notify', get_string('extra_groups_notify', 'block_usermanager'));
+            $this->add_checkbox_controller(2, null, null, 0);
             foreach ($extra_groups_of_users_per_disciplin as $disciplin_num => $groups_of_users) {
                 if ($groups_of_users != null) {
                     foreach ($groups_of_users as $group_num => $group) {
-                        $moodle_group_name = '';
-                        $moodle_group_name .= $disciplins->{$disciplin_num}->faculty.' ';
-                        $moodle_group_name .= $disciplins->{$disciplin_num}->speciality;
-                        $moodle_group_name .= ' ('.$disciplins->{$disciplin_num}->step.', ';
-                        $moodle_group_name .= $disciplins->{$disciplin_num}->st_form;
-                        $moodle_group_name .= ' '.$group_num.' группа) ';
-                        $moodle_group_name .= $disciplins->{$disciplin_num}->year.' года потока';
+                        [$moodle_group_name, $moodle_group_description] = create_student_moodlegroup_vars($disciplins->{$disciplin_num}, $group_num);
                         if ($group != null) {
                             $id = $disciplin_num.'_'.$group_num;
                             $mform->addElement('advcheckbox', $id.'_extra', $moodle_group_name, ' ', array('group' => 2));
+
                             $i = 1;
                             $list_of_user = '';
                             foreach ($group as $user) {
@@ -118,7 +108,7 @@ class group_search_user_groups_form extends moodleform
                                 $list_of_user .= $i.'. '.$user->lastname.' '.$user->firstname.' '.$enrolled.'</br>';
                                 $i++;
                             }
-                            $mform->addElement('html', '<details><summary>Список студентов '.$group_num.' группы</summary>'.$list_of_user.'</details></br>');
+                            $mform->addElement('html', '<details><summary>'.get_string('list_of_students', 'block_usermanager').' '.$group_num.' '.get_string('of_group', 'block_usermanager').'</summary>'.$list_of_user.'</details></br>');
                         }
                     }
 
@@ -130,6 +120,3 @@ class group_search_user_groups_form extends moodleform
     }
 }
 
-/*
-6563
-*/

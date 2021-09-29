@@ -1,4 +1,30 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This is a one-line short description of the file.
+ *
+ * You can have a rather longer description of the file as well,
+ * if you like, and it can span multiple lines.
+ *
+ * @package    block_usermanager
+ * @category   block
+ * @copyright  2021 Igor Grebennikov
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 function get_user_field_ids() {
     /*
      * fac - Факультет //Физический факультет
@@ -174,6 +200,29 @@ function get_edu_specialites_fac($ids) {
     return $edu_specialites;
 }
 
+function get_edu_streamyear($ids) {
+    global $DB;
+    $field_id = $ids['streamyear'];
+
+    $sql = "SELECT DISTINCT data
+            FROM mdl_user_info_data
+            WHERE fieldid = '".$field_id."';";
+    $results = $DB->get_records_sql($sql);
+
+    $i = 0;
+    $streamyears = array();
+    foreach ($results as $result) {
+        if (($result->data != '') && ($result->data != null)) {
+            $streamyears[$i] = $result->data;
+            $i++;
+        }
+    }
+
+    $streamyears = reformat_array($streamyears);
+
+    return $streamyears;
+}
+
 function format_users_to_groups($ids, $users_from_disciplin) {
     //Reformat group from student plan to academic format
     global $DB;
@@ -208,12 +257,13 @@ function search_vsu_fields_users($ids, $fields) {
      * 21 -
      */
 
-    $sql = "select userid from mdl_user_info_data where fieldid='19' and data='учится' and userid in
-                (select userid from mdl_user_info_data where fieldid = '".$ids['fac']."' and data = '".$fields->fac."' and userid in
-                    (select userid from mdl_user_info_data where fieldid = '".$ids['naprspec']."' and data = '".$fields->naprspec."' and userid in 
-                        (select userid from mdl_user_info_data where fieldid = '".$ids['year']."' and data = '".$fields->year."' and userid in
-                            (select userid from mdl_user_info_data where fieldid = '".$ids['stform']."' and data = '".$fields->stform."' and userid in
-                                (select userid from mdl_user_info_data where fieldid = '".$ids['level']."' and data = '".$fields->level."')))));";
+    $sql = "select userid from mdl_user_info_data where fieldid='".$ids['streamyear']."' and data = '".$fields->streamyears."'and userid in 
+                (select userid from mdl_user_info_data where fieldid='19' and data='учится' and userid in
+                    (select userid from mdl_user_info_data where fieldid = '".$ids['fac']."' and data = '".$fields->fac."' and userid in
+                        (select userid from mdl_user_info_data where fieldid = '".$ids['naprspec']."' and data = '".$fields->naprspec."' and userid in 
+                            (select userid from mdl_user_info_data where fieldid = '".$ids['year']."' and data = '".$fields->year."' and userid in
+                                (select userid from mdl_user_info_data where fieldid = '".$ids['stform']."' and data = '".$fields->stform."' and userid in
+                                    (select userid from mdl_user_info_data where fieldid = '".$ids['level']."' and data = '".$fields->edu_levels."'))))));";
     $user_ids = $DB->get_records_sql($sql);
 
         $users = new stdClass();
@@ -249,7 +299,8 @@ function prepare_data_one($fromform, $firstdata) {
     $data->naprspec = $firstdata->edu_specialites[$fromform->naprspec];
     $data->year = $firstdata->num_course[$fromform->year];
     $data->stform = $firstdata->edu_forms[$fromform->stform];
-    $data->level = $firstdata->edu_level[$fromform->level];
+    $data->edu_levels = $firstdata->edu_levels[$fromform->level];
+    $data->streamyears = $firstdata->streamyears[$fromform->streamyears];
 
     return $data;
 }
@@ -268,51 +319,50 @@ function enrol_user_custom($courseid, $userid, $group_id, $roleid=5, $duration=0
 
     //Check if user already enrolled
     $context = context_course::instance($courseid);
-    if (is_enrolled($context, $userid, '', true)) {
-        return true;
-    }
+    if (!is_enrolled($context, $userid, '', false)) {
 
-    //Get enroll instance:
-    $sql = "SELECT id FROM mdl_enrol WHERE courseid='".$courseid."' AND enrol='".$method."';";
-    $result = $DB->get_records_sql($sql);
-    if(!$result){
-        ///Not enrol associated (this shouldn't happen and means you have an error in your moodle database)
-        return false;
-    }
-    foreach ($result as $unit){
-        $idenrol = $unit->id;
-    }
+        //Get enroll instance:
+        $sql = "SELECT id FROM mdl_enrol WHERE courseid='" . $courseid . "' AND enrol='" . $method . "';";
+        $result = $DB->get_records_sql($sql);
+        if (!$result) {
+            ///Not enrol associated (this shouldn't happen and means you have an error in your moodle database)
+            return false;
+        }
+        foreach ($result as $unit) {
+            $idenrol = $unit->id;
+        }
 
-    //Get the context
-    $sql = "SELECT id FROM mdl_context WHERE contextlevel='50' AND instanceid='".$courseid."';"; ///contextlevel = 50 means course in moodle
-    $result = $DB->get_records_sql($sql);
-    if(!$result){
-        ///Again, weird error, shouldnt happen to you
-    }
-    foreach ($result as $unit){
-        $idcontext = $unit->id;
-    }
+        //Get the context
+        $sql = "SELECT id FROM mdl_context WHERE contextlevel='50' AND instanceid='" . $courseid . "';"; ///contextlevel = 50 means course in moodle
+        $result = $DB->get_records_sql($sql);
+        if (!$result) {
+            ///Again, weird error, shouldnt happen to you
+        }
+        foreach ($result as $unit) {
+            $idcontext = $unit->id;
+        }
 
-    //Get variables from moodle. Here is were the enrolment begins:
-    $time = time();
-    //$ntime = $time + 60*60*24*$duration; //How long will it last enroled $duration = days, this can be 0 for unlimited.
-    $ntime = 0;
-    $sql = "INSERT INTO mdl_user_enrolments (status, enrolid, userid, timestart, timeend, timecreated, timemodified)
+        //Get variables from moodle. Here is were the enrolment begins:
+        $time = time();
+        //$ntime = $time + 60*60*24*$duration; //How long will it last enroled $duration = days, this can be 0 for unlimited.
+        $ntime = 0;
+        $sql = "INSERT INTO mdl_user_enrolments (status, enrolid, userid, timestart, timeend, timecreated, timemodified)
 VALUES (0, $idenrol, $userid, '$time', '$ntime', '$time', '$time')";
-    if ($DB->execute($sql) === TRUE) {
-        //return true;
-    } else {
-        ///Manage sql error
-        return false;
-    }
+        if ($DB->execute($sql) === TRUE) {
+            //return true;
+        } else {
+            ///Manage sql error
+            return false;
+        }
 
-    $sql = "INSERT INTO mdl_role_assignments (roleid, contextid, userid, timemodified)
+        $sql = "INSERT INTO mdl_role_assignments (roleid, contextid, userid, timemodified)
 VALUES ($roleid, $idcontext, '$userid', '$time')";
-    if ($DB->execute($sql) === TRUE) {
-        //return true;
-    } else {
-        //Manage errors
-        return false;
+        if ($DB->execute($sql) === TRUE) {
+            //return true;
+        } else {
+            //Manage errors
+            return false;
+        }
     }
 
     //add users into group
@@ -321,6 +371,31 @@ VALUES ($roleid, $idcontext, '$userid', '$time')";
     } else {
         return false;
     }
+}
+
+function create_student_moodlegroup_vars($disciplin, $group_id) {
+    $moodle_group_name = '';
+    $moodle_group_name .= $disciplin->faculty.' ';
+    $moodle_group_name .= $disciplin->speciality.' ';
+    $moodle_group_name .= $disciplin->step;
+    $moodle_group_name .= ' '.$group_id.' группа ';
+    $moodle_group_name .= $disciplin->year.'г. ';
+    $moodle_group_name .= $disciplin->st_form;
+
+    $moodle_group_description = '';
+    $moodle_group_description .= $group_id . ' группа ' . '</br>';
+    $moodle_group_description .= $disciplin->faculty . '</br>';
+    $moodle_group_description .= $disciplin->speciality_code . '</br>';
+    $moodle_group_description .= $disciplin->speciality . '</br>';
+    $moodle_group_description .= $disciplin->specialisation . '</br>';
+    $moodle_group_description .= $disciplin->step . '</br>';
+    $moodle_group_description .= $disciplin->year . '</br>';
+
+    return array($moodle_group_name, $moodle_group_description);
+}
+
+function create_student_moodlegroup_description($disciplin, $group_id) {
+
 }
 
 function search_vsu_fields_users_per_disciplin($ids, $disciplin) {
