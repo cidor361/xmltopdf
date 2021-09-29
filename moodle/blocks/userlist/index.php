@@ -30,6 +30,7 @@ require_once('../../config.php');
 require_once($CFG->dirroot.'/user/profile/lib.php');
 
 $courseid = required_param('courseid', PARAM_INT);
+
 $coursecontext = context_course::instance($courseid);
 
 if (!has_capability('block/userlist:view', $coursecontext)) {
