@@ -1,4 +1,4 @@
-<XMLDB PATH="local/addition_vsu_data/db" VERSION="20200219" COMMENT="XMLDB file for Moodle blocks/usermanager"
+<XMLDB PATH="local/addition_vsu_data/db" VERSION="20210930" COMMENT="XMLDB file for Moodle blocks/usermanager"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
     <TABLES>

@@ -1,6 +1,7 @@
 <?php
 defined('MOODLE_INTERNAL') || die();
 
+//TODO: Добавить ссылку на интерфейс для редактирования списка данных
 //if ($hassiteconfig) {
 //    $ADMIN->add('localplugins', new admin_category('local_addition_vsu_data_settings', new lang_string('pluginname', 'local_addition_vsu_data')));
 //    $settingspage = new admin_settingpage('managelocalhelloworld', new lang_string('manage', 'local_addition_vsu_data'));

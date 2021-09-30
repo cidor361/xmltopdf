@@ -84,6 +84,9 @@ class general_data_vsu {
 
     }
 
+    //TODO: Добавить функцию получения краткого названия факультета
+
+    //TODO: Функция получения специальности по факультету (ПЕРЕДЕЛАТЬ!)
 //    function get_edu_specialites_fac($ids)
 //    {
 //        global $DB;
