@@ -55,7 +55,8 @@ echo $OUTPUT->header();
 //Get disciplins from contingent
 //TODO: Should be removed when all data will be in moodle database
 $disciplins_with_number = get_semestr_of_subject_oci_old($conn, $courseid);
-$ids = get_user_field_ids();
+$vsu_data = new \local_addition_vsu_data\general_data_vsu;
+$ids = $vsu_data->ids;
 
 $groups_of_users_per_disciplin = new stdClass();
 $extra_groups_of_users_per_disciplin = new stdClass();
@@ -95,6 +96,11 @@ $mform = new group_search_user_groups_form(null, $toform_data);
 if ($mform->is_cancelled()) {
 
 } else if ($fromform = $mform->get_data()) {
+    echo '<b>' . get_string('error_notice', 'block_usermanager') . '</b></br>';
+    //If user press "submit" button, all users in groups will be enrolled and
+    //this action will be logged
+
+    //Reformat $fromform array to usefull format
     $groups_selected = array();
     $i = 0;
     foreach ($fromform as $group_id => $selected) {
@@ -104,19 +110,32 @@ if ($mform->is_cancelled()) {
         }
     }
 
-    //If user press "submit" button, all users in groups will be enrolled and
-    //this action will be logged
     //Subscription for students with secialities
     $error_count = 0;
     foreach ($groups_of_users_per_disciplin as $disciplin_id=>$groups_of_users) {
         foreach ($groups_of_users as $group_id => $group_of_user) {
+            //Chech if group was selected
             $check = $disciplin_id . '_' . $group_id;
             if (in_array($check, $groups_selected, $strict = true)) {
+
+                //Create group in moodle course
+                if ($moodle_group_id = groups_get_group_by_name($courseid, $group_name)) {
+                    echo get_string('groupe_has_benn_created', 'block_usermanager').'</br>';
+                } else {
+                    [$moodle_group_name, $moodle_group_description] = create_student_moodlegroup_vars($disciplins_with_number->{$disciplin_id}, $group_id);
+                    $moodle_group_data = new stdClass();
+                    $moodle_group_data->courseid = $courseid;
+                    $moodle_group_data->idnumber = $moodle_group_id;
+                    $moodle_group_data->name = $moodle_group_name;
+                    $moodle_group_data->description = $moodle_group_description;
+                    $moodle_group_data->descriptionformat = FORMAT_HTML;
+                    $moodle_group_id = groups_create_group($moodle_group_data);
+                    echo '<h4>' . get_string('group_created', 'block_usermanager') . ' ' .
+                        $moodle_group_name . '</h4>';
+
+                }
                 //Create application report for logging in db (block_usermanager_applies)
-                //$group_id = str_replace(' ', '_', $group_id);
-                $moodle_group_id = $disciplin_id . '-' . $group_id;
                 $application_report = new stdClass();
-                //$application_report->group_id = $group_id;  //add getting academic group number or other
                 $application_report->group_id = $moodle_group_id;
                 $application_report->courseid = $courseid;
                 $application_report->created = time();
@@ -126,6 +145,7 @@ if ($mform->is_cancelled()) {
                 $application_report->num_of_users = count((array)$group_of_user);
                 $application_id = $DB->insert_record('block_usermanager_applies', $application_report);
                 /*
+                if ($DB->record_exists('block_usermanager_applies', array('group_id' => $moodle_group_id))
                 if ($DB->count_records('block_usermanager_applies', array('group_id' => $moodle_group_id)) > 0) {
                     $application_report->modified = time();
                     echo var_dump($DB->update_record('block_usermanager_applies', $application_report));
@@ -136,19 +156,6 @@ if ($mform->is_cancelled()) {
 
                 }
                 */
-                //Create group in moodle course
-                if (!groups_get_group_by_idnumber($courseid, $moodle_group_id)) {
-                    [$moodle_group_name, $moodle_group_description] = create_student_moodlegroup_vars($disciplins_with_number->{$disciplin_id}, $group_id);
-
-                    $moodle_group_data = new stdClass();
-                    $moodle_group_data->courseid = $courseid;
-                    $moodle_group_data->idnumber = $moodle_group_id;
-                    $moodle_group_data->name = $moodle_group_name;
-                    $moodle_group_data->description = $moodle_group_description;
-                    $moodle_group_data->descriptionformat = FORMAT_HTML;
-                    $moodle_group_id = groups_create_group($moodle_group_data);
-                }
-
                 foreach ($group_of_user as $user) {
                     //Create user report for logging in db (block_usermanager_users)
                     //and enrol user
@@ -156,41 +163,68 @@ if ($mform->is_cancelled()) {
                     $user_report = new stdClass();
                     $user_report->application_id = $application_id;
                     $user_report->user_id = $userid;
-                    if (!groups_is_member($moodle_group_id, $userid)) {
-                        if (enrol_user_custom($courseid, $userid, $moodle_group_id)) {
-                            //Status 01 - success
-                            $user_report->status = 01;
-                            $groups_of_users_per_disciplin->{$disciplin_id}->{$group_id}->{$userid}->enrolled = true;
-                        } else {
-                            //Status 00 - error
-                            $user_report->status = 00;
-                            $groups_of_users_per_disciplin->{$disciplin_id}->{$group_id}->{$userid}->enrolled = false;
-                            $error_count += 1;
-                            $error_log = new stdClass();
-                            $error_log->application_id = $application_id;
-                            $error_log->userid = $userid;
-                            $error_log->time = time();
-                            $DB->insert_record('block_usermanager_error_log', $error_log, $returnid=false,
-                                $bulk=false);
-                        }
-                        $DB->insert_record('block_usermanager_users', $user_report);
-                        echo $user->lastname.' '.$user->firstname.' ('.$user->id.')'.'</br>';
+                    if (enrol_user_custom($courseid, $userid, $moodle_group_id)) {
+                        //Status 01 - success
+                        $user_report->status = 01;
+                        $groups_of_users_per_disciplin->{$disciplin_id}->{$group_id}->{$userid}->enrolled = true;
+                    } else {
+                        //Status 00 - error
+                        $user_report->status = 00;
+                        $groups_of_users_per_disciplin->{$disciplin_id}->{$group_id}->{$userid}->enrolled = false;
+                        $error_count += 1;
+                        $error_log = new stdClass();
+                        $error_log->application_id = $application_id;
+                        $error_log->userid = $userid;
+                        $error_log->time = time();
+                        $DB->insert_record('block_usermanager_error_log', $error_log, $returnid=false,
+                            $bulk=false);
                     }
+                    $DB->insert_record('block_usermanager_users', $user_report);
+
+
+                    echo get_string('student', 'block_usermanager') . $user->lastname . ' ' . $user->firstname . ': ' ;
+                    if (is_enrolled($coursecontext, $user->id, '', true)) {
+                        echo get_string('enrolled', 'block_usermanager') . ' ';
+                        if (groups_is_member($moodle_group_id, $user->id)) {
+                            echo get_string('enrolled_to_the_group', 'block_usermanager');
+                        } else {
+                            echo get_string('enrolled_to_the_group_error', 'block_usermanager');
+                        }
+                    } else {
+                        echo $user->id . ' ' . get_string('enrol_error', 'block_usermanager');
+                    }
+                    echo '</br>';
                 }
             }
         }
     }
 
-    //Subscription for students without secialities
+    //Subscription for students without specialities
+    $error_count = 0;
     foreach ($extra_groups_of_users_per_disciplin as $disciplin_id=>$groups_of_users) {
         foreach ($groups_of_users as $group_id => $group_of_user) {
+            //Chech if group was selected
             $check = $disciplin_id . '_' . $group_id . '_extra';
             if (in_array($check, $groups_selected, $strict = true)) {
+
+                //Create group in moodle course
+                if ($moodle_group_id = groups_get_group_by_name($courseid, $group_name)) {
+                    echo get_string('groupe_has_benn_created', 'block_usermanager').'</br>';
+                } else {
+                    [$moodle_group_name, $moodle_group_description] = create_student_moodlegroup_vars($disciplins_with_number->{$disciplin_id}, $group_id);
+                    $moodle_group_data = new stdClass();
+                    $moodle_group_data->courseid = $courseid;
+                    $moodle_group_data->idnumber = $moodle_group_id;
+                    $moodle_group_data->name = $moodle_group_name;
+                    $moodle_group_data->description = $moodle_group_description;
+                    $moodle_group_data->descriptionformat = FORMAT_HTML;
+                    $moodle_group_id = groups_create_group($moodle_group_data);
+                    echo '<h4>' . get_string('group_created', 'block_usermanager') . ' ' .
+                        $moodle_group_name . '</h4>';
+
+                }
                 //Create application report for logging in db (block_usermanager_applies)
-//                $group_id = str_replace(' ', '_', $group_id);
-                $moodle_group_id = $disciplin_id . '_' . $group_id;
                 $application_report = new stdClass();
-                //$application_report->group_id = $group_id;  //academic group number or other
                 $application_report->group_id = $moodle_group_id;
                 $application_report->courseid = $courseid;
                 $application_report->created = time();
@@ -200,28 +234,17 @@ if ($mform->is_cancelled()) {
                 $application_report->num_of_users = count((array)$group_of_user);
                 $application_id = $DB->insert_record('block_usermanager_applies', $application_report);
                 /*
-                if ($DB->record_exist('block_usermanager_applies', array('group_id' => $moodle_group_id))) {
+                if ($DB->record_exists('block_usermanager_applies', array('group_id' => $moodle_group_id))
+                if ($DB->count_records('block_usermanager_applies', array('group_id' => $moodle_group_id)) > 0) {
                     $application_report->modified = time();
-                    $DB->update_record('block_usermanager_applies', $application_report);
+                    echo var_dump($DB->update_record('block_usermanager_applies', $application_report));
                 } else {
                     $application_report->modified = 0;
+                    echo var_dump($application_report);
                     $application_id = $DB->insert_record('block_usermanager_applies', $application_report);
 
                 }
-*/
-                //Create group in moodle course
-                if (!groups_get_group_by_idnumber($courseid, $moodle_group_id)) {
-                    [$moodle_group_name, $moodle_group_description] = create_student_moodlegroup_vars($disciplins_with_number->{$disciplin_id}, $group_id);
-
-                    $moodle_group_data = new stdClass();
-                    $moodle_group_data->courseid = $courseid;
-                    $moodle_group_data->idnumber = $moodle_group_id;
-                    $moodle_group_data->name = $moodle_group_name;
-                    $moodle_group_data->description = $moodle_group_description;
-                    $moodle_group_data->descriptionformat = FORMAT_HTML;
-                    $moodle_group_id = groups_create_group($moodle_group_data);
-                }
-
+                */
                 foreach ($group_of_user as $user) {
                     //Create user report for logging in db (block_usermanager_users)
                     //and enrol user
@@ -229,38 +252,46 @@ if ($mform->is_cancelled()) {
                     $user_report = new stdClass();
                     $user_report->application_id = $application_id;
                     $user_report->user_id = $userid;
-                    if (!groups_is_member($moodle_group_id, $userid)) {
-                        if (enrol_user_custom($courseid, $userid, $moodle_group_id)) {
-                            //Status 01 - success
-                            $user_report->status = 01;
-                            $groups_of_users_per_disciplin->{$disciplin_id}->{$group_id}->{$userid}->enrolled = true;
-                        } else {
-                            //Status 00 - error
-                            $user_report->status = 00;
-                            $groups_of_users_per_disciplin->{$disciplin_id}->{$group_id}->{$userid}->enrolled = false;
-                            $error_count += 1;
-                            $error_log = new stdClass();
-                            $error_log->application_id = $application_id;
-                            $error_log->userid = $userid;
-                            $error_log->time = time();
-                            $DB->insert_record('block_usermanager_error_log', $error_log, $returnid=false,
-                                $bulk=false);
-                            echo $user->lastname.' '.$user->firstname.'</br>';
-                        }
-                        $DB->insert_record('block_usermanager_users', $user_report);
+                    if (enrol_user_custom($courseid, $userid, $moodle_group_id)) {
+                        //Status 01 - success
+                        $user_report->status = 01;
+                        $groups_of_users_per_disciplin->{$disciplin_id}->{$group_id}->{$userid}->enrolled = true;
+                    } else {
+                        //Status 00 - error
+                        $user_report->status = 00;
+                        $groups_of_users_per_disciplin->{$disciplin_id}->{$group_id}->{$userid}->enrolled = false;
+                        $error_count += 1;
+                        $error_log = new stdClass();
+                        $error_log->application_id = $application_id;
+                        $error_log->userid = $userid;
+                        $error_log->time = time();
+                        $DB->insert_record('block_usermanager_error_log', $error_log, $returnid=false,
+                            $bulk=false);
                     }
-                    //TODO: тестированеи логгирования
+                    $DB->insert_record('block_usermanager_users', $user_report);
+
+
+                    echo get_string('student', 'block_usermanager') . $user->lastname . ' ' . $user->firstname . ': ' ;
+                    if (is_enrolled($coursecontext, $user->id, '', true)) {
+                        echo get_string('enrolled', 'block_usermanager') . ' ';
+                        if (groups_is_member($moodle_group_id, $user->id)) {
+                            echo get_string('enrolled_to_the_group', 'block_usermanager');
+                        } else {
+                            echo get_string('enrolled_to_the_group_error', 'block_usermanager');
+                        }
+                    } else {
+                        echo $user->id . ' ' . get_string('enrol_error', 'block_usermanager');
+                    }
+                    echo '</br>';
                 }
             }
         }
     }
 
+
     //Processing errors and show button "return to course"
-    if ($error_count > 0) {
-        echo '<h3><b>'.get_string('unsuccess_enrol', 'block_usermanager').' ('.$error_count.')</b></h3>';
-    } else {
-        echo '<h3><b>'.get_string('success_enrol', 'block_usermanager').'</b></h3>';
-    }
+
+    echo '<b>'.get_string('subscribtion_complete', 'block_usermanager').'</b></br>';
     $url = new moodle_url($CFG->wwwroot.'/course/view.php', array('id' => $courseid));
     echo html_writer::link($url,get_string('return_to_coursepage', 'block_usermanager'));
 

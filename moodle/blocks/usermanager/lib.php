@@ -25,203 +25,6 @@
  * @copyright  2021 Igor Grebennikov
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-function get_user_field_ids() {
-    /*
-     * fac - Факультет //Физический факультет
-     * year - Курс //4
-     * stform - Форма обучения //Очная
-     * level - Ступень //Бакалавр
-     * naprspec - Код и наименование направления (специальности) //09.03.01 Информатика и вычислительная техника
-     * naprspec2 - Наименование направления (специальности) //Информатика и вычислительная техника
-     * specialityCode - Код направления (специальности) //09.03.01
-     * profile - Профиль (специализация) //Вычислительные машины, комплексы, системы и сети (ФГОС3+)
-     * streamyear - Год потока //2017
-     * groupname - Номер группы //4
-    */
-
-    global $DB;
-    
-    $sql = "SELECT id, shortname 
-            FROM mdl_user_info_field
-            WHERE (shortname = 'fac') OR
-                  (shortname = 'year') OR
-                  (shortname = 'stform') OR
-                  (shortname = 'level') OR
-                  (shortname = 'naprspec') OR
-                  (shortname = 'specialityCode') OR
-                  (shortname = 'profile') OR
-                  (shortname = 'naprspec2') OR
-                  (shortname = 'streamyear') OR
-                  (shortname = 'groupname');";
-    $results = $DB->get_records_sql($sql);
-
-    $ids = array();
-    foreach ($results as $result) {
-        $name = $result->shortname;
-        $ids[$name] = $result->id;
-    }
-
-    return $ids;
-}
-
-function get_facultet_names($ids) {
-    //Getting facultet names from DB
-    global $DB;
-    $field_id = $ids['fac'];
-    
-    $sql = "SELECT DISTINCT data
-            FROM mdl_user_info_data
-            WHERE fieldid = '".$field_id."';";
-    $results = $DB->get_records_sql($sql);
-    $i = 0;
-    $facultets = array();
-    foreach ($results as $result) {
-        if (($result->data != '') && ($result->data != null)) {
-            $facultets[$i] = $result->data;
-            $i++;
-        }
-    }
-    $facultets = reformat_array($facultets);
-    
-    return $facultets;
-}
-
-function get_num_course_name($ids) {
-    global $DB;
-    $field_id = $ids['year'];
-
-    $sql = "SELECT DISTINCT data
-            FROM mdl_user_info_data
-            WHERE fieldid = '".$field_id."';";
-    $results = $DB->get_records_sql($sql);
-
-    $i = 0;
-    $nums_course = array();
-    foreach ($results as $result) {
-        if (($result->data != '') && ($result->data != null)) {
-            $nums_course[$i] = $result->data;
-            $i++;
-        }
-    }
-
-    $nums_course = reformat_array($nums_course);
-
-    return $nums_course;
-}
-
-function get_edu_forms_name($ids) {
-    global $DB;
-    $field_id = $ids['stform'];
-
-    $sql = "SELECT DISTINCT data
-            FROM mdl_user_info_data
-            WHERE fieldid = '".$field_id."';";
-    $results = $DB->get_records_sql($sql);
-
-    $i = 0;
-    $edu_forms = array();
-    foreach ($results as $result) {
-        if (($result->data != '') && ($result->data != null)) {
-            $edu_forms[$i] = $result->data;
-            $i++;
-        }
-    }
-
-    $edu_forms = reformat_array($edu_forms);
-
-    return $edu_forms;
-}
-
-function get_edu_level_name($ids) {
-    global $DB;
-    $field_id = $ids['level'];
-
-    $sql = "SELECT DISTINCT data
-            FROM mdl_user_info_data
-            WHERE fieldid = '".$field_id."';";
-    $results = $DB->get_records_sql($sql);
-
-    $i = 0;
-    $edu_levels = array();
-    foreach ($results as $result) {
-        if (($result->data != '') && ($result->data != null)) {
-            $edu_levels[$i] = $result->data;
-            $i++;
-        }
-    }
-
-    $edu_levels = reformat_array($edu_levels);
-
-    return $edu_levels;
-}
-
-function get_edu_specialites_name($ids) {
-    global $DB;
-    $field_id = $ids['naprspec'];
-
-    $sql = "SELECT DISTINCT data
-            FROM mdl_user_info_data
-            WHERE fieldid = '".$field_id."';";
-    $results = $DB->get_records_sql($sql);
-
-    $i = 0;
-    $edu_specialites = array();
-    foreach ($results as $result) {
-        if (($result->data != '') && ($result->data != null)) {
-            $edu_specialites[$i] = $result->data;
-            $i++;
-        }
-    }
-
-    $edu_specialites = reformat_array($edu_specialites);
-
-    return $edu_specialites;
-}
-
-function get_edu_specialites_fac($ids) {
-    global $DB;
-    
-    $sql = "SELECT DISTINCT data
-            FROM mdl_user_info_data
-            WHERE fieldid = '".$ids['fac']."';";
-    $results = $DB->get_records_sql($sql);
-
-    $i = 0;
-    $edu_specialites = array();
-    foreach ($results as $result) {
-        if ($result->data != '' and $result->data != null) {
-            $edu_specialites[$i] = $result->data;
-        }
-        $i++;
-    }
-
-    $edu_specialites = reformat_array($edu_specialites);
-
-    return $edu_specialites;
-}
-
-function get_edu_streamyear($ids) {
-    global $DB;
-    $field_id = $ids['streamyear'];
-
-    $sql = "SELECT DISTINCT data
-            FROM mdl_user_info_data
-            WHERE fieldid = '".$field_id."';";
-    $results = $DB->get_records_sql($sql);
-
-    $i = 0;
-    $streamyears = array();
-    foreach ($results as $result) {
-        if (($result->data != '') && ($result->data != null)) {
-            $streamyears[$i] = $result->data;
-            $i++;
-        }
-    }
-
-    $streamyears = reformat_array($streamyears);
-
-    return $streamyears;
-}
 
 function format_users_to_groups($ids, $users_from_disciplin) {
     //Reformat group from student plan to academic format
@@ -278,21 +81,6 @@ function search_vsu_fields_users($ids, $fields) {
     return $users;
 }
 
-function reformat_array($array) {
-    for ($i=0; $i < count($array); $i++) {
-        $sortkey[$i]=$array[$i]['price'];
-    }
-
-    asort($sortkey); //по возрастанию,
-    //arsort($sortkey); //по убыванию
-
-    foreach ($sortkey as $key => $key) {
-        $sorted[]=$array[$key];
-    }
-
-    return $sorted;
-}
-
 function prepare_data_one($fromform, $firstdata) {
     $data = new stdClass();
     $data->fac = $firstdata->facultets[$fromform->fac];
@@ -303,14 +91,6 @@ function prepare_data_one($fromform, $firstdata) {
     $data->streamyears = $firstdata->streamyears[$fromform->streamyears];
 
     return $data;
-}
-
-function group_selected($selected_groups, $check_group_number) {
-    foreach ($selected_groups as $selected=>$group_number) {
-        if ($group_number == $check_group_number) {
-            return true;
-        }
-    }
 }
 
 function enrol_user_custom($courseid, $userid, $group_id, $roleid=5, $duration=0, $method='manual') {
@@ -346,13 +126,15 @@ function enrol_user_custom($courseid, $userid, $group_id, $roleid=5, $duration=0
         $time = time();
         //$ntime = $time + 60*60*24*$duration; //How long will it last enroled $duration = days, this can be 0 for unlimited.
         $ntime = 0;
-        $sql = "INSERT INTO mdl_user_enrolments (status, enrolid, userid, timestart, timeend, timecreated, timemodified)
+        if (!$DB->record_exists('user_enrolments', array('enrolid' => $idenrol, 'userid' => $userid))) {
+            $sql = "INSERT INTO mdl_user_enrolments (status, enrolid, userid, timestart, timeend, timecreated, timemodified)
 VALUES (0, $idenrol, $userid, '$time', '$ntime', '$time', '$time')";
-        if ($DB->execute($sql) === TRUE) {
-            //return true;
-        } else {
-            ///Manage sql error
-            return false;
+            if ($DB->execute($sql) === TRUE) {
+                //return true;
+            } else {
+                ///Manage sql error
+                return false;
+            }
         }
 
         $sql = "INSERT INTO mdl_role_assignments (roleid, contextid, userid, timemodified)
@@ -366,10 +148,13 @@ VALUES ($roleid, $idcontext, '$userid', '$time')";
     }
 
     //add users into group
-    if (groups_add_member($group_id, $userid)) {
-        return true;
-    } else {
-        return false;
+    //$group = groups_get_group_by_idnumber($courseid, $group_id);
+    if (!groups_is_member($group_id, $user->id)) {
+        if (groups_add_member($group_id, $userid)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 
@@ -392,10 +177,6 @@ function create_student_moodlegroup_vars($disciplin, $group_id) {
     $moodle_group_description .= $disciplin->year . '</br>';
 
     return array($moodle_group_name, $moodle_group_description);
-}
-
-function create_student_moodlegroup_description($disciplin, $group_id) {
-
 }
 
 function search_vsu_fields_users_per_disciplin($ids, $disciplin) {

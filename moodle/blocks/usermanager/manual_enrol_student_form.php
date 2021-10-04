@@ -50,11 +50,12 @@ class manual_enrol_student extends moodleform {
 
         $mform->addElement('hidden', 'courseid', $courseid);
 
+        $mform->addElement('html', get_string('select_student_faculty', 'block_usermanager'));
         $mform->addElement('select', 'fac', get_string('choose_faculty', 'block_usermanager'),
             $facultets);
         $options = array(
             'multiple' => false,
-            'noselectionstring' => get_string('allareas', 'search'),
+            'noselectionstring' => get_string('search', 'search'),
         );
         $mform->addElement('autocomplete', 'naprspec', get_string('choose_edu_specialites', 'block_usermanager'),
             $edu_specialites, $options);
@@ -67,7 +68,7 @@ class manual_enrol_student extends moodleform {
         $mform->addElement('select', 'streamyears', 'Выберите год потока/поступления',
             $streamyears);
 
-        $this->add_action_buttons($cancel = false, $submitlabel = get_string('allareas', 'search'));
+        $this->add_action_buttons($cancel = false, $submitlabel = get_string('search', 'search'));
 
         $mform->registerNoSubmitButton('addotags');
         $otagsgrp = array();

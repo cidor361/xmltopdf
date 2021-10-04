@@ -33,5 +33,5 @@ $plugin->version = 2021092300;
 $plugin->requires = 2011062400;
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->dependencies = array(
-    'loacal_addition_data_vsu' => ANY_VERSION
+    'local_addition_vsu_data' => ANY_VERSION
     );
