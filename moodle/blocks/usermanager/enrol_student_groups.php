@@ -117,12 +117,11 @@ if ($mform->is_cancelled()) {
             //Chech if group was selected
             $check = $disciplin_id . '_' . $group_id;
             if (in_array($check, $groups_selected, $strict = true)) {
-
+                [$moodle_group_name, $moodle_group_description] = create_student_moodlegroup_vars($disciplins_with_number->{$disciplin_id}, $group_id);
                 //Create group in moodle course
-                if ($moodle_group_id = groups_get_group_by_name($courseid, $group_name)) {
-                    echo get_string('groupe_has_benn_created', 'block_usermanager').'</br>';
+                if ($moodle_group_id = groups_get_group_by_name($courseid, $moodle_group_name)) {
+                    echo get_string('groupe_has_benn_created', 'block_usermanager') . ' ' . $moodle_group_name . '</br>';
                 } else {
-                    [$moodle_group_name, $moodle_group_description] = create_student_moodlegroup_vars($disciplins_with_number->{$disciplin_id}, $group_id);
                     $moodle_group_data = new stdClass();
                     $moodle_group_data->courseid = $courseid;
                     $moodle_group_data->idnumber = $moodle_group_id;
@@ -130,32 +129,28 @@ if ($mform->is_cancelled()) {
                     $moodle_group_data->description = $moodle_group_description;
                     $moodle_group_data->descriptionformat = FORMAT_HTML;
                     $moodle_group_id = groups_create_group($moodle_group_data);
-                    echo '<h4>' . get_string('group_created', 'block_usermanager') . ' ' .
-                        $moodle_group_name . '</h4>';
-
+                    echo get_string('group_created', 'block_usermanager') . ' ' . $moodle_group_name;
                 }
                 //Create application report for logging in db (block_usermanager_applies)
                 $application_report = new stdClass();
                 $application_report->group_id = $moodle_group_id;
                 $application_report->courseid = $courseid;
-                $application_report->created = time();
                 $application_report->required_user = $USER->id;
-                $application_report->status = 0001;
-                $application_report->modified = 0;
+                $application_report->status = 0000;
                 $application_report->num_of_users = count((array)$group_of_user);
-                $application_id = $DB->insert_record('block_usermanager_applies', $application_report);
-                /*
-                if ($DB->record_exists('block_usermanager_applies', array('group_id' => $moodle_group_id))
-                if ($DB->count_records('block_usermanager_applies', array('group_id' => $moodle_group_id)) > 0) {
-                    $application_report->modified = time();
-                    echo var_dump($DB->update_record('block_usermanager_applies', $application_report));
-                } else {
-                    $application_report->modified = 0;
-                    echo var_dump($application_report);
-                    $application_id = $DB->insert_record('block_usermanager_applies', $application_report);
 
+                if ($DB->record_exists('block_usermanager_applies', array('group_id' => $moodle_group_id))) {
+                    $application = $DB->get_record('block_usermanager_applies', array('group_id' => $moodle_group_id), 'id');
+                    $application_report->id = $application->id;
+                    $application_id = $application->id;
+                    $application_report->modified = time();
+                    $DB->update_record('block_usermanager_applies', $application_report);
+                } else {
+                    $application_report->created = time();
+                    $application_report->modified = 0;
+                    $application_id = $DB->insert_record('block_usermanager_applies', $application_report);
                 }
-                */
+
                 foreach ($group_of_user as $user) {
                     //Create user report for logging in db (block_usermanager_users)
                     //and enrol user
@@ -206,12 +201,11 @@ if ($mform->is_cancelled()) {
             //Chech if group was selected
             $check = $disciplin_id . '_' . $group_id . '_extra';
             if (in_array($check, $groups_selected, $strict = true)) {
-
+                [$moodle_group_name, $moodle_group_description] = create_student_moodlegroup_vars($disciplins_with_number->{$disciplin_id}, $group_id);
                 //Create group in moodle course
-                if ($moodle_group_id = groups_get_group_by_name($courseid, $group_name)) {
-                    echo get_string('groupe_has_benn_created', 'block_usermanager').'</br>';
+                if ($moodle_group_id = groups_get_group_by_name($courseid, $moodle_group_name)) {
+                    echo get_string('groupe_has_benn_created', 'block_usermanager') . ' ' . $moodle_group_name . '</br>';
                 } else {
-                    [$moodle_group_name, $moodle_group_description] = create_student_moodlegroup_vars($disciplins_with_number->{$disciplin_id}, $group_id);
                     $moodle_group_data = new stdClass();
                     $moodle_group_data->courseid = $courseid;
                     $moodle_group_data->idnumber = $moodle_group_id;
@@ -219,32 +213,29 @@ if ($mform->is_cancelled()) {
                     $moodle_group_data->description = $moodle_group_description;
                     $moodle_group_data->descriptionformat = FORMAT_HTML;
                     $moodle_group_id = groups_create_group($moodle_group_data);
-                    echo '<h4>' . get_string('group_created', 'block_usermanager') . ' ' .
-                        $moodle_group_name . '</h4>';
+                    echo get_string('group_created', 'block_usermanager') . ' ' . $moodle_group_name;
 
                 }
                 //Create application report for logging in db (block_usermanager_applies)
                 $application_report = new stdClass();
                 $application_report->group_id = $moodle_group_id;
                 $application_report->courseid = $courseid;
-                $application_report->created = time();
                 $application_report->required_user = $USER->id;
-                $application_report->status = 0001;
-                $application_report->modified = 0;
+                $application_report->status = 0000;
                 $application_report->num_of_users = count((array)$group_of_user);
-                $application_id = $DB->insert_record('block_usermanager_applies', $application_report);
-                /*
-                if ($DB->record_exists('block_usermanager_applies', array('group_id' => $moodle_group_id))
-                if ($DB->count_records('block_usermanager_applies', array('group_id' => $moodle_group_id)) > 0) {
-                    $application_report->modified = time();
-                    echo var_dump($DB->update_record('block_usermanager_applies', $application_report));
-                } else {
-                    $application_report->modified = 0;
-                    echo var_dump($application_report);
-                    $application_id = $DB->insert_record('block_usermanager_applies', $application_report);
 
+                if ($DB->record_exists('block_usermanager_applies', array('group_id' => $moodle_group_id))) {
+                    $application = $DB->get_record('block_usermanager_applies', array('group_id' => $moodle_group_id), 'id');
+                    $application_report->id = $application->id;
+                    $application_id = $application->id;
+                    $application_report->modified = time();
+                    $DB->update_record('block_usermanager_applies', $application_report);
+                } else {
+                    $application_report->created = time();
+                    $application_report->modified = 0;
+                    $application_id = $DB->insert_record('block_usermanager_applies', $application_report);
                 }
-                */
+
                 foreach ($group_of_user as $user) {
                     //Create user report for logging in db (block_usermanager_users)
                     //and enrol user

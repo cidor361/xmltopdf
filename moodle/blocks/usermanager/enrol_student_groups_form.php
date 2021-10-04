@@ -100,12 +100,12 @@ class group_search_user_groups_form extends moodleform
                             $i = 1;
                             $list_of_user = '';
                             foreach ($group as $user) {
-                                if ($user->enrolled) {
+                                if (is_enrolled($context, $user->id, '', true)) {
                                     $enrolled = get_string('enrolled', 'block_usermanager');
                                 } else {
                                     $enrolled = '';
                                 }
-                                $list_of_user .= $i.'. '.$user->lastname.' '.$user->firstname.' '.$enrolled.'</br>';
+                                $list_of_user .= $i.'. '.$user->lastname.' '.$user->firstname.' <b>'.$enrolled.'</b></br>';
                                 $i++;
                             }
                             $mform->addElement('html', '<details><summary>'.get_string('list_of_students', 'block_usermanager').' '.$group_num.' '.get_string('of_group', 'block_usermanager').'</summary>'.$list_of_user.'</details></br>');
