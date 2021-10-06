@@ -38,7 +38,8 @@ class manual_enrol_student extends moodleform {
 
     function definition() {
         $mform =& $this->_form;
-        $searchareas = \core_search\manager::get_search_areas_list(true);
+        //Uncomment and test this feature when table with naprspec will be filled
+//        $searchareas = \core_search\manager::get_search_areas_list(true);
 
         $courseid = $this->_customdata['courseid'];
         $facultets = $this->_customdata['facultets'];
@@ -53,12 +54,15 @@ class manual_enrol_student extends moodleform {
         $mform->addElement('html', get_string('select_student_faculty', 'block_usermanager'));
         $mform->addElement('select', 'fac', get_string('choose_faculty', 'block_usermanager'),
             $facultets);
-        $options = array(
-            'multiple' => false,
-            'noselectionstring' => get_string('search', 'search'),
-        );
-        $mform->addElement('autocomplete', 'naprspec', get_string('choose_edu_specialites', 'block_usermanager'),
-            $edu_specialites, $options);
+        //Uncomment and test this feature when table with naprspec will be filled
+//        $options = array(
+//            'multiple' => false,
+//            'noselectionstring' => get_string('search', 'search'),
+//        );
+//        $mform->addElement('autocomplete', 'naprspec', get_string('choose_edu_specialites', 'block_usermanager'),
+//            $edu_specialites, $options);
+        $mform->addElement('select', 'naprspec', get_string('choose_edu_specialites', 'block_usermanager'),
+            $edu_specialites);
         $mform->addElement('select', 'year', get_string('choose_course', 'block_usermanager'),
             $num_course);
         $mform->addElement('select', 'stform', get_string('choose_edu_forms', 'block_usermanager'),

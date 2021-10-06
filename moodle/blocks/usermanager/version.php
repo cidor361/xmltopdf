@@ -29,7 +29,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_usermanager';
-$plugin->version = 2021100400;
+$plugin->version = 2021100600;
 $plugin->requires = 2011062400;
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->dependencies = array(

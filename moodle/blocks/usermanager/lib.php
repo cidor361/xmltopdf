@@ -303,7 +303,7 @@ function get_semestr_of_subject_oci_old($conn, $courseid) {
                 if (date('n') < 7){
                     array_push($years, (date('Y') - floor(($row_study['SEMESTER'] + 1) / 2)));
                 } else {
-                    array_push($years, (date('Y') - floor(($row_study['SEMESTER']) / 2)));
+                    array_push($years, (date('Y') + 1 - floor(($row_study['SEMESTER'] + 1) / 2)));
                 }
 /*
                     if ((int)date('m') < 8) {
