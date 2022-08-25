@@ -109,3 +109,20 @@ public function downloadall_csv_file()
 
         return $br . \html_writer::link($url, 'Скачать xlsx', ['class' => 'btn btn-primary float-sm-right float-right']);
     }
+
+
+    private function delete_old_files($filearea)
+    {
+        global $USER;
+
+        $contextid = \context_system::instance()->id;
+        $component = 'local_report_constructor';
+        $itemid = 0;
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($contextid, $component, $filearea, $itemid, '', false);
+        foreach ($files as $file) {
+            if ($file->get_userid() == $USER->id) $file->delete();
+        }
+
+        return true;
+    }
